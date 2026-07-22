@@ -1,6 +1,6 @@
 /* PiekAtleet service worker — cachet de app-shell zodat de app offline opent.
    Data-sync gaat buiten de SW om (local-first in app.js). */
-var CACHE = 'piekatleet-v1';
+var CACHE = 'piekatleet-v2'; // bump bij ELKE deploy — vervangt de hele shell atomisch
 var SHELL = [
   './',
   './index.html',
@@ -18,9 +18,11 @@ var CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabas
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (cache) {
-      // CDN apart: opaque response is prima, maar mag installatie nooit blokkeren
-      cache.add(new Request(CDN, { mode: 'no-cors' })).catch(function () {});
-      return cache.addAll(SHELL);
+      // CDN mee-awaiten (opaque response is prima), maar een CDN-fout mag installatie nooit blokkeren
+      return Promise.all([
+        cache.add(new Request(CDN, { mode: 'no-cors' })).catch(function () {}),
+        cache.addAll(SHELL)
+      ]);
     }).then(function () { return self.skipWaiting(); })
   );
 });

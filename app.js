@@ -41,14 +41,15 @@
     var d = new Date(dateStr + 'T12:00:00');
     return DAGNAMEN[d.getDay()] + ' ' + String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0');
   }
-  function isoWeek(dateStr) {
+  function isoWeekParts(dateStr) {
     var d = new Date(dateStr + 'T12:00:00');
     var day = (d.getDay() + 6) % 7; // ma=0
     d.setDate(d.getDate() - day + 3); // donderdag van deze week
+    var isoYear = d.getFullYear(); // ISO-weekjaar = jaar van de donderdag
     var thursday = d.getTime();
     d.setMonth(0, 1);
     if (d.getDay() !== 4) d.setMonth(0, 1 + ((4 - d.getDay()) + 7) % 7);
-    return 1 + Math.round((thursday - d.getTime()) / (7 * 24 * 3600 * 1000));
+    return { year: isoYear, week: 1 + Math.round((thursday - d.getTime()) / (7 * 24 * 3600 * 1000)) };
   }
   function num(v) {
     if (v === '' || v == null) return null;
@@ -60,6 +61,8 @@
     return String(n).replace('.', ',');
   }
   function nowIso() { return new Date().toISOString(); }
+  // timestamps als epoch vergelijken — Postgres ("...+00") en JS ("...Z") serialiseren verschillend
+  function ts(v) { var t = new Date(v || 0).getTime(); return isNaN(t) ? 0 : t; }
 
   /* ---------------- State + opslag ---------------- */
   var LS_SESS = 'pa_sessions_v1', LS_MET = 'pa_metrics_v1', LS_DIRTY = 'pa_dirty_v1';
@@ -74,7 +77,9 @@
     if (!S.dirty.sessions) S.dirty.sessions = [];
     if (!S.dirty.metrics) S.dirty.metrics = [];
   }
-  function saveLocal() {
+  var saveTimer = null;
+  function saveLocalNow() {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     try {
       localStorage.setItem(LS_SESS, JSON.stringify(S.sessions));
       localStorage.setItem(LS_MET, JSON.stringify(S.metrics));
@@ -83,6 +88,15 @@
       toast('Let op: lokaal opslaan mislukt (' + e.name + ')');
     }
   }
+  // korte debounce: geen volledige serialize op élke toetsaanslag; flush bij verbergen/sluiten
+  function saveLocal() {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveLocalNow, 300);
+  }
+  window.addEventListener('pagehide', saveLocalNow);
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') saveLocalNow();
+  });
 
   function sessKey(date, dayKey) { return date + '|' + dayKey; }
 
@@ -153,33 +167,49 @@
     var jobs = [];
 
     if (sessKeys.length) {
+      var sentSess = {};
       var rows = sessKeys.map(function (k) {
         var s = S.sessions[k];
-        return s ? { session_date: s.date, day_key: s.dayKey, data: s, updated_at: s.updatedAt } : null;
+        if (!s) return null;
+        sentSess[k] = s.updatedAt;
+        return { session_date: s.date, day_key: s.dayKey, data: s, updated_at: s.updatedAt };
       }).filter(Boolean);
       jobs.push(sb.from('pa_sessions').upsert(rows, { onConflict: 'session_date,day_key' }).then(function (res) {
         if (res.error) throw res.error;
-        S.dirty.sessions = S.dirty.sessions.filter(function (k) { return sessKeys.indexOf(k) < 0; });
+        // alleen de-dirty'en als er tijdens de round-trip geen nieuwe edit op dezelfde key kwam
+        S.dirty.sessions = S.dirty.sessions.filter(function (k) {
+          if (!(k in sentSess)) return true;
+          return S.sessions[k] && S.sessions[k].updatedAt !== sentSess[k];
+        });
       }));
     }
     if (metKeys.length) {
+      var sentMet = {};
       var mrows = metKeys.map(function (k) {
         var m = S.metrics[k];
-        return m ? { metric_date: m.date, metric_key: m.key, value: m.value, note: m.note || '', updated_at: m.updatedAt } : null;
+        if (!m) return null;
+        sentMet[k] = m.updatedAt;
+        return { metric_date: m.date, metric_key: m.key, value: m.value, note: m.note || '', updated_at: m.updatedAt };
       }).filter(Boolean);
       jobs.push(sb.from('pa_metrics').upsert(mrows, { onConflict: 'metric_date,metric_key' }).then(function (res) {
         if (res.error) throw res.error;
-        S.dirty.metrics = S.dirty.metrics.filter(function (k) { return metKeys.indexOf(k) < 0; });
+        S.dirty.metrics = S.dirty.metrics.filter(function (k) {
+          if (!(k in sentMet)) return true;
+          return S.metrics[k] && S.metrics[k].updatedAt !== sentMet[k];
+        });
       }));
     }
     if (!jobs.length) { refreshSyncUI(); return; }
 
     Promise.all(jobs).then(function () {
       lastSyncError = null;
-      saveLocal();
+      saveLocalNow();
       refreshSyncUI();
+      // kwam er tijdens de round-trip een nieuwe edit binnen → direct opnieuw pushen
+      if (S.dirty.sessions.length || S.dirty.metrics.length) schedulePush();
     }).catch(function (err) {
       lastSyncError = err;
+      saveLocalNow();
       refreshSyncUI();
       console.error('Sync-fout:', err);
     });
@@ -187,34 +217,40 @@
 
   function pullAll() {
     if (!sb || !navigator.onLine) return Promise.resolve(false);
-    return Promise.all([
-      sb.from('pa_sessions').select('*'),
-      sb.from('pa_metrics').select('*')
-    ]).then(function (results) {
-      var sRes = results[0], mRes = results[1];
-      if (sRes.error) throw sRes.error;
-      if (mRes.error) throw mRes.error;
-
-      (sRes.data || []).forEach(function (row) {
+    // gepagineerd: PostgREST kapt select('*') af op de default rijenlimiet
+    function fetchAll(table) {
+      var all = [];
+      function page(from) {
+        return sb.from(table).select('*').range(from, from + 999).then(function (res) {
+          if (res.error) throw res.error;
+          all = all.concat(res.data || []);
+          if ((res.data || []).length === 1000) return page(from + 1000);
+          return all;
+        });
+      }
+      return page(0);
+    }
+    return Promise.all([fetchAll('pa_sessions'), fetchAll('pa_metrics')]).then(function (results) {
+      results[0].forEach(function (row) {
         var k = sessKey(row.session_date, row.day_key);
         var local = S.sessions[k];
         var localIsDirty = S.dirty.sessions.indexOf(k) >= 0;
-        if (local && localIsDirty && local.updatedAt > row.updated_at) return; // lokale nieuwere wijziging wint
+        if (local && localIsDirty && ts(local.updatedAt) >= ts(row.updated_at)) return; // lokale nieuwere wijziging wint
         var data = row.data || {};
         data.date = row.session_date;
         data.dayKey = row.day_key;
         data.updatedAt = row.updated_at;
         S.sessions[k] = data;
       });
-      (mRes.data || []).forEach(function (row) {
+      results[1].forEach(function (row) {
         var k = row.metric_date + '|' + row.metric_key;
         var local = S.metrics[k];
         var localIsDirty = S.dirty.metrics.indexOf(k) >= 0;
-        if (local && localIsDirty && local.updatedAt > row.updated_at) return;
+        if (local && localIsDirty && ts(local.updatedAt) >= ts(row.updated_at)) return;
         S.metrics[k] = { date: row.metric_date, key: row.metric_key, value: row.value == null ? null : Number(row.value), note: row.note || '', updatedAt: row.updated_at };
       });
       lastSyncError = null;
-      saveLocal();
+      saveLocalNow();
       refreshSyncUI();
       return true;
     }).catch(function (err) {
@@ -297,10 +333,11 @@
       (it.sets || []).forEach(function (st) {
         var kg = num(st.kg), reps = num(st.reps);
         if (kg == null || reps == null) return;
-        var wk = isoWeek(s.date);
-        var cur = byWeek[wk];
+        var wp = isoWeekParts(s.date);
+        var wkKey = wp.year + '-' + wp.week; // jaar erbij: wk 30 van 2026 ≠ wk 30 van 2027
+        var cur = byWeek[wkKey];
         if (!cur || kg > cur.kg || (kg === cur.kg && reps > cur.reps)) {
-          byWeek[wk] = { week: wk, kg: kg, reps: reps, date: s.date };
+          byWeek[wkKey] = { week: wp.week, kg: kg, reps: reps, date: s.date };
         }
       });
     });
