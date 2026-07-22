@@ -67,7 +67,7 @@
   /* ---------------- State + opslag ---------------- */
   var LS_SESS = 'pa_sessions_v1', LS_MET = 'pa_metrics_v1', LS_DIRTY = 'pa_dirty_v1';
   var S = { sessions: {}, metrics: {}, dirty: { sessions: [], metrics: [] } };
-  var UI = { view: 'vandaag', date: todayStr(), dayKey: null, histMode: 'sessies', histEx: 'back_squat', openerOpen: null };
+  var UI = { view: 'vandaag', date: todayStr(), dayKey: null, histMode: 'sessies', histEx: 'back_squat', openerOpen: null, focusIdx: 0 };
   UI.dayKey = dayKeyForDate(UI.date);
 
   function loadLocal() {
@@ -438,6 +438,152 @@
     return wrap;
   }
 
+  /* ---------------- Rust-timer ---------------- */
+  var LS_REST = 'pa_rest_v1', LS_AUTOREST = 'pa_autorest_v1';
+  var restDefault = (function () { var v = parseInt(localStorage.getItem(LS_REST), 10); return (v >= 15 && v <= 900) ? v : 120; })();
+  function autoRestOn() { return localStorage.getItem(LS_AUTOREST) !== '0'; }
+  var RT = { remaining: 0, total: 0, iv: null, audio: null };
+
+  function fmtClock(s) { var m = Math.floor(s / 60), ss = s % 60; return m + ':' + String(ss).padStart(2, '0'); }
+  function beep() {
+    try {
+      if (!RT.audio) RT.audio = new (window.AudioContext || window.webkitAudioContext)();
+      var ctx = RT.audio;
+      if (ctx.state === 'suspended') ctx.resume();
+      [0, 0.18].forEach(function (offset) {
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = 880;
+        o.connect(g); g.connect(ctx.destination);
+        var t = ctx.currentTime + offset;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+        o.start(t); o.stop(t + 0.16);
+      });
+    } catch (e) { /* geluid mag nooit de app breken */ }
+  }
+  function vibrate(pattern) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {} }
+
+  function restPillEl() {
+    var p = $('#restPill');
+    if (!p) {
+      p = el('<div id="restPill" class="rest-pill" hidden>' +
+        '<button class="rest-adj" data-d="-15" aria-label="15 seconden eraf">–15</button>' +
+        '<div class="rest-mid"><div class="rest-time">0:00</div><div class="rest-lbl">rust</div></div>' +
+        '<button class="rest-adj" data-d="15" aria-label="15 seconden erbij">+15</button>' +
+        '<button class="rest-x" aria-label="Timer stoppen">✕</button>' +
+        '</div>');
+      document.body.appendChild(p);
+      p.querySelectorAll('.rest-adj').forEach(function (b) { b.addEventListener('click', function () { adjustRest(parseInt(b.dataset.d, 10)); }); });
+      p.querySelector('.rest-x').addEventListener('click', stopRest);
+    }
+    return p;
+  }
+  function paintRest() {
+    var p = restPillEl();
+    p.querySelector('.rest-time').textContent = fmtClock(Math.max(0, RT.remaining));
+    p.classList.toggle('rest-done', RT.remaining <= 0);
+  }
+  function scheduleTick(endAt) {
+    if (RT.iv) clearInterval(RT.iv);
+    RT.iv = setInterval(function () {
+      RT.remaining = Math.round((endAt - Date.now()) / 1000);
+      paintRest();
+      if (RT.remaining <= 0) {
+        clearInterval(RT.iv); RT.iv = null;
+        beep(); vibrate([120, 60, 120]);
+        setTimeout(function () { if (RT.remaining <= 0) hideRest(); }, 4000);
+      }
+    }, 250);
+  }
+  function startRest(sec) {
+    sec = sec || restDefault;
+    restDefault = sec;
+    try { localStorage.setItem(LS_REST, String(sec)); } catch (e) {}
+    RT.remaining = sec; RT.total = sec;
+    var p = restPillEl(); p.hidden = false; p.classList.remove('rest-done');
+    // audio ontgrendelen binnen de klik-gesture (set afvinken)
+    if (!RT.audio) { try { RT.audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (RT.audio && RT.audio.state === 'suspended') RT.audio.resume();
+    paintRest();
+    scheduleTick(Date.now() + sec * 1000);
+  }
+  function adjustRest(d) {
+    var p = $('#restPill'); if (!p || p.hidden) return;
+    RT.remaining = Math.max(0, RT.remaining + d);
+    paintRest();
+    if (RT.remaining > 0) { p.classList.remove('rest-done'); scheduleTick(Date.now() + RT.remaining * 1000); }
+    else if (RT.iv) { clearInterval(RT.iv); RT.iv = null; }
+  }
+  function stopRest() { if (RT.iv) { clearInterval(RT.iv); RT.iv = null; } hideRest(); }
+  function hideRest() { var p = $('#restPill'); if (p) p.hidden = true; RT.remaining = 0; }
+  function onSetCompleted() { if (autoRestOn()) startRest(restDefault); }
+
+  /* ---------------- Workout-modus (focus, één oefening tegelijk) ---------------- */
+  function enterFocus(idx) { UI.focusIdx = idx || 0; renderFocus(); }
+  function exitFocus() {
+    var o = $('#focusOverlay'); if (o) o.remove();
+    document.body.classList.remove('focus-open');
+    stopRest();
+    renderVandaag();
+  }
+  function focusItemDone(item) {
+    var l = (getSession(UI.date, UI.dayKey, false) || {}).items;
+    l = l && l[item.key];
+    if (!l) return false;
+    if (item.type === 'strength') {
+      var prog = (l.sets || []).slice(0, item.sets || 0);
+      return prog.length > 0 && prog.every(function (s) { return s.done; });
+    }
+    return !!l.done;
+  }
+  function renderFocus() {
+    var date = UI.date, dayKey = UI.dayKey, day = P.days[dayKey];
+    if (!day || day.rest) { exitFocus(); return; }
+    var items = day.items;
+    if (UI.focusIdx < 0) UI.focusIdx = 0;
+    if (UI.focusIdx >= items.length) { exitFocus(); return; }
+    var item = items[UI.focusIdx];
+
+    var old = $('#focusOverlay'); if (old) old.remove();
+    document.body.classList.add('focus-open');
+    var o = el('<div id="focusOverlay" class="focus"></div>');
+
+    var header = el('<div class="focus-head">' +
+      '<button class="focus-x" aria-label="Afsluiten">✕ Afsluiten</button>' +
+      '<div class="focus-count">' + (UI.focusIdx + 1) + ' / ' + items.length + '</div></div>');
+    header.querySelector('.focus-x').addEventListener('click', exitFocus);
+    o.appendChild(header);
+
+    var dots = el('<div class="focus-dots"></div>');
+    items.forEach(function (it, i) {
+      var d = el('<button class="fdot' + (i === UI.focusIdx ? ' cur' : '') + (focusItemDone(it) ? ' done' : '') + '" aria-label="Oefening ' + (i + 1) + '"></button>');
+      d.addEventListener('click', function () { UI.focusIdx = i; renderFocus(); });
+      dots.appendChild(d);
+    });
+    o.appendChild(dots);
+
+    var body = el('<div class="focus-body"></div>');
+    body.appendChild(el('<div class="focus-group tiny">' + esc(item.group) + '</div>'));
+    // hergebruik exact dezelfde log-kaart als de lijst → identieke opslag/sync
+    body.appendChild(item.type === 'strength' ? strengthCard(date, dayKey, item) : checkCard(date, dayKey, item));
+    o.appendChild(body);
+
+    var last = UI.focusIdx === items.length - 1;
+    var nav = el('<div class="focus-nav">' +
+      '<button class="fnav-prev"' + (UI.focusIdx === 0 ? ' disabled' : '') + '>‹ Vorige</button>' +
+      '<button class="fnav-next">' + (last ? 'Workout afronden ✓' : 'Volgende ›') + '</button></div>');
+    nav.querySelector('.fnav-prev').addEventListener('click', function () { if (UI.focusIdx > 0) { UI.focusIdx--; renderFocus(); } });
+    nav.querySelector('.fnav-next').addEventListener('click', function () {
+      if (last) exitFocus();
+      else { UI.focusIdx++; renderFocus(); }
+    });
+    o.appendChild(nav);
+
+    document.body.appendChild(o);
+    o.scrollTop = 0;
+  }
+
   /* ---------------- View: Vandaag (workout-editor) ---------------- */
   function renderVandaag() {
     var root = $('#view');
@@ -493,6 +639,11 @@
       (day.warn ? '<div class="callout"><span class="ic">⚠</span><span>' + esc(day.warn) + '</span></div>' : '') +
       '</div>');
     root.appendChild(head);
+
+    // workout-modus: oefening-voor-oefening met grote knoppen + rust-timer
+    var startBtn = el('<button class="btn btn-focus">▶  Start workout-modus</button>');
+    startBtn.addEventListener('click', function () { enterFocus(0); });
+    root.appendChild(startBtn);
 
     // atleet-fase: inklapbaar zodat de compound-kern direct in beeld staat
     var skeyOpener = sessKey(date, dayKey);
@@ -624,6 +775,7 @@
         write('done', turningOn);
         doneBtn.classList.toggle('on', turningOn);
         refreshDoneState();
+        if (turningOn) onSetCompleted(); // rust-timer start automatisch (indien aan)
       });
       return row;
     }
@@ -968,6 +1120,31 @@
       '<div class="kv"><b>Voeding</b><span>' + esc(m.nutritionShort) + '</span></div>' +
       '<div class="kv"><b>Zwakke punten</b><span>' + esc(m.weakPoints) + '</span></div>' +
       '</div>'));
+
+    root.appendChild(el('<div class="section-title">Instellingen</div>'));
+    var setCard = el('<div class="card"></div>');
+    var autoRow = el('<div class="set-row"><div><b>Rust-timer automatisch</b><div class="tiny">Start zodra je een set afvinkt</div></div><button class="toggle" role="switch" aria-label="Rust-timer automatisch"></button></div>');
+    var tg = autoRow.querySelector('.toggle');
+    function paintTg() { tg.classList.toggle('on', autoRestOn()); tg.setAttribute('aria-checked', autoRestOn()); }
+    paintTg();
+    tg.addEventListener('click', function () { try { localStorage.setItem(LS_AUTOREST, autoRestOn() ? '0' : '1'); } catch (e) {} paintTg(); });
+    setCard.appendChild(autoRow);
+    var restRow = el('<div class="set-row" style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px"><div><b>Standaard rusttijd</b><div class="tiny">Tussen sets</div></div><div class="rest-presets"></div></div>');
+    var pr = restRow.querySelector('.rest-presets');
+    [60, 90, 120, 180].forEach(function (s) {
+      var lbl = (s % 60 === 0) ? (s / 60) + 'm' : fmtClock(s);
+      var b = el('<button class="preset' + (restDefault === s ? ' on' : '') + '">' + lbl + '</button>');
+      b.addEventListener('click', function () {
+        restDefault = s;
+        try { localStorage.setItem(LS_REST, String(s)); } catch (e) {}
+        pr.querySelectorAll('.preset').forEach(function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+        toast('Standaard rust: ' + lbl);
+      });
+      pr.appendChild(b);
+    });
+    setCard.appendChild(restRow);
+    root.appendChild(setCard);
 
     root.appendChild(el('<div class="section-title">De vier regels</div>'));
     var rules = el('<div class="card"></div>');
