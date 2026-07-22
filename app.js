@@ -67,7 +67,7 @@
   /* ---------------- State + opslag ---------------- */
   var LS_SESS = 'pa_sessions_v1', LS_MET = 'pa_metrics_v1', LS_DIRTY = 'pa_dirty_v1';
   var S = { sessions: {}, metrics: {}, dirty: { sessions: [], metrics: [] } };
-  var UI = { view: 'vandaag', date: todayStr(), dayKey: null, histMode: 'sessies', histEx: 'back_squat' };
+  var UI = { view: 'vandaag', date: todayStr(), dayKey: null, histMode: 'sessies', histEx: 'back_squat', openerOpen: null };
   UI.dayKey = dayKeyForDate(UI.date);
 
   function loadLocal() {
@@ -123,6 +123,29 @@
     if (S.dirty.sessions.indexOf(k) < 0) S.dirty.sessions.push(k);
     saveLocal();
     schedulePush();
+    updateDayProgress();
+  }
+
+  // live voortgang in de dag-header ("X sets gelogd · Y/Z onderdelen klaar")
+  function updateDayProgress() {
+    var elP = $('#dayProgress');
+    if (!elP) return;
+    var day = P.days[UI.dayKey];
+    if (!day || day.rest) return;
+    var sess = getSession(UI.date, UI.dayKey, false);
+    var setsLogged = 0, itemsDone = 0, total = day.items.length;
+    day.items.forEach(function (it) {
+      var l = sess && sess.items && sess.items[it.key];
+      if (!l) return;
+      if (it.type === 'strength') {
+        (l.sets || []).forEach(function (st) { if (num(st.kg) != null || num(st.reps) != null || st.done) setsLogged++; });
+        var prog = (l.sets || []).slice(0, it.sets || 0);
+        if (prog.length && prog.every(function (st) { return st.done; })) itemsDone++;
+      } else if (l.done) {
+        itemsDone++;
+      }
+    });
+    elP.textContent = (setsLogged || itemsDone) ? setsLogged + ' sets gelogd · ' + itemsDone + '/' + total + ' onderdelen klaar' : '';
   }
   function markMetricDirty(k) {
     if (S.dirty.metrics.indexOf(k) < 0) S.dirty.metrics.push(k);
@@ -442,8 +465,15 @@
     root.appendChild(chips);
 
     if (day.rest) {
+      var idxR = P.weekOrder.indexOf(dayKey);
+      var nextDay = null;
+      for (var iR = 1; iR <= 7 && !nextDay; iR++) {
+        var cand = P.days[P.weekOrder[(idxR + iR) % 7]];
+        if (!cand.rest) nextDay = cand;
+      }
       root.appendChild(el('<div class="card restcard"><div class="h1">Rustdag</div>' +
         '<div class="sub">Herstel is het plafond — vandaag bouw je.</div>' +
+        (nextDay ? '<div class="sub" style="margin-top:10px;color:var(--accent)">Volgende training: ' + esc(nextDay.label + ' — ' + nextDay.title) + '</div>' : '') +
         '<div class="tiny" style="margin-top:10px">Toch trainen? Kies hierboven een andere dag — de sessie wordt op ' + esc(fmtDate(date)) + ' gelogd.</div></div>'));
       root.appendChild(el('<div class="card"><div class="h2" style="margin-bottom:6px">Rood signaal</div>' +
         '<div class="sub">🟢 ' + esc(P.redFlag.ok) + '</div>' +
@@ -459,12 +489,32 @@
       '<span class="badge badge-erector-' + esc(day.erector.toLowerCase().replace(/\s+/g, '-')) + '">erector ' + esc(day.erector) + '</span>' +
       '</div>' +
       '<div class="tiny" style="margin-top:7px">Power: ' + esc(day.power) + '</div>' +
+      '<div class="tiny" id="dayProgress" style="margin-top:5px;color:var(--good)"></div>' +
       (day.warn ? '<div class="callout"><span class="ic">⚠</span><span>' + esc(day.warn) + '</span></div>' : '') +
       '</div>');
     root.appendChild(head);
 
-    root.appendChild(el('<div class="section-title">' + esc(P.opener.title) + ' · 12–15 min</div>'));
-    var opener = el('<div class="card"><div class="tiny">' + esc(P.opener.sub) + '</div></div>');
+    // atleet-fase: inklapbaar zodat de compound-kern direct in beeld staat
+    var skeyOpener = sessKey(date, dayKey);
+    var openerChecked = 0;
+    if (sess && sess.opener) Object.keys(sess.opener).forEach(function (bk) { openerChecked += Object.keys(sess.opener[bk]).length; });
+    var openerOpen = UI.openerOpen === skeyOpener;
+    var opener = el('<div class="card">' +
+      '<button class="opener-toggle" aria-expanded="' + openerOpen + '">' +
+      '<span><span class="h2">' + esc(P.opener.title) + '</span> <span class="tiny">· 12–15 min</span></span>' +
+      '<span class="opener-count"><span class="badge"><span class="opener-n">' + openerChecked + '</span> ✓</span><span class="chev">' + (openerOpen ? '▾' : '▸') + '</span></span>' +
+      '</button>' +
+      '<div class="opener-body"' + (openerOpen ? '' : ' hidden') + '><div class="tiny" style="margin-top:4px">' + esc(P.opener.sub) + '</div></div>' +
+      '</div>');
+    var openerBody = opener.querySelector('.opener-body');
+    var openerToggle = opener.querySelector('.opener-toggle');
+    openerToggle.addEventListener('click', function () {
+      var open = openerBody.hidden;
+      openerBody.hidden = !open;
+      UI.openerOpen = open ? skeyOpener : null;
+      openerToggle.setAttribute('aria-expanded', open);
+      opener.querySelector('.chev').textContent = open ? '▾' : '▸';
+    });
     P.opener.blocks.forEach(function (block) {
       var blockEl = el('<div class="opener-block"><div class="opener-head"><span class="h2">' + esc(block.title) + '</span><span class="tiny">' + esc(block.sub) + '</span></div><div class="chiprow"></div></div>');
       if (block.key === 'power' && (dayKey === 'ma' || dayKey === 'do')) {
@@ -481,10 +531,13 @@
           if (!s2.opener[block.key][itName]) delete s2.opener[block.key][itName];
           markSessionDirty(date, dayKey);
           chip.classList.toggle('on');
+          var n = 0;
+          Object.keys(s2.opener).forEach(function (bk) { n += Object.keys(s2.opener[bk]).length; });
+          opener.querySelector('.opener-n').textContent = n;
         });
         row.appendChild(chip);
       });
-      opener.appendChild(blockEl);
+      openerBody.appendChild(blockEl);
     });
     root.appendChild(opener);
 
@@ -509,6 +562,7 @@
       markSessionDirty(date, dayKey);
     });
     root.appendChild(noteCard);
+    updateDayProgress();
   }
 
   function strengthCard(date, dayKey, item) {
@@ -569,18 +623,27 @@
         if (turningOn && repsIn.value === '' && ph && ph.reps !== '') { repsIn.value = fmtNum(num(ph.reps)); write('reps', repsIn.value); }
         write('done', turningOn);
         doneBtn.classList.toggle('on', turningOn);
+        refreshDoneState();
       });
       return row;
+    }
+
+    // groene rand zodra alle programma-sets afgevinkt zijn — voortgang in één oogopslag
+    function refreshDoneState() {
+      var prog = logged && logged.sets ? logged.sets.slice(0, item.sets || 0) : [];
+      card.classList.toggle('ex-done', prog.length > 0 && prog.every(function (st) { return st.done; }));
     }
 
     for (var i = 0; i < nSets; i++) {
       rows.appendChild(setRow(i));
     }
+    refreshDoneState();
 
     var foot = el('<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">' +
-      '<button class="linkbtn">+ extra set</button>' +
+      '<span><button class="linkbtn">+ extra set</button><button class="linkbtn" style="margin-left:14px">– set</button></span>' +
       '<button class="linkbtn">notitie</button></div>');
-    var addBtn = foot.children[0], noteBtn = foot.children[1];
+    var btns = foot.querySelectorAll('.linkbtn');
+    var addBtn = btns[0], delBtn = btns[1], noteBtn = btns[2];
     addBtn.addEventListener('click', function () {
       var s2 = getSession(date, dayKey, true);
       var it2 = ensureItem(s2, item);
@@ -588,6 +651,19 @@
       logged = it2;
       markSessionDirty(date, dayKey);
       rows.appendChild(setRow(it2.sets.length - 1));
+      refreshDoneState();
+    });
+    delBtn.addEventListener('click', function () {
+      var s2 = getSession(date, dayKey, false);
+      var it2 = s2 && s2.items && s2.items[item.key];
+      if (!it2 || it2.sets.length <= (item.sets || 0)) { toast('Alleen extra sets kun je verwijderen'); return; }
+      var last = it2.sets[it2.sets.length - 1];
+      if (num(last.kg) != null || num(last.reps) != null || last.done) { toast('Laatste set is niet leeg — maak hem eerst leeg'); return; }
+      it2.sets.pop();
+      logged = it2;
+      markSessionDirty(date, dayKey);
+      if (rows.lastElementChild) rows.lastElementChild.remove();
+      refreshDoneState();
     });
     card.appendChild(foot);
 
@@ -630,6 +706,7 @@
       it2.done = !it2.done;
       markSessionDirty(date, dayKey);
       btn.classList.toggle('on', it2.done);
+      card.classList.toggle('ex-done', it2.done);
     });
     ta.addEventListener('input', function () {
       var s2 = getSession(date, dayKey, true);
@@ -637,6 +714,7 @@
       it2.note = ta.value;
       markSessionDirty(date, dayKey);
     });
+    card.classList.toggle('ex-done', on);
     return card;
   }
 
@@ -790,18 +868,22 @@
 
     root.appendChild(el('<div class="section-title">Kracht-ankers · wekelijks (top set)</div>'));
     root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Automatisch afgeleid uit je gelogde sets — hier hoef je niets voor in te vullen.</div>'));
+    var noData = [];
     P.anchors.strength.forEach(function (a) {
       var series = weeklyTopSets(a.key);
+      if (!series.length) { noData.push(a.label); return; }
       var card = el('<div class="card"><div class="ex-head"><div class="h2">' + esc(a.label) + '</div>' +
-        (series.length ? '<span class="badge badge-target">' + fmtNum(series[series.length - 1].kg) + ' kg × ' + fmtNum(series[series.length - 1].reps) + '</span>' : '<span class="tiny">nog geen data</span>') +
+        '<span class="badge badge-target">' + fmtNum(series[series.length - 1].kg) + ' kg × ' + fmtNum(series[series.length - 1].reps) + '</span>' +
         '</div></div>');
-      if (series.length) {
-        card.appendChild(lineChart(series.map(function (t) {
-          return { label: 'wk ' + t.week, value: t.kg, sub: fmtNum(t.kg) + ' kg × ' + fmtNum(t.reps) + ' (' + fmtDate(t.date) + ')' };
-        }), 'kg'));
-      }
+      card.appendChild(lineChart(series.map(function (t) {
+        return { label: 'wk ' + t.week, value: t.kg, sub: fmtNum(t.kg) + ' kg × ' + fmtNum(t.reps) + ' (' + fmtDate(t.date) + ')' };
+      }), 'kg'));
       root.appendChild(card);
     });
+    if (noData.length) {
+      // lege ankers samenvouwen: geen muur van "nog geen data"-kaarten
+      root.appendChild(el('<div class="card"><div class="tiny">Nog zonder data (vullen zichzelf zodra je sets logt): <b>' + esc(noData.join(' · ')) + '</b></div></div>'));
+    }
 
     root.appendChild(el('<div class="section-title">Atletiek-ankers · elke 4 weken</div>'));
     P.anchors.athletic.forEach(function (a) {
@@ -929,9 +1011,13 @@
   function show(view) {
     UI.view = view;
     if (view === 'vandaag') {
-      // tab "Vandaag" = altijd terug naar de dag van vandaag
-      UI.date = todayStr();
-      UI.dayKey = dayKeyForDate(UI.date);
+      var today = todayStr();
+      if (UI.date !== today) {
+        // andere datum stond open (historie-edit) → terug naar vandaag
+        UI.date = today;
+        UI.dayKey = dayKeyForDate(today);
+      }
+      // zelfde datum: gekozen workout-dag behouden (geschoven schema raakt niet kwijt)
     }
     setActiveTab();
     VIEWS[view]();

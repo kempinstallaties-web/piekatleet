@@ -244,6 +244,24 @@ select.input:focus, input.input:focus { outline: none; border-color: var(--accen
   max-width: 90vw; text-align: center;
 }
 
+/* ---------- Stresstest-fixes ---------- */
+/* datum-input heeft intrinsieke breedte → grid liep 109px buiten beeld op 375px */
+.metric-add { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) auto; }
+.metric-add input { min-width: 0; }
+
+/* inklapbare atleet-fase */
+.opener-toggle {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  text-align: left; min-height: 40px; padding: 2px 0; gap: 8px;
+}
+.opener-count { display: flex; align-items: center; gap: 9px; flex: none; }
+.opener-count .badge { background: var(--good-soft); color: var(--good); border-color: rgba(89, 211, 141, 0.35); }
+.chev { color: var(--muted); font-size: 13px; }
+
+/* oefening klaar = groene rand */
+.card.ex-done { border-color: rgba(89, 211, 141, 0.5); }
+.card.ex-done .badge-target { background: var(--good-soft); color: var(--good); border-color: rgba(89, 211, 141, 0.4); }
+
 @media (min-width: 700px) {
   .view { padding-top: 20px; }
 }
