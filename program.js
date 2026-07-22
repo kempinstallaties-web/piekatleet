@@ -7,7 +7,6 @@ window.PROGRAM = {
     athlete: 'Kaj Kemp',
     motto: 'machine worden, niet alleen groot',
     block: '12 weken · evalueren op data, niet op spiegelgevoel',
-    protocol: 'TRT 125 mg/week (3× prikken) — sinds 22-06-2026',
     nutritionShort: '3500–3700 kcal · 240 g eiwit',
     weakPoints: 'Hamstrings · Rugdikte · Aerobe basis'
   },
@@ -18,11 +17,6 @@ window.PROGRAM = {
     'Compound eerst. Isolatie alleen voor zwakke punten.',
     'Eén koers vasthouden. 12 weken draaien, dán bijsturen.'
   ],
-
-  redFlag: {
-    ok: 'Stijf en zeurderig, maar losser bij bewegen → het systeem doet z\'n werk. Geef het 2–3 weken.',
-    stop: 'Scherp, uitstralend of blijvend → stoppen met programmeren en naar de fysio.'
-  },
 
   opener: {
     title: 'Atleet-fase',
@@ -138,7 +132,7 @@ window.PROGRAM = {
     reminders: [
       'Wekelijks: kracht-ankers (top set) + lichaamsgewicht',
       'Elke 4 weken: broad jump · balans-hold · sprinttijd · foto\'s',
-      'Bloed ~half september: creatinine & CK opnieuw meten (12 wk na TRT-switch 22-06-2026)'
+      'Bloed ~half september: creatinine & CK opnieuw meten'
     ]
   },
 

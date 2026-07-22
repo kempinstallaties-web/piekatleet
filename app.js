@@ -621,9 +621,6 @@
         '<div class="sub">Herstel is het plafond — vandaag bouw je.</div>' +
         (nextDay ? '<div class="sub" style="margin-top:10px;color:var(--accent)">Volgende training: ' + esc(nextDay.label + ' — ' + nextDay.title) + '</div>' : '') +
         '<div class="tiny" style="margin-top:10px">Toch trainen? Kies hierboven een andere dag — de sessie wordt op ' + esc(fmtDate(date)) + ' gelogd.</div></div>'));
-      root.appendChild(el('<div class="card"><div class="h2" style="margin-bottom:6px">Rood signaal</div>' +
-        '<div class="sub">🟢 ' + esc(P.redFlag.ok) + '</div>' +
-        '<div class="sub" style="margin-top:6px">🔴 ' + esc(P.redFlag.stop) + '</div></div>'));
       return;
     }
 
@@ -1116,7 +1113,6 @@
       '<div class="sub" style="margin-bottom:8px">— ' + esc(m.motto) + '</div>' +
       '<div class="kv"><b>Atleet</b><span>' + esc(m.athlete) + '</span></div>' +
       '<div class="kv"><b>Blok</b><span>' + esc(m.block) + '</span></div>' +
-      '<div class="kv"><b>Protocol</b><span>' + esc(m.protocol) + '</span></div>' +
       '<div class="kv"><b>Voeding</b><span>' + esc(m.nutritionShort) + '</span></div>' +
       '<div class="kv"><b>Zwakke punten</b><span>' + esc(m.weakPoints) + '</span></div>' +
       '</div>'));
@@ -1152,11 +1148,6 @@
       rules.appendChild(el('<div class="sub" style="margin:8px 0"><span class="rulenum">0' + (i + 1) + '</span>' + esc(r) + '</div>'));
     });
     root.appendChild(rules);
-
-    root.appendChild(el('<div class="section-title">Rood signaal</div>'));
-    root.appendChild(el('<div class="card">' +
-      '<div class="sub">🟢 ' + esc(P.redFlag.ok) + '</div>' +
-      '<div class="sub" style="margin-top:8px">🔴 ' + esc(P.redFlag.stop) + '</div></div>'));
 
     root.appendChild(el('<div class="section-title">' + esc(P.nutrition.title) + '</div>'));
     var nut = el('<div class="card"><div class="sub">' + esc(P.nutrition.context) + '</div>' +
