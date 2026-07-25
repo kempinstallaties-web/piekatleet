@@ -1,6 +1,6 @@
 /* PiekAtleet service worker — cachet de app-shell zodat de app offline opent.
    Data-sync gaat buiten de SW om (local-first in app.js). */
-var CACHE = 'piekatleet-v6'; // bump bij ELKE deploy — vervangt de hele shell atomisch
+var CACHE = 'piekatleet-v7'; // bump bij ELKE deploy — vervangt de hele shell atomisch
 var SHELL = [
   './',
   './index.html',
@@ -48,21 +48,52 @@ self.addEventListener('fetch', function (e) {
   var isCdn = req.url === CDN;
   if (!isShell && !isCdn) return; // Supabase-API e.d.: direct naar netwerk
 
-  // stale-while-revalidate: cache direct, vernieuw op de achtergrond
-  e.respondWith(
-    caches.open(CACHE).then(function (cache) {
-      return cache.match(req).then(function (cached) {
-        var fetching = fetch(req).then(function (resp) {
-          if (resp && (resp.ok || resp.type === 'opaque')) cache.put(req, resp.clone());
-          return resp;
-        }).catch(function () { return cached; });
-        if (cached) return cached;
-        return fetching.then(function (resp) {
-          // navigatie zonder cache én zonder netwerk → shell
-          if (!resp && req.mode === 'navigate') return cache.match('./index.html');
+  // CDN (versie zit in de URL, verandert nooit) → cache-first
+  if (isCdn) {
+    e.respondWith(
+      caches.match(req).then(function (cached) {
+        return cached || fetch(req).then(function (resp) {
+          if (resp && (resp.ok || resp.type === 'opaque')) {
+            var clone = resp.clone();
+            caches.open(CACHE).then(function (c) { c.put(req, clone); });
+          }
           return resp;
         });
+      })
+    );
+    return;
+  }
+
+  // App-shell → NETWORK-FIRST met cache als vangnet.
+  // Zo krijg je online altijd de nieuwste versie (geen "update pas de 2e keer openen"),
+  // en offline/traag netwerk valt na 3,5 s terug op de opgeslagen kopie.
+  e.respondWith(new Promise(function (resolve) {
+    var settled = false;
+    function done(resp) { if (!settled) { settled = true; resolve(resp); } }
+
+    var timer = setTimeout(function () {
+      if (settled) return;
+      caches.match(req).then(function (cached) { if (cached) done(cached); });
+    }, 3500);
+
+    fetch(req).then(function (resp) {
+      clearTimeout(timer);
+      if (resp && resp.ok) {
+        var clone = resp.clone();
+        caches.open(CACHE).then(function (c) { c.put(req, clone); });
+      }
+      done(resp);
+    }).catch(function () {
+      clearTimeout(timer);
+      caches.match(req).then(function (cached) {
+        if (cached) return done(cached);
+        if (req.mode === 'navigate') {
+          return caches.match('./index.html').then(function (shell) {
+            done(shell || new Response('Offline', { status: 503 }));
+          });
+        }
+        done(new Response('Offline', { status: 503 }));
       });
-    })
-  );
+    });
+  }));
 });

@@ -7,6 +7,9 @@
 
   var P = window.PROGRAM;
   var CFG = window.PA_CONFIG || {};
+  // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
+  // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
+  var APP_VERSION = '7 · 26-07-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1166,6 +1169,21 @@
       pr.appendChild(b);
     });
     setCard.appendChild(restRow);
+
+    var verRow = el('<div class="set-row" style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">' +
+      '<div><b>App-versie</b><div class="tiny">' + esc(APP_VERSION) + ' · programma ' + esc(P.meta.version) + '</div></div>' +
+      '<button class="preset" style="min-width:76px">Bijwerken</button></div>');
+    verRow.querySelector('button').addEventListener('click', function () {
+      toast('Bijwerken…');
+      var done = function () { location.reload(); };
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(function (reg) {
+          if (!reg) return done();
+          reg.update().then(done).catch(done);
+        }).catch(done);
+      } else { done(); }
+    });
+    setCard.appendChild(verRow);
     root.appendChild(setCard);
 
     root.appendChild(el('<div class="section-title">De vier regels</div>'));
