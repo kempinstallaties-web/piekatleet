@@ -33,12 +33,12 @@ window.PROGRAM = {
       },
       {
         key: 'balans', title: 'Balans & pantser', sub: '~4 min · elke dag',
-        items: ['Hip airplane', 'Copenhagen óf Nordic (roterend)', 'Pallof press of loaded carry']
+        items: ['Hip airplane', 'Pallof press of loaded carry', 'Side plank']
       }
     ]
   },
 
-  weekRule: 'Squat → deadlift → row staan uit elkaar (72u / 48u / 48u herstel). Nooit twee erector-dagen op rij.',
+  weekRule: 'Squat → deadlift → row staan uit elkaar (72u / 48u / 48u herstel). Nooit twee erector-dagen op rij. Hamstring-prehab (Nordic) ver van de deadlift-dag: zaterdag.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
 
   days: {
@@ -65,10 +65,19 @@ window.PROGRAM = {
         { key: 'flat_press_dips', group: 'WERK', name: 'Flat press of dips', cue: 'Tweede borst-prikkel — bouw naar weighted', sets: 3, target: '8–10', type: 'strength' },
         { key: 'cable_fly', group: 'WERK', name: 'Cable fly', cue: 'Enige isolatie — stretch / pump', sets: 2, target: '12–15', type: 'strength' },
         { key: 'lateral_raise', group: 'WERK', name: 'Lateral raise', sets: 2, target: '', type: 'strength' },
-        { key: 'triceps', group: 'WERK', name: 'Triceps', sets: 2, target: '', type: 'strength' }
+        { key: 'triceps', group: 'WERK', name: 'Triceps', sets: 2, target: '', type: 'strength' },
+        { key: 'copenhagen', group: 'PREHAB', name: 'Copenhagen plank', cue: 'Adductor/lies — benen zijn vandaag vers, dus geen conflict', sets: 3, target: '20–40 sec p/z', type: 'strength' }
       ]
     },
-    wo: { key: 'wo', label: 'WO', title: 'Rust', rest: true },
+    wo: {
+      key: 'wo', label: 'WO', title: 'Actief herstel — Zone 2', sub: 'aerobe basis · low impact',
+      erector: 'LAAG', power: 'Geen', compound: 'Zone 2 cardio',
+      warn: 'Low impact houden (fiets · roeier · wandelen). Géén hardlopen — donderdag is de zwaarste tildag en die wil je met frisse benen in.',
+      items: [
+        { key: 'zone2', group: 'CONDITIE', name: 'Zone 2 cardio', cue: 'HR 145–158 — aerobe basis = grootste gat', target: '40–45 min', type: 'check' },
+        { key: 'wo_mobility', group: 'HERSTEL', name: 'Mobility / soft tissue', cue: 'Optioneel — heupen, thoracaal, kuiten', type: 'check' }
+      ]
+    },
     do: {
       key: 'do', label: 'DO', title: 'Lower — Deadlift', sub: 'posterior + hamstrings',
       erector: 'ZEER HOOG', power: 'Licht / skip', compound: 'Trap bar deadlift',
@@ -78,21 +87,22 @@ window.PROGRAM = {
         { key: 'trap_bar_deadlift', group: 'WERK', name: 'Trap bar deadlift', cue: 'Compound-kern', sets: 4, target: '3–6', type: 'strength' },
         { key: 'rdl', group: 'WERK', name: 'RDL', cue: 'Hamstring op lange spierlengte', sets: 3, target: '8–12', type: 'strength' },
         { key: 'lying_leg_curl', group: 'WERK', name: 'Lying leg curl', cue: 'Hamstring-frequentie #2 — zwak punt', sets: 3, target: '10–12', type: 'strength' },
-        { key: 'hip_thrust', group: 'WERK', name: 'Hip thrust', sets: 2, target: '', type: 'strength' },
         { key: 'calf', group: 'WERK', name: 'Kuit', sets: 3, target: '', type: 'strength' }
       ]
     },
     vr: {
-      key: 'vr', label: 'VR', title: 'Atletiek + conditie', sub: 'fris = volledige power',
+      key: 'vr', label: 'VR', title: 'Atletiek + HIIT', sub: 'fris = volledige power',
       erector: 'LAAG', power: 'Vol — fris', compound: 'Sprints · sled · carries',
-      warn: 'Geen pushups of triceps hier — dat doe je dinsdag al en het vreet herstel dat je zaterdag nodig hebt.',
+      warn: 'Volgorde is de hele truc: springen en sprinten eerst op een fris zenuwstelsel, isolatie pas achteraan. Isolatie hier mag — zaterdag is trekwerk, dus borst en triceps zitten elkaar niet in de weg.',
       items: [
-        { key: 'vr_core', group: 'CORE', name: 'L-sits / calisthenics + crunches', type: 'check' },
-        { key: 'sprints', group: 'ATLETIEK', name: 'Sprints / heuvel / sled', cue: 'snelheid', type: 'check' },
-        { key: 'carries', group: 'ATLETIEK', name: 'Loaded carries (farmer / suitcase)', cue: 'Core onder last — full body', type: 'check' },
-        { key: 'ball_jumps', group: 'ATLETIEK', name: 'Ball jumps vanuit zit + plyo', cue: 'Pure concentrische explosiviteit — power', type: 'check' },
-        { key: 'zone2', group: 'CONDITIE & PREHAB', name: 'Zone 2 cardio', cue: 'HR 145–158 — aerobe basis = grootste gat', target: '30 min', type: 'check' },
-        { key: 'cop_nordic', group: 'CONDITIE & PREHAB', name: 'Copenhagen / Nordic', cue: 'prehab', type: 'check' }
+        { key: 'ball_jumps', group: 'PLYO', name: 'Med ball jump vanuit zit', cue: 'Pure concentrische explosiviteit — geen stretch-reflex', sets: 3, target: '5 reps', type: 'strength' },
+        { key: 'broad_jump_plyo', group: 'PLYO', name: 'Broad jump', cue: 'Horizontale power — meteen je 4-weken test', sets: 3, target: '3 reps', type: 'strength' },
+        { key: 'sprints', group: 'ATLETIEK & HIIT', name: 'Sprints / intervallen', cue: 'Kort & explosief (6–10 × 20–40 m, volle rust) óf intervallen (6 × 1 min, 1:30 rust)', type: 'check' },
+        { key: 'carries', group: 'ATLETIEK & HIIT', name: 'Loaded carries (farmer / suitcase)', cue: 'Core onder last — full body', type: 'check' },
+        { key: 'pec_deck', group: 'OPVULLING', name: 'Pec deck', cue: 'Tweede borst-prikkel in de week — goed voor groei', sets: 3, target: '12–15', type: 'strength' },
+        { key: 'shrugs', group: 'OPVULLING', name: 'Shrugs', cue: 'Traps — telt mee voor rugdikte (zwak punt)', sets: 3, target: '10–12', type: 'strength' },
+        { key: 'triceps_vr', group: 'OPVULLING', name: 'Triceps', cue: 'Tweede armprikkel — samen met dinsdag kom je op ~5 sets', sets: 3, target: '10–12', type: 'strength' },
+        { key: 'vr_core', group: 'CORE', name: 'L-sits / calisthenics + crunches', type: 'check' }
       ]
     },
     za: {
@@ -104,10 +114,16 @@ window.PROGRAM = {
         { key: 'chest_supported_row', group: 'WERK', name: 'Chest-supported row', cue: 'Dikte, lage erector', sets: 3, target: '10–12', type: 'strength' },
         { key: 'cable_row', group: 'WERK', name: 'Cable row', sets: 3, target: '8–12', type: 'strength' },
         { key: 'rear_delt_facepull', group: 'WERK', name: 'Rear delt + face pull', sets: 2, target: '', type: 'strength' },
-        { key: 'biceps', group: 'WERK', name: 'Biceps', sets: 2, target: '', type: 'strength' }
+        { key: 'biceps', group: 'WERK', name: 'Biceps', sets: 2, target: '', type: 'strength' },
+        { key: 'nordic', group: 'PREHAB', name: 'Nordic curl (excentrisch)', cue: 'Hamstring-prehab — 5 dagen na de deadlift, dus soreness stoort niets', sets: 3, target: '4–6', type: 'strength' }
       ]
     },
-    zo: { key: 'zo', label: 'ZO', title: 'Rust', rest: true }
+    zo: {
+      key: 'zo', label: 'ZO', title: 'Rust — optioneel Zone 2', rest: true,
+      items: [
+        { key: 'zone2_zo', group: 'OPTIONEEL', name: 'Zone 2 kort', cue: 'Alleen als je er zin in hebt — wandelen of rustig fietsen', target: '20–30 min', type: 'check' }
+      ]
+    }
   },
 
   // Tracking — 12-weken evaluatie ("objectieve data verslaat spiegelgevoel")
@@ -152,12 +168,12 @@ window.PROGRAM = {
   volumeCheck: {
     title: 'Volume-check', sub: 'Werksets per week — alles op groei-volume.',
     rows: [
-      { name: 'Rug', sets: '~13' },
-      { name: 'Hamstrings', sets: '~11–12 (3× freq.)' },
+      { name: 'Rug', sets: '~13 + 3 shrugs' },
+      { name: 'Hamstrings', sets: '~12 (ma · do · za)' },
       { name: 'Quads', sets: '~9' },
-      { name: 'Borst', sets: '~9–10' },
+      { name: 'Borst', sets: '~12–13 (di + vr)' },
       { name: 'Schouders', sets: '~7–9' },
-      { name: 'Armen', sets: '~6–8' }
+      { name: 'Armen', sets: '~7' }
     ]
   }
 };

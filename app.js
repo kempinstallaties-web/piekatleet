@@ -621,6 +621,23 @@
         '<div class="sub">Herstel is het plafond — vandaag bouw je.</div>' +
         (nextDay ? '<div class="sub" style="margin-top:10px;color:var(--accent)">Volgende training: ' + esc(nextDay.label + ' — ' + nextDay.title) + '</div>' : '') +
         '<div class="tiny" style="margin-top:10px">Toch trainen? Kies hierboven een andere dag — de sessie wordt op ' + esc(fmtDate(date)) + ' gelogd.</div></div>'));
+
+      // rustdag mag optionele items hebben (bv. korte Zone 2 op zondag) — geen opener, geen focus-modus
+      if (day.items && day.items.length) {
+        var restSess = getSession(date, dayKey, false);
+        root.appendChild(el('<div class="section-title">Optioneel</div>'));
+        day.items.forEach(function (it) {
+          root.appendChild(it.type === 'strength' ? strengthCard(date, dayKey, it) : checkCard(date, dayKey, it));
+        });
+        var restNote = el('<div class="card"><textarea class="ex-note" rows="2" placeholder="Notitie (hoe voel je je?)"></textarea></div>');
+        var rta = restNote.querySelector('textarea');
+        rta.value = (restSess && restSess.note) || '';
+        rta.addEventListener('input', function () {
+          getSession(date, dayKey, true).note = rta.value;
+          markSessionDirty(date, dayKey);
+        });
+        root.appendChild(restNote);
+      }
       return;
     }
 
@@ -880,7 +897,16 @@
       var d = P.days[dk];
       var tr;
       if (d.rest) {
-        tr = el('<tr class="rest"><td class="wd">' + esc(d.label) + '</td><td colspan="4" style="color:var(--muted)">rust</td></tr>');
+        var restTxt = (d.items && d.items.length)
+          ? 'rust · optioneel: ' + d.items.map(function (i) { return i.name; }).join(', ')
+          : 'rust';
+        tr = el('<tr class="rest" data-day="' + esc(dk) + '"><td class="wd">' + esc(d.label) + '</td><td colspan="4" style="color:var(--muted)">' + esc(restTxt) + '</td></tr>');
+        tr.addEventListener('click', function () {
+          UI.dayKey = dk;
+          UI.view = 'vandaag';
+          setActiveTab();
+          renderVandaag();
+        });
       } else {
         tr = el('<tr data-day="' + esc(dk) + '"><td class="wd">' + esc(d.label) + '</td><td>' + esc(d.title) + '</td><td>' + esc(d.compound) + '</td><td>' + esc(d.power) + '</td><td>' + esc(d.erector) + '</td></tr>');
         tr.addEventListener('click', function () {
