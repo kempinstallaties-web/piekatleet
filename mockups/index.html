@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PiekAtleet — 3 ontwerpen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,700;0,900;1,700&family=Archivo+Expanded:wght@700;900&family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { -webkit-text-size-adjust:100%; }
+  body { background:#111; font-family:Inter,-apple-system,sans-serif; }
+  button { font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+
+  /* ---------- keuzebalk ---------- */
+  .picker {
+    position:fixed; top:0; left:0; right:0; z-index:999;
+    display:flex; gap:6px; padding:10px 12px calc(10px);
+    background:rgba(8,8,8,.94); backdrop-filter:blur(12px); border-bottom:1px solid #2a2a2a;
+  }
+  .picker button {
+    flex:1; min-height:44px; border-radius:10px; border:1px solid #333;
+    color:#999; font-size:12.5px; font-weight:700; letter-spacing:.04em;
+  }
+  .picker button.on { background:#fff; color:#000; border-color:#fff; }
+  .stage { padding-top:64px; min-height:100vh; }
+  .set input { width:100%; min-width:0; }
+  .variant { display:none; max-width:430px; margin:0 auto; min-height:calc(100vh - 64px); position:relative; padding-bottom:90px; }
+  .variant.show { display:block; }
+
+  /* ============================================================
+     ONTWERP 1 — STAAL  (industrieel, krijt & ijzer)
+  ============================================================ */
+  .v1 { background:#0b0b0b; color:#f2f0eb; font-family:Archivo,Inter,sans-serif; }
+  .v1 .top { display:flex; justify-content:space-between; align-items:center; padding:16px 16px 10px; border-bottom:3px solid #f2f0eb; }
+  .v1 .brand { font-family:'Archivo Expanded',Archivo,sans-serif; font-weight:900; font-size:17px; letter-spacing:.08em; }
+  .v1 .brand em { font-style:normal; color:#e8442e; }
+  .v1 .sync { font-size:10px; font-weight:700; letter-spacing:.14em; color:#8a8a84; text-transform:uppercase; }
+  .v1 .sync::before { content:"●"; color:#4bc97a; margin-right:5px; }
+  .v1 .chips { display:flex; border-bottom:1px solid #2c2c2c; }
+  .v1 .chip { flex:1; padding:11px 0 9px; text-align:center; font-weight:700; font-size:12px; color:#77776f; border-right:1px solid #2c2c2c; }
+  .v1 .chip small { display:block; font-size:8.5px; font-weight:500; letter-spacing:.06em; margin-top:1px; }
+  .v1 .chip.on { background:#f2f0eb; color:#0b0b0b; }
+  .v1 .dayhead { padding:20px 16px 14px; }
+  .v1 h1 { font-family:'Archivo Expanded',Archivo,sans-serif; font-weight:900; font-size:30px; line-height:.95; text-transform:uppercase; letter-spacing:-.01em; }
+  .v1 h1 span { color:#e8442e; }
+  .v1 .meta { display:flex; gap:14px; margin-top:10px; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#8a8a84; }
+  .v1 .meta b { color:#e8442e; }
+  .v1 .progressbar { height:8px; background:#242420; margin:14px 16px 0; }
+  .v1 .progressbar i { display:block; height:100%; width:38%; background:#4bc97a; }
+  .v1 .proglabel { padding:6px 16px 0; font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#4bc97a; }
+  .v1 .startbtn {
+    display:block; margin:16px; width:calc(100% - 32px); padding:16px;
+    background:#e8442e; color:#fff; font-family:'Archivo Expanded',Archivo,sans-serif;
+    font-weight:900; font-size:15px; letter-spacing:.1em; text-transform:uppercase;
+    box-shadow:5px 5px 0 #f2f0eb;
+  }
+  .v1 .opener { margin:6px 16px 18px; border:2px solid #2c2c2c; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; }
+  .v1 .opener b { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
+  .v1 .opener span { font-size:11px; color:#8a8a84; font-weight:700; }
+  .v1 .sectlbl { padding:0 16px 8px; font-size:11px; font-weight:900; letter-spacing:.2em; color:#e8442e; text-transform:uppercase; }
+  .v1 .ex { border-top:3px solid #f2f0eb; margin:0 16px 22px; padding-top:10px; }
+  .v1 .ex.done-ex { border-top-color:#4bc97a; }
+  .v1 .exhead { display:flex; justify-content:space-between; align-items:baseline; }
+  .v1 .exname { font-family:'Archivo Expanded',Archivo,sans-serif; font-weight:900; font-size:19px; text-transform:uppercase; }
+  .v1 .extarget { font-size:12px; font-weight:900; color:#0b0b0b; background:#f2f0eb; padding:3px 8px; }
+  .v1 .excue { font-size:11.5px; color:#8a8a84; margin-top:3px; }
+  .v1 .prev { margin-top:8px; font-size:12px; color:#c9c6bd; }
+  .v1 .prev b { color:#f2f0eb; }
+  .v1 .advies { margin-top:8px; border-left:4px solid #4bc97a; padding:7px 10px; background:#151513; font-size:12px; font-weight:700; color:#4bc97a; }
+  .v1 .sets { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+  .v1 .set { display:grid; grid-template-columns:34px 1fr 1fr 52px; gap:8px; align-items:stretch; }
+  .v1 .setn { display:flex; align-items:center; justify-content:center; font-weight:900; font-size:15px; color:#77776f; }
+  .v1 .set input { background:#151513; border:2px solid #2c2c2c; color:#f2f0eb; text-align:center; font-size:18px; font-weight:900; min-height:52px; font-family:Archivo; }
+  .v1 .set .ok { border:2px solid #2c2c2c; background:#151513; color:transparent; font-size:20px; font-weight:900; }
+  .v1 .set.done input { border-color:#4bc97a; }
+  .v1 .set.done .ok { background:#4bc97a; border-color:#4bc97a; color:#0b0b0b; }
+  .v1 .exfoot { display:flex; gap:18px; margin-top:10px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#e8442e; }
+  .v1 .tabbar { position:absolute; bottom:0; left:0; right:0; display:flex; background:#0b0b0b; border-top:3px solid #f2f0eb; }
+  .v1 .tab { flex:1; padding:13px 0 11px; text-align:center; font-size:10px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; color:#77776f; }
+  .v1 .tab.on { color:#0b0b0b; background:#f2f0eb; }
+
+  /* ============================================================
+     ONTWERP 2 — COURT  (sport-tech HUD)
+  ============================================================ */
+  .v2 { background:radial-gradient(1200px 700px at 50% -10%, #10202e 0%, #070d16 55%) #070d16; color:#e9f2f7; font-family:Inter,sans-serif; }
+  .v2 .top { display:flex; justify-content:space-between; align-items:center; padding:16px 18px 12px; }
+  .v2 .brand { font-weight:800; font-size:15px; letter-spacing:.16em; }
+  .v2 .brand em { font-style:normal; background:linear-gradient(90deg,#35e0ff,#a3ff4e); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .v2 .sync { display:flex; align-items:center; gap:6px; font-size:11px; color:#7d93a5; }
+  .v2 .sync i { width:7px; height:7px; border-radius:50%; background:#a3ff4e; box-shadow:0 0 8px #a3ff4e; }
+  .v2 .chips { display:flex; gap:7px; padding:4px 16px 14px; overflow-x:auto; }
+  .v2 .chip { flex:none; min-width:52px; padding:8px 10px; border-radius:14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09); color:#7d93a5; font-size:11.5px; font-weight:700; text-align:center; }
+  .v2 .chip small { display:block; font-size:9px; font-weight:500; margin-top:1px; }
+  .v2 .chip.on { background:linear-gradient(135deg,rgba(53,224,255,.22),rgba(163,255,78,.14)); border-color:#35e0ff; color:#e9f2f7; box-shadow:0 0 18px rgba(53,224,255,.25); }
+  .v2 .hero { margin:2px 16px 14px; padding:18px; border-radius:22px; background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:16px; }
+  .v2 .ring { position:relative; width:74px; height:74px; flex:none; }
+  .v2 .ring svg { transform:rotate(-90deg); }
+  .v2 .ring .val { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:800; font-size:17px; }
+  .v2 .ring .val small { font-size:8.5px; font-weight:600; color:#7d93a5; letter-spacing:.08em; }
+  .v2 h1 { font-size:21px; font-weight:800; letter-spacing:-.01em; }
+  .v2 .sub2 { font-size:12px; color:#7d93a5; margin-top:3px; }
+  .v2 .badges { display:flex; gap:6px; margin-top:8px; }
+  .v2 .bdg { font-size:10px; font-weight:700; letter-spacing:.05em; padding:3px 9px; border-radius:99px; background:rgba(255,107,90,.14); color:#ff8d7a; border:1px solid rgba(255,107,90,.3); }
+  .v2 .bdg.b2 { background:rgba(53,224,255,.1); color:#35e0ff; border-color:rgba(53,224,255,.3); }
+  .v2 .startbtn { display:flex; align-items:center; justify-content:center; gap:8px; margin:0 16px 14px; width:calc(100% - 32px); padding:15px; border-radius:16px; background:linear-gradient(90deg,#35e0ff,#a3ff4e); color:#04121c; font-weight:800; font-size:15px; box-shadow:0 8px 28px rgba(53,224,255,.35); }
+  .v2 .opener { margin:0 16px 18px; padding:13px 15px; border-radius:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; align-items:center; }
+  .v2 .opener b { font-size:13.5px; font-weight:700; }
+  .v2 .opener b small { display:block; font-size:10.5px; color:#7d93a5; font-weight:500; margin-top:1px; }
+  .v2 .opener .cnt { font-size:11px; font-weight:700; color:#a3ff4e; background:rgba(163,255,78,.1); border:1px solid rgba(163,255,78,.3); padding:4px 10px; border-radius:99px; }
+  .v2 .sectlbl { padding:0 18px 8px; font-size:10.5px; font-weight:800; letter-spacing:.18em; color:#35e0ff; text-transform:uppercase; }
+  .v2 .ex { margin:0 16px 14px; padding:15px; border-radius:20px; background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.09); }
+  .v2 .ex.done-ex { border-color:rgba(163,255,78,.45); box-shadow:0 0 22px rgba(163,255,78,.08) inset; }
+  .v2 .exhead { display:flex; justify-content:space-between; gap:10px; }
+  .v2 .exname { font-size:16.5px; font-weight:800; }
+  .v2 .excue { font-size:11.5px; color:#7d93a5; margin-top:2px; }
+  .v2 .extarget { flex:none; align-self:flex-start; font-size:11px; font-weight:800; color:#35e0ff; background:rgba(53,224,255,.1); border:1px solid rgba(53,224,255,.3); padding:4px 9px; border-radius:99px; }
+  .v2 .spark { margin-top:9px; display:flex; align-items:center; gap:9px; font-size:11.5px; color:#7d93a5; }
+  .v2 .spark svg { flex:none; }
+  .v2 .spark b { color:#e9f2f7; }
+  .v2 .advies { margin-top:9px; padding:8px 11px; border-radius:12px; background:rgba(163,255,78,.09); border:1px solid rgba(163,255,78,.3); color:#a3ff4e; font-size:12px; font-weight:600; }
+  .v2 .sets { margin-top:11px; display:flex; flex-direction:column; gap:7px; }
+  .v2 .set { display:grid; grid-template-columns:26px 1fr 1fr 50px; gap:8px; align-items:stretch; }
+  .v2 .setn { display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#7d93a5; }
+  .v2 .set input { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:13px; color:#e9f2f7; text-align:center; font-size:16.5px; font-weight:700; min-height:50px; }
+  .v2 .set .ok { border-radius:13px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05); color:transparent; font-size:18px; font-weight:800; }
+  .v2 .set.done input { border-color:rgba(163,255,78,.4); }
+  .v2 .set.done .ok { background:rgba(163,255,78,.15); border-color:#a3ff4e; color:#a3ff4e; box-shadow:0 0 12px rgba(163,255,78,.3); }
+  .v2 .exfoot { display:flex; gap:16px; margin-top:9px; font-size:12px; font-weight:700; color:#35e0ff; }
+  .v2 .tabbar { position:absolute; bottom:10px; left:14px; right:14px; display:flex; border-radius:20px; background:rgba(13,22,33,.92); border:1px solid rgba(255,255,255,.1); backdrop-filter:blur(14px); box-shadow:0 10px 30px rgba(0,0,0,.5); }
+  .v2 .tab { flex:1; padding:12px 0; text-align:center; font-size:10px; font-weight:700; color:#7d93a5; }
+  .v2 .tab.on { color:#04121c; background:linear-gradient(90deg,#35e0ff,#a3ff4e); border-radius:16px; margin:4px; padding:8px 0; }
+
+  /* ============================================================
+     ONTWERP 3 — PAPIER  (licht clubhuis-logboek)
+  ============================================================ */
+  .v3 { background:#f6f2ea; color:#20201c; font-family:Inter,sans-serif; }
+  .v3 .top { display:flex; justify-content:space-between; align-items:baseline; padding:18px 18px 10px; }
+  .v3 .brand { font-family:Fraunces,Georgia,serif; font-weight:700; font-size:19px; letter-spacing:.01em; }
+  .v3 .brand em { font-style:italic; color:#b3541e; }
+  .v3 .sync { font-size:11px; color:#8c8677; }
+  .v3 .sync::before { content:"●"; color:#3f7d4e; margin-right:5px; font-size:9px; }
+  .v3 .chips { display:flex; gap:4px; padding:4px 14px 4px; }
+  .v3 .chip { flex:1; padding:8px 0; text-align:center; border-radius:10px; font-size:11.5px; font-weight:600; color:#8c8677; }
+  .v3 .chip small { display:block; font-size:8.5px; font-weight:500; margin-top:1px; }
+  .v3 .chip.on { background:#20201c; color:#f6f2ea; }
+  .v3 .rule { border-top:1px solid #ddd5c4; margin:10px 18px 0; }
+  .v3 .dayhead { padding:16px 18px 4px; }
+  .v3 h1 { font-family:Fraunces,Georgia,serif; font-weight:700; font-size:29px; line-height:1.05; }
+  .v3 .sub3 { font-size:12.5px; color:#8c8677; margin-top:4px; font-style:italic; font-family:Fraunces,Georgia,serif; }
+  .v3 .meta3 { display:flex; gap:8px; margin-top:10px; }
+  .v3 .tag { font-size:10.5px; font-weight:600; padding:4px 10px; border-radius:99px; border:1px solid #ddd5c4; color:#6b654f; background:#fdfbf6; }
+  .v3 .tag.hot { border-color:#e3b8a5; color:#b3541e; background:#faeee6; }
+  .v3 .prog3 { margin:12px 18px 0; font-size:12px; color:#3f7d4e; font-weight:600; }
+  .v3 .prog3 i { display:block; height:4px; border-radius:99px; background:#e6dfcf; margin-top:6px; overflow:hidden; }
+  .v3 .prog3 i b { display:block; height:100%; width:38%; background:#3f7d4e; }
+  .v3 .startbtn { display:block; margin:16px 18px 6px; width:calc(100% - 36px); padding:15px; border-radius:14px; background:#b3541e; color:#fdfbf6; font-weight:700; font-size:15px; box-shadow:0 3px 0 #8a3f14; }
+  .v3 .opener { margin:12px 18px; padding:12px 0; border-top:1px solid #ddd5c4; border-bottom:1px solid #ddd5c4; display:flex; justify-content:space-between; align-items:center; }
+  .v3 .opener b { font-family:Fraunces,Georgia,serif; font-size:15px; font-weight:700; }
+  .v3 .opener span { font-size:11.5px; color:#8c8677; }
+  .v3 .sectlbl { padding:6px 18px 2px; font-family:Fraunces,Georgia,serif; font-style:italic; font-size:14px; color:#b3541e; }
+  .v3 .ex { margin:10px 18px 20px; background:#fdfbf6; border:1px solid #e6dfcf; border-radius:16px; padding:15px; box-shadow:0 1px 3px rgba(60,50,20,.06); }
+  .v3 .ex.done-ex { border-color:#9dc2a6; background:#f4f8f2; }
+  .v3 .exhead { display:flex; justify-content:space-between; gap:10px; align-items:baseline; }
+  .v3 .exname { font-family:Fraunces,Georgia,serif; font-size:18.5px; font-weight:700; }
+  .v3 .extarget { font-size:11px; font-weight:700; color:#6b654f; }
+  .v3 .excue { font-size:11.5px; color:#8c8677; margin-top:2px; }
+  .v3 .prev3 { margin-top:8px; font-size:12px; color:#6b654f; border-left:3px solid #ddd5c4; padding-left:9px; }
+  .v3 .advies { margin-top:9px; font-size:12.5px; font-weight:600; color:#3f7d4e; background:#edf3ea; border-radius:10px; padding:8px 11px; }
+  .v3 .sets { margin-top:11px; display:flex; flex-direction:column; }
+  .v3 .set { display:grid; grid-template-columns:26px 1fr 1fr 46px; gap:8px; align-items:center; padding:7px 0; border-bottom:1px dashed #e6dfcf; }
+  .v3 .set:last-child { border-bottom:none; }
+  .v3 .setn { text-align:center; font-size:12px; font-weight:600; color:#b9b2a0; }
+  .v3 .set input { background:transparent; border:none; border-bottom:2px solid #ddd5c4; color:#20201c; text-align:center; font-size:17px; font-weight:700; min-height:42px; font-family:Fraunces,Georgia,serif; }
+  .v3 .set .ok { width:34px; height:34px; margin:0 auto; border-radius:9px; border:2px solid #ddd5c4; background:#fdfbf6; color:transparent; font-size:16px; font-weight:800; }
+  .v3 .set.done input { border-bottom-color:#3f7d4e; }
+  .v3 .set.done .ok { background:#3f7d4e; border-color:#3f7d4e; color:#fdfbf6; }
+  .v3 .exfoot { display:flex; gap:18px; margin-top:10px; font-size:12.5px; font-weight:600; color:#b3541e; }
+  .v3 .tabbar { position:absolute; bottom:0; left:0; right:0; display:flex; background:#fdfbf6; border-top:1px solid #ddd5c4; }
+  .v3 .tab { flex:1; padding:13px 0 11px; text-align:center; font-size:10.5px; font-weight:600; color:#8c8677; }
+  .v3 .tab.on { color:#b3541e; box-shadow:inset 0 3px 0 #b3541e; }
+</style>
+</head>
+<body>
+
+<div class="picker">
+  <button class="on" data-v="1">1 · STAAL</button>
+  <button data-v="2">2 · COURT</button>
+  <button data-v="3">3 · PAPIER</button>
+</div>
+
+<div class="stage">
+
+  <!-- ================= ONTWERP 1: STAAL ================= -->
+  <section class="variant v1 show" id="var1">
+    <div class="top"><span class="brand">PIEK<em>—</em>ATLEET</span><span class="sync">gesynct</span></div>
+    <div class="chips">
+      <span class="chip on">MA<small>SQUAT</small></span><span class="chip">DI<small>PUSH</small></span><span class="chip">WO<small>ZONE 2</small></span><span class="chip">DO<small>DEADLIFT</small></span><span class="chip">VR<small>ATLETIEK</small></span><span class="chip">ZA<small>PULL</small></span><span class="chip">ZO<small>RUST</small></span>
+    </div>
+    <div class="dayhead">
+      <h1>Lower<br><span>Squat</span></h1>
+      <div class="meta"><span>ERECTOR <b>HOOG</b></span><span>POWER · JUMPS VOL</span></div>
+    </div>
+    <div class="progressbar"><i></i></div>
+    <div class="proglabel">5 sets gelogd · 1/6 klaar</div>
+    <button class="startbtn">▶ Start workout-modus</button>
+    <div class="opener"><b>Atleet-fase · 10–12 min</b><span>2 ✓ &nbsp;▸</span></div>
+    <div class="sectlbl">Werk</div>
+    <div class="ex">
+      <div class="exhead"><span class="exname">Back squat</span><span class="extarget">4 × 5–8</span></div>
+      <div class="excue">Compound-kern — hier bouw je progressie</div>
+      <div class="prev">Vorige (ma 27-07): <b>80×8 · 80×8 · 80×8 · 80×8</b></div>
+      <div class="advies">▲ 80 × 8 STOND OP ALLE SETS → NU 85 KG, MIK OP 5–8</div>
+      <div class="sets">
+        <div class="set done"><span class="setn">1</span><input value="85"><input value="6"><button class="ok">✓</button></div>
+        <div class="set done"><span class="setn">2</span><input value="85"><input value="5"><button class="ok">✓</button></div>
+        <div class="set"><span class="setn">3</span><input placeholder="85"><input placeholder="reps"><button class="ok">✓</button></div>
+        <div class="set"><span class="setn">4</span><input placeholder="85"><input placeholder="reps"><button class="ok">✓</button></div>
+      </div>
+      <div class="exfoot"><span>+ extra set</span><span>– set</span><span style="margin-left:auto">notitie</span></div>
+    </div>
+    <div class="ex done-ex">
+      <div class="exhead"><span class="exname">Leg curl</span><span class="extarget">3 × vrij</span></div>
+      <div class="excue">Hamstring-frequentie #1 — zwak punt</div>
+      <div class="prev">Vorige: <b>30×15 · 30×15 · 30×12</b></div>
+    </div>
+    <div class="tabbar"><span class="tab on">Vandaag</span><span class="tab">Week</span><span class="tab">Historie</span><span class="tab">Ankers</span><span class="tab">Info</span></div>
+  </section>
+
+  <!-- ================= ONTWERP 2: COURT ================= -->
+  <section class="variant v2" id="var2">
+    <div class="top"><span class="brand">PIEK<em>ATLEET</em></span><span class="sync"><i></i>gesynct</span></div>
+    <div class="chips">
+      <span class="chip on">MA<small>Squat</small></span><span class="chip">DI<small>Push</small></span><span class="chip">WO<small>Zone 2</small></span><span class="chip">DO<small>Deadlift</small></span><span class="chip">VR<small>Atletiek</small></span><span class="chip">ZA<small>Pull</small></span><span class="chip">ZO<small>rust</small></span>
+    </div>
+    <div class="hero">
+      <div class="ring">
+        <svg width="74" height="74"><circle cx="37" cy="37" r="31" stroke="rgba(255,255,255,.08)" stroke-width="7" fill="none"/><circle cx="37" cy="37" r="31" stroke="url(#g1)" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="195" stroke-dashoffset="122"/><defs><linearGradient id="g1"><stop offset="0" stop-color="#35e0ff"/><stop offset="1" stop-color="#a3ff4e"/></linearGradient></defs></svg>
+        <span class="val">38%<small>KLAAR</small></span>
+      </div>
+      <div>
+        <h1>Lower — Squat</h1>
+        <div class="sub2">quads + full body · 5 sets gelogd</div>
+        <div class="badges"><span class="bdg">ERECTOR HOOG</span><span class="bdg b2">POWER VOL</span></div>
+      </div>
+    </div>
+    <button class="startbtn">▶ Start workout-modus</button>
+    <div class="opener"><b>Atleet-fase<small>10–12 min · kies wat je nodig hebt</small></b><span class="cnt">2 ✓</span></div>
+    <div class="sectlbl">Werk</div>
+    <div class="ex">
+      <div class="exhead"><div><div class="exname">Back squat</div><div class="excue">Compound-kern — hier bouw je progressie</div></div><span class="extarget">4 × 5–8</span></div>
+      <div class="spark">
+        <svg width="72" height="24"><polyline points="2,20 20,17 38,12 56,10 70,4" fill="none" stroke="#35e0ff" stroke-width="2" stroke-linecap="round"/><circle cx="70" cy="4" r="3" fill="#a3ff4e"/></svg>
+        <span>Vorige: <b>80×8 ·8·8·8</b></span>
+      </div>
+      <div class="advies">▲ 80 × 8 stond op alle sets → nu 85 kg, mik op 5–8</div>
+      <div class="sets">
+        <div class="set done"><span class="setn">1</span><input value="85"><input value="6"><button class="ok">✓</button></div>
+        <div class="set done"><span class="setn">2</span><input value="85"><input value="5"><button class="ok">✓</button></div>
+        <div class="set"><span class="setn">3</span><input placeholder="85"><input placeholder="reps"><button class="ok">✓</button></div>
+        <div class="set"><span class="setn">4</span><input placeholder="85"><input placeholder="reps"><button class="ok">✓</button></div>
+      </div>
+      <div class="exfoot"><span>+ extra set</span><span>– set</span><span style="margin-left:auto">notitie</span></div>
+    </div>
+    <div class="ex done-ex">
+      <div class="exhead"><div><div class="exname">Leg curl</div><div class="excue">Hamstring-frequentie #1 — zwak punt</div></div><span class="extarget">3 × vrij</span></div>
+      <div class="spark"><svg width="72" height="24"><polyline points="2,18 24,14 46,12 70,8" fill="none" stroke="#a3ff4e" stroke-width="2" stroke-linecap="round"/><circle cx="70" cy="8" r="3" fill="#a3ff4e"/></svg><span>Vorige: <b>30×15 ·15·12</b></span></div>
+    </div>
+    <div class="tabbar"><span class="tab on">Vandaag</span><span class="tab">Week</span><span class="tab">Historie</span><span class="tab">Ankers</span><span class="tab">Info</span></div>
+  </section>
+
+  <!-- ================= ONTWERP 3: PAPIER ================= -->
+  <section class="variant v3" id="var3">
+    <div class="top"><span class="brand">Piek<em>Atleet</em></span><span class="sync">gesynct</span></div>
+    <div class="chips">
+      <span class="chip on">MA<small>Squat</small></span><span class="chip">DI<small>Push</small></span><span class="chip">WO<small>Zone 2</small></span><span class="chip">DO<small>Deadlift</small></span><span class="chip">VR<small>Atletiek</small></span><span class="chip">ZA<small>Pull</small></span><span class="chip">ZO<small>rust</small></span>
+    </div>
+    <div class="rule"></div>
+    <div class="dayhead">
+      <h1>Lower — Squat</h1>
+      <div class="sub3">quads + full body · maandag 3 augustus</div>
+      <div class="meta3"><span class="tag hot">erector hoog</span><span class="tag">power · jumps vol</span></div>
+    </div>
+    <div class="prog3">5 sets gelogd · 1/6 onderdelen klaar<i><b></b></i></div>
+    <button class="startbtn">▶ Start workout-modus</button>
+    <div class="opener"><b>Atleet-fase</b><span>10–12 min · 2 afgevinkt ▸</span></div>
+    <div class="sectlbl">Het werk van vandaag</div>
+    <div class="ex">
+      <div class="exhead"><span class="exname">Back squat</span><span class="extarget">4 × 5–8</span></div>
+      <div class="excue">Compound-kern — hier bouw je progressie</div>
+      <div class="prev3">Vorige (ma 27-07): 80×8 · 80×8 · 80×8 · 80×8</div>
+      <div class="advies">▲ 80 × 8 stond op alle sets → nu 85 kg, mik op 5–8</div>
+      <div class="sets">
+        <div class="set done"><span class="setn">1</span><input value="85"><input value="6"><button class="ok">✓</button></div>
+        <div class="set done"><span class="setn">2</span><input value="85"><input value="5"><button class="ok">✓</button></div>
+        <div class="set"><span class="setn">3</span><input placeholder="85"><input placeholder="reps"><button class="ok">✓</button></div>
+        <div class="set"><span class="setn">4</span><input placeholder="85"><input placeholder="reps"><button class="ok">✓</button></div>
+      </div>
+      <div class="exfoot"><span>+ extra set</span><span>– set</span><span style="margin-left:auto">notitie</span></div>
+    </div>
+    <div class="ex done-ex">
+      <div class="exhead"><span class="exname">Leg curl</span><span class="extarget">3 × vrij</span></div>
+      <div class="excue">Hamstring-frequentie #1 — zwak punt</div>
+      <div class="prev3">Vorige: 30×15 · 30×15 · 30×12</div>
+    </div>
+    <div class="tabbar"><span class="tab on">Vandaag</span><span class="tab">Week</span><span class="tab">Historie</span><span class="tab">Ankers</span><span class="tab">Info</span></div>
+  </section>
+
+</div>
+
+<script>
+  document.querySelectorAll('.picker button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.picker button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      document.querySelectorAll('.variant').forEach(function (v) { v.classList.remove('show'); });
+      document.getElementById('var' + b.dataset.v).classList.add('show');
+      window.scrollTo(0, 0);
+    });
+  });
+</script>
+</body>
+</html>
