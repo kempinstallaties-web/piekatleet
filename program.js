@@ -75,13 +75,13 @@ window.PROGRAM = {
     di: {
       key: 'di', label: 'DI', title: 'Upper — Push', sub: 'borst + schouder gelijkwaardig',
       erector: 'LAAG', power: 'Throws (vol)', compound: 'Incline press + OHP',
-      warn: 'Alle zware pers zit op deze ene dag. Voel je de schouder zeuren → haal dips eruit vóór je iets anders schrapt.',
+      warn: 'Alle zware pers zit op deze ene dag, en upper chest heeft voorrang. Voel je de schouder zeuren → haal de OHP eruit vóór je in het incline-werk snijdt. Dips komen pas het volgende blok terug.',
       items: [
         { key: 'di_core', group: 'CORE', name: 'Hanging leg raises + crunches', type: 'check' },
-        { key: 'incline_press', group: 'WERK', name: 'Incline barbell / DB press', cue: 'Borst-kern, zwaar', sets: 4, target: '6–10', type: 'strength' },
-        { key: 'overhead_press', group: 'WERK', name: 'Overhead press', cue: 'Schouder-kern — tweede, niet eerste', sets: 3, target: '5–8', type: 'strength' },
-        { key: 'flat_press_dips', group: 'WERK', name: 'Flat press of dips', cue: 'Tweede borst-prikkel — bouw naar weighted', sets: 3, target: '8–10', type: 'strength' },
-        { key: 'cable_fly', group: 'WERK', name: 'Cable fly', cue: 'Enige isolatie — stretch / pump', sets: 2, target: '12–15', type: 'strength' },
+        { key: 'incline_press', group: 'WERK', name: 'Incline barbell / DB press', cue: 'Zwaarste incline — upper chest is je zwakke punt, dus deze eerst', sets: 4, target: '6–10', type: 'strength' },
+        { key: 'incline_prime', group: 'WERK', name: 'Incline press (Prime)', cue: 'Tweede incline-prikkel — machine, dus veilig tot dicht bij falen', sets: 3, target: '8–12', type: 'strength' },
+        { key: 'cable_fly', group: 'WERK', name: 'Cable fly', cue: 'Stretch/pump op lange spierlengte', sets: 3, target: '12–15', type: 'strength' },
+        { key: 'overhead_press', group: 'WERK', name: 'Overhead press', cue: 'Machine of barbell — ná het borstwerk', sets: 3, target: '6–10', type: 'strength' },
         { key: 'lateral_raise', group: 'WERK', name: 'Lateral raise', sets: 2, target: '', type: 'strength' },
         { key: 'triceps', group: 'WERK', name: 'Triceps', sets: 2, target: '', type: 'strength' },
         { key: 'copenhagen', group: 'PREHAB', name: 'Copenhagen plank', cue: 'Adductor/lies — benen zijn vandaag vers, dus geen conflict', sets: 3, target: '20–40 sec p/z', type: 'strength' }
@@ -193,8 +193,8 @@ window.PROGRAM = {
       { name: 'Rug', sets: '~13 + 3 shrugs' },
       { name: 'Hamstrings', sets: '~12 (ma · do · za)' },
       { name: 'Quads', sets: '~9' },
-      { name: 'Borst', sets: '~12–13 (di + vr)' },
-      { name: 'Schouders', sets: '~7–9' },
+      { name: 'Borst', sets: '~13 (2× incline + fly + pec deck)' },
+      { name: 'Schouders', sets: '~5 + indirect uit persen' },
       { name: 'Armen', sets: '~7' }
     ]
   }
