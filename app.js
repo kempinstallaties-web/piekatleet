@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '7 · 26-07-2026';
+  var APP_VERSION = '8 · 29-07-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -331,6 +331,59 @@
       .map(function (s) { return fmtNum(num(s.kg) == null ? 0 : num(s.kg)) + '×' + (num(s.reps) == null ? '?' : fmtNum(num(s.reps))); })
       .join(' · ');
   }
+  /* ---------------- Progressie-advies (double progression) ----------------
+     Regel: haal je bij álle werksets de bovengrens van de rep-range → gewicht omhoog
+     en terug naar de ondergrens. Zit je ertussen → zelfde gewicht, meer reps.
+     Val je onder de ondergrens → gewicht vasthouden tot het weer staat. */
+  function parseTarget(t) {
+    if (!t) return null;
+    if (/sec|min/i.test(t)) return null; // tijd-gebaseerd, geen rep-progressie
+    var m = String(t).match(/(\d+)\s*[–—-]\s*(\d+)/);
+    if (m) return { min: parseInt(m[1], 10), max: parseInt(m[2], 10) };
+    var one = String(t).match(/(\d+)/);
+    if (one) { var v = parseInt(one[1], 10); return { min: v, max: v }; }
+    return null;
+  }
+
+  function progressieAdvies(item, prevItem) {
+    if (!prevItem || item.type !== 'strength') return null;
+    var nWerk = item.sets || 0;
+    var werksets = (prevItem.sets || []).slice(0, nWerk).filter(function (s) { return num(s.reps) != null; });
+    if (!werksets.length) return null;
+
+    var kgs = werksets.map(function (s) { var k = num(s.kg); return k == null ? 0 : k; });
+    var repsArr = werksets.map(function (s) { return num(s.reps); });
+    var topKg = Math.max.apply(null, kgs);
+    var minReps = Math.min.apply(null, repsArr);
+    var compleet = werksets.length >= nWerk;
+    var inc = item.inc || 2.5;
+    var range = parseTarget(item.target);
+    var bodyweight = topKg === 0;
+
+    if (bodyweight) {
+      if (!range) return null;
+      if (compleet && minReps >= range.max) {
+        return { kg: null, tekst: 'Alle sets op ' + range.max + ' — tijd om gewicht toe te voegen (+' + fmtNum(inc) + ' kg)' };
+      }
+      return { kg: null, tekst: 'Mik op ' + nWerk + '× ' + range.max + ' (laagste set was ' + minReps + ')' };
+    }
+
+    if (!range) return { kg: topKg, tekst: 'Vorige top: ' + fmtNum(topKg) + ' kg — evenaren of iets zwaarder' };
+
+    if (!compleet) {
+      return { kg: topKg, tekst: 'Vorige keer ' + werksets.length + ' van ' + nWerk + ' sets ingevuld → maak eerst ' + nWerk + '× ' + range.max + ' vol op ' + fmtNum(topKg) + ' kg' };
+    }
+    var zelfdeGewicht = kgs.every(function (k) { return k === topKg; });
+    if (compleet && zelfdeGewicht && minReps >= range.max) {
+      var nieuw = topKg + inc;
+      return { kg: nieuw, op: true, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets → nu ' + fmtNum(nieuw) + ' kg, mik op ' + range.min + '–' + range.max };
+    }
+    if (minReps < range.min) {
+      return { kg: topKg, tekst: 'Zakte naar ' + minReps + ' reps → houd ' + fmtNum(topKg) + ' kg tot alle sets ' + range.min + '+ halen' };
+    }
+    return { kg: topKg, tekst: 'Houd ' + fmtNum(topKg) + ' kg tot alle sets ' + range.max + ' halen (laagste was ' + minReps + ')' };
+  }
+
   function findProgramItem(exKey) {
     var found = null;
     Object.keys(P.days).forEach(function (dk) {
@@ -358,7 +411,8 @@
       if (!it) return;
       (it.sets || []).forEach(function (st) {
         var kg = num(st.kg), reps = num(st.reps);
-        if (kg == null || reps == null) return;
+        if (reps == null) return;
+        if (kg == null) kg = 0; // bodyweight (bv. pullups) telt gewoon mee
         var wp = isoWeekParts(s.date);
         var wkKey = wp.year + '-' + wp.week; // jaar erbij: wk 30 van 2026 ≠ wk 30 van 2027
         var cur = byWeek[wkKey];
@@ -689,14 +743,18 @@
         blockEl.insertBefore(el('<div class="callout" style="margin:2px 0 8px"><span class="ic">⚠</span><span>Zware til-dag: houd power licht of sla over.</span></div>'), blockEl.querySelector('.chiprow'));
       }
       var row = blockEl.querySelector('.chiprow');
-      block.items.forEach(function (itName) {
-        var on = !!(sess && sess.opener && sess.opener[block.key] && sess.opener[block.key][itName]);
-        var chip = el('<button class="chip' + (on ? ' on' : '') + '">' + esc(itName) + '</button>');
+      block.items.forEach(function (oi) {
+        var naam = oi.name, why = oi.why || '';
+        var on = !!(sess && sess.opener && sess.opener[block.key] && sess.opener[block.key][naam]);
+        var chip = el('<button class="oitem' + (on ? ' on' : '') + '">' +
+          '<span class="oitem-box">✓</span>' +
+          '<span class="oitem-txt"><b>' + esc(naam) + '</b>' + (why ? '<small>' + esc(why) + '</small>' : '') + '</span>' +
+          '</button>');
         chip.addEventListener('click', function () {
           var s2 = getSession(date, dayKey, true);
           if (!s2.opener[block.key]) s2.opener[block.key] = {};
-          s2.opener[block.key][itName] = !s2.opener[block.key][itName];
-          if (!s2.opener[block.key][itName]) delete s2.opener[block.key][itName];
+          s2.opener[block.key][naam] = !s2.opener[block.key][naam];
+          if (!s2.opener[block.key][naam]) delete s2.opener[block.key][naam];
           markSessionDirty(date, dayKey);
           chip.classList.toggle('on');
           var n = 0;
@@ -745,10 +803,18 @@
       '</div>');
 
     var prev = prevSessionFor(item.key, date, skey);
+    var advies = null;
     if (prev) {
       var summary = setsSummary(prev.items[item.key]);
       if (summary) card.appendChild(el('<div class="ex-prev">Vorige (' + esc(fmtDate(prev.date)) + '): <b>' + esc(summary) + '</b>' +
         (prev.items[item.key].note ? ' · „' + esc(prev.items[item.key].note) + '”' : '') + '</div>'));
+      // alleen adviseren zolang je vandaag nog niets gelogd hebt
+      var alGelogd = logged && (logged.sets || []).some(function (s) { return num(s.kg) != null || num(s.reps) != null; });
+      if (!alGelogd) {
+        advies = progressieAdvies(item, prev.items[item.key]);
+        if (advies) card.appendChild(el('<div class="ex-next' + (advies.op ? ' ex-next-up' : '') + '">' +
+          (advies.op ? '▲ ' : '→ ') + esc(advies.tekst) + '</div>'));
+      }
     }
 
     var rows = el('<div class="setrows"></div>');
@@ -761,12 +827,19 @@
       return ps[i] && (ps[i].kg !== '' || ps[i].reps !== '') ? ps[i] : null;
     }
 
+    // wat de app voorstelt in het kg-veld: het advies, anders wat je vorige keer deed
+    function suggestieKg(ph) {
+      if (advies && advies.kg != null) return fmtNum(advies.kg);
+      if (ph && ph.kg !== '') return fmtNum(num(ph.kg));
+      return '';
+    }
+
     function setRow(i) {
       var st = (logged && logged.sets && logged.sets[i]) || { kg: '', reps: '', done: false };
       var ph = prevSet(i);
       var row = el('<div class="setrow">' +
         '<span class="setnum">' + (i + 1) + '</span>' +
-        '<input type="text" inputmode="decimal" placeholder="' + esc(ph && ph.kg !== '' ? fmtNum(num(ph.kg)) : 'kg') + '" aria-label="Gewicht set ' + (i + 1) + '">' +
+        '<input type="text" inputmode="decimal" placeholder="' + esc(suggestieKg(ph) || 'kg') + '" aria-label="Gewicht set ' + (i + 1) + '">' +
         '<input type="text" inputmode="numeric" placeholder="' + esc(ph && ph.reps !== '' ? fmtNum(num(ph.reps)) : 'reps') + '" aria-label="Reps set ' + (i + 1) + '">' +
         '<button class="setdone' + (st.done ? ' on' : '') + '" aria-label="Set ' + (i + 1) + ' klaar">✓</button>' +
         '</div>');
@@ -786,8 +859,9 @@
       repsIn.addEventListener('input', function () { write('reps', repsIn.value.trim()); });
       doneBtn.addEventListener('click', function () {
         var turningOn = !doneBtn.classList.contains('on');
-        // snelle log: leeg veld + vorige waarde bekend → overnemen bij afvinken
-        if (turningOn && kgIn.value === '' && ph && ph.kg !== '') { kgIn.value = fmtNum(num(ph.kg)); write('kg', kgIn.value); }
+        // snelle log: leeg veld → neem over wat de app voorstelt (advies, anders vorige keer)
+        var fillKg = suggestieKg(ph);
+        if (turningOn && kgIn.value === '' && fillKg) { kgIn.value = fillKg; write('kg', kgIn.value); }
         if (turningOn && repsIn.value === '' && ph && ph.reps !== '') { repsIn.value = fmtNum(num(ph.reps)); write('reps', repsIn.value); }
         write('done', turningOn);
         doneBtn.classList.toggle('on', turningOn);
@@ -927,7 +1001,7 @@
     var op = el('<div class="card"><div class="tiny">' + esc(P.opener.sub) + '</div></div>');
     P.opener.blocks.forEach(function (b) {
       op.appendChild(el('<div style="margin-top:10px"><div class="opener-head"><span class="h2">' + esc(b.title) + '</span><span class="tiny">' + esc(b.sub) + '</span></div>' +
-        '<div class="sub">' + esc(b.items.join(' · ')) + '</div>' +
+        '<div class="sub">' + esc(b.items.map(function (i) { return i.name; }).join(' · ')) + '</div>' +
         (b.warn ? '<div class="callout"><span class="ic">⚠</span><span>' + esc(b.warn) + '</span></div>' : '') + '</div>'));
     });
     root.appendChild(op);
@@ -1050,12 +1124,19 @@
     P.anchors.strength.forEach(function (a) {
       var series = weeklyTopSets(a.key);
       if (!series.length) { noData.push(a.label); return; }
+      var laatste = series[series.length - 1];
+      // bodyweight-oefening (alles op 0 kg) → volg de reps i.p.v. het gewicht
+      var bw = series.every(function (t) { return t.kg === 0; });
       var card = el('<div class="card"><div class="ex-head"><div class="h2">' + esc(a.label) + '</div>' +
-        '<span class="badge badge-target">' + fmtNum(series[series.length - 1].kg) + ' kg × ' + fmtNum(series[series.length - 1].reps) + '</span>' +
+        '<span class="badge badge-target">' + (bw
+          ? fmtNum(laatste.reps) + ' reps'
+          : fmtNum(laatste.kg) + ' kg × ' + fmtNum(laatste.reps)) + '</span>' +
         '</div></div>');
       card.appendChild(lineChart(series.map(function (t) {
-        return { label: 'wk ' + t.week, value: t.kg, sub: fmtNum(t.kg) + ' kg × ' + fmtNum(t.reps) + ' (' + fmtDate(t.date) + ')' };
-      }), 'kg'));
+        return bw
+          ? { label: 'wk ' + t.week, value: t.reps, sub: fmtNum(t.reps) + ' reps bodyweight (' + fmtDate(t.date) + ')' }
+          : { label: 'wk ' + t.week, value: t.kg, sub: fmtNum(t.kg) + ' kg × ' + fmtNum(t.reps) + ' (' + fmtDate(t.date) + ')' };
+      }), bw ? 'reps' : 'kg'));
       root.appendChild(card);
     });
     if (noData.length) {
