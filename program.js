@@ -47,6 +47,7 @@ window.PROGRAM = {
       {
         key: 'balans', title: 'Balans & gewrichten', sub: '~4 min · knie- en enkelbescherming',
         items: [
+          { name: 'Achteruit lopen (2–3 min)', why: 'knie-vriendelijke quad-prep — bouwt de rem op zonder impact' },
           { name: 'Hip airplane', why: 'heupcontrole op één been — basis voor landen' },
           { name: 'Tibialis raise', why: 'scheenbeen — remkracht, beschermt de knie' },
           { name: 'Single-leg balance', why: 'enkelstabiliteit — verzwikken voorkomen' },
@@ -69,7 +70,8 @@ window.PROGRAM = {
         { key: 'atg_split_squat', group: 'WERK', name: '(B)ATG split squat', sets: 3, target: '8–10', type: 'strength' },
         { key: 'leg_curl', group: 'WERK', name: 'Leg curl', cue: 'Hamstring-frequentie #1 — zwak punt', sets: 3, target: '', type: 'strength' },
         { key: 'leg_extension', group: 'WERK', name: 'Leg extension', sets: 2, target: '12', type: 'strength' },
-        { key: 'calf_standing', group: 'WERK', name: 'Staande kuit', sets: 3, target: '', type: 'strength' }
+        { key: 'calf_standing', group: 'WERK', name: 'Staande kuit', sets: 3, target: '', type: 'strength' },
+        { key: 'wall_sit', group: 'PREHAB · KNIE', name: 'Wall sit', cue: 'Iso op 90° — vul seconden in bij reps. Opbouw: naar 3×60 sec, dan schijf op schoot', sets: 3, target: '30–60 sec', type: 'strength' }
       ]
     },
     di: {
@@ -93,6 +95,8 @@ window.PROGRAM = {
       warn: 'Low impact houden (fiets · roeier · wandelen). Géén hardlopen — donderdag is de zwaarste tildag en die wil je met frisse benen in.',
       items: [
         { key: 'zone2', group: 'CONDITIE', name: 'Zone 2 cardio', cue: 'HR 145–158 — aerobe basis = grootste gat', target: '40–45 min', type: 'check' },
+        { key: 'retro_walk', group: 'CONDITIE', name: 'Achteruit lopen', cue: 'Loopband op helling of sled achteruit — quad/knie-opbouw zonder impact. Mag ook als deel van je zone 2', target: '10 min', type: 'check' },
+        { key: 'wo_iso_knee', group: 'HERSTEL', name: 'Wall sit / Spanish squat (iso)', cue: 'Bij knie-gevoel: 3–5 × 30–45 sec op pijnvrij niveau — iso werkt pijndempend voor de pees', type: 'check' },
         { key: 'wo_mobility', group: 'HERSTEL', name: 'Mobility / soft tissue', cue: 'Optioneel — heupen, thoracaal, kuiten', type: 'check' }
       ]
     },
@@ -111,7 +115,7 @@ window.PROGRAM = {
     vr: {
       key: 'vr', label: 'VR', title: 'Atletiek + HIIT', sub: 'fris = volledige power',
       erector: 'LAAG', power: 'Vol — fris', compound: 'Sprints · sled · carries',
-      warn: 'Volgorde is de hele truc: springen, sportwerk en sprinten eerst op een fris zenuwstelsel, isolatie pas achteraan. Isolatie hier mag — zaterdag is trekwerk, dus borst en triceps zitten elkaar niet in de weg.',
+      warn: 'Volgorde is de hele truc: springen, sportwerk en sprinten eerst op een fris zenuwstelsel, isolatie pas achteraan. Basketbal morgen? Houd de plyo licht en skip de HIIT-finisher — dan is de wedstrijd je conditiewerk en gaat je knie er fris in.',
       items: [
         { key: 'ball_jumps', group: 'PLYO', name: 'Med ball jump vanuit zit', cue: 'Pure concentrische explosiviteit — geen stretch-reflex', sets: 3, target: '5 reps', type: 'strength' },
         { key: 'broad_jump_plyo', group: 'PLYO', name: 'Broad jump', cue: 'Horizontale power — meteen je 4-weken test', sets: 3, target: '3 reps', type: 'strength' },
