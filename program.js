@@ -48,6 +48,7 @@ window.PROGRAM = {
         key: 'balans', title: 'Balans & gewrichten', sub: '~4 min · knie- en enkelbescherming',
         items: [
           { name: 'Achteruit lopen (2–3 min)', why: 'knie-vriendelijke quad-prep — bouwt de rem op zonder impact' },
+          { name: 'Wall sit 2 × 1 min', why: 'iso-warmte in de knie vóór je gaat laden' },
           { name: 'Hip airplane', why: 'heupcontrole op één been — basis voor landen' },
           { name: 'Tibialis raise', why: 'scheenbeen — remkracht, beschermt de knie' },
           { name: 'Single-leg balance', why: 'enkelstabiliteit — verzwikken voorkomen' },
@@ -66,11 +67,11 @@ window.PROGRAM = {
       erector: 'HOOG', power: 'Jumps (vol)', compound: 'Back squat',
       items: [
         { key: 'ma_core', group: 'CORE', name: 'Ball planks / hyper holds', type: 'check' },
-        { key: 'back_squat', group: 'WERK', name: 'Back squat', cue: 'Compound-kern — hier bouw je progressie', sets: 4, target: '5–8', inc: 5, type: 'strength' },
+        { key: 'calf_standing', group: 'WERK', name: 'Staande kuit', cue: 'Eerst — low fatigue en kuiten kunnen nooit groot genoeg', sets: 4, target: '10–15', type: 'strength' },
+        { key: 'back_squat', group: 'WERK', name: 'Back squat', cue: 'Compound-kern. Knie zeurt (bv. na basketbal)? Blijf op het gewicht dat pijnvrij is — één week vasthouden kost je niks', sets: 4, target: '5–8', inc: 5, type: 'strength' },
         { key: 'atg_split_squat', group: 'WERK', name: '(B)ATG split squat', sets: 3, target: '8–10', type: 'strength' },
         { key: 'leg_curl', group: 'WERK', name: 'Leg curl', cue: 'Hamstring-frequentie #1 — zwak punt', sets: 3, target: '', type: 'strength' },
-        { key: 'leg_extension', group: 'WERK', name: 'Leg extension', sets: 2, target: '12', type: 'strength' },
-        { key: 'calf_standing', group: 'WERK', name: 'Staande kuit', sets: 3, target: '', type: 'strength' },
+        { key: 'leg_extension', group: 'WERK', name: 'Leg extension', cue: 'Prime: hoofdgewicht in het kg-veld, load-shift in de notitie', sets: 3, target: '12–15', type: 'strength' },
         { key: 'wall_sit', group: 'PREHAB · KNIE', name: 'Wall sit', cue: 'Iso op 90° — vul seconden in bij reps. Opbouw: naar 3×60 sec, dan schijf op schoot', sets: 3, target: '30–60 sec', type: 'strength' }
       ]
     },
@@ -80,7 +81,7 @@ window.PROGRAM = {
       warn: 'Alle zware pers zit op deze ene dag, en upper chest heeft voorrang. Voel je de schouder zeuren → haal de OHP eruit vóór je in het incline-werk snijdt. Dips komen pas het volgende blok terug.',
       items: [
         { key: 'di_core', group: 'CORE', name: 'Hanging leg raises + crunches', type: 'check' },
-        { key: 'incline_press', group: 'WERK', name: 'Incline barbell / DB press', cue: 'Zwaarste incline — upper chest is je zwakke punt, dus deze eerst', sets: 4, target: '6–10', type: 'strength' },
+        { key: 'incline_press', group: 'WERK', name: 'Incline barbell / DB press', cue: 'Zwaarste incline — raak iets lager aan (tepelhoogte), dat voelt krachtiger', sets: 4, target: '6–10', type: 'strength' },
         { key: 'incline_prime', group: 'WERK', name: 'Incline press (Prime)', cue: 'Tweede incline-prikkel — machine, dus veilig tot dicht bij falen', sets: 3, target: '8–12', type: 'strength' },
         { key: 'cable_fly', group: 'WERK', name: 'Cable fly', cue: 'Stretch/pump op lange spierlengte', sets: 3, target: '12–15', type: 'strength' },
         { key: 'overhead_press', group: 'WERK', name: 'Overhead press', cue: 'Machine of barbell — ná het borstwerk', sets: 3, target: '6–10', type: 'strength' },
@@ -106,10 +107,11 @@ window.PROGRAM = {
       warn: 'Géén back extension op deze dag. Trap bar + RDL is al zware hinge-stapeling — back ext erbovenop is precies de erector-overload die eruit moest.',
       items: [
         { key: 'do_core', group: 'CORE', name: 'Cable rotations + Y-raises', type: 'check' },
-        { key: 'trap_bar_deadlift', group: 'WERK', name: 'Trap bar deadlift', cue: 'Compound-kern', sets: 4, target: '3–6', inc: 5, type: 'strength' },
-        { key: 'rdl', group: 'WERK', name: 'RDL', cue: 'Hamstring op lange spierlengte — bouw de spanning op vóór je zakt', sets: 3, target: '8–12', inc: 5, type: 'strength' },
-        { key: 'lying_leg_curl', group: 'WERK', name: 'Lying leg curl', cue: 'Hamstring-frequentie #2 — zwak punt', sets: 3, target: '10–12', type: 'strength' },
-        { key: 'calf', group: 'WERK', name: 'Kuit', sets: 3, target: '', type: 'strength' }
+        { key: 'calf', group: 'WERK', name: 'Kuit (machine)', cue: 'Eerst — low fatigue, warmt meteen de enkels op voor de hinge', sets: 4, target: '10–15', type: 'strength' },
+        { key: 'trap_bar_deadlift', group: 'WERK', name: 'Trap bar deadlift', cue: 'Voeten iets dichter bij elkaar en recht houden — dat pakt jouw hinge', sets: 4, target: '3–6', inc: 5, type: 'strength' },
+        { key: 'contrast_jumps', group: 'WERK', name: 'Box jumps + pogo\'s', cue: 'Contrast ná het zware tillen: box jumps 4×4, dan pogo\'s (2 benen heen, 1 been terug) 2 sets. Maakt ook de weg vrij voor de RDL', type: 'check' },
+        { key: 'rdl', group: 'WERK', name: 'RDL', cue: 'Til hem vanaf de grond zoals een deadlift — dat pakt je eerste rep en haalt de pijn eruit', sets: 3, target: '8–12', inc: 5, type: 'strength' },
+        { key: 'lying_leg_curl', group: 'WERK', name: 'Lying leg curl', cue: 'Hamstring-frequentie #2 — zwak punt', sets: 3, target: '10–12', type: 'strength' }
       ]
     },
     vr: {
@@ -135,7 +137,8 @@ window.PROGRAM = {
       key: 'za', label: 'ZA', title: 'Upper — Pull', sub: 'rugdikte',
       erector: 'MID-HOOG', power: 'Licht', compound: 'Bent-over row',
       items: [
-        { key: 'bent_over_row', group: 'WERK', name: 'Bent-over row', cue: 'Rugdikte-anker — hard trainen mag', sets: 4, target: '6–10', type: 'strength' },
+        { key: 'calf_pull', group: 'WERK', name: 'Kuit (vrij te kiezen)', cue: 'Derde kuitdag — eerst, low fatigue', sets: 3, target: '10–15', type: 'strength' },
+        { key: 'bent_over_row', group: 'WERK', name: 'Bent-over row', cue: 'Rugdikte-anker — warm de hinge op met 2 lichte sets vóór je zwaar gaat', sets: 4, target: '6–10', type: 'strength' },
         { key: 'weighted_pullups', group: 'WERK', name: 'Weighted pullups', cue: 'Breedte — progressie via gewicht', sets: 3, target: '6–10', type: 'strength' },
         { key: 'chest_supported_row', group: 'WERK', name: 'Chest-supported row', cue: 'Dikte, lage erector', sets: 3, target: '10–12', type: 'strength' },
         { key: 'cable_row', group: 'WERK', name: 'Cable row', sets: 3, target: '8–12', type: 'strength' },

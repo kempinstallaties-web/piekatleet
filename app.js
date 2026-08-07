@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '10 · 04-08-2026';
+  var APP_VERSION = '11 · 07-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -348,7 +348,11 @@
   function progressieAdvies(item, prevItem) {
     if (!prevItem || item.type !== 'strength') return null;
     var nWerk = item.sets || 0;
-    var werksets = (prevItem.sets || []).slice(0, nWerk).filter(function (s) { return num(s.reps) != null; });
+    // 0 reps = set niet uitgevoerd (bv. afgebroken) → telt niet als prestatie
+    var werksets = (prevItem.sets || []).slice(0, nWerk).filter(function (s) {
+      var r = num(s.reps);
+      return r != null && r > 0;
+    });
     if (!werksets.length) return null;
 
     var kgs = werksets.map(function (s) { var k = num(s.kg); return k == null ? 0 : k; });
@@ -374,9 +378,10 @@
       return { kg: topKg, tekst: 'Vorige keer ' + werksets.length + ' van ' + nWerk + ' sets ingevuld → maak eerst ' + nWerk + '× ' + range.max + ' vol op ' + fmtNum(topKg) + ' kg' };
     }
     var zelfdeGewicht = kgs.every(function (k) { return k === topKg; });
+    var mik = range.min === range.max ? String(range.max) : range.min + '–' + range.max;
     if (compleet && zelfdeGewicht && minReps >= range.max) {
       var nieuw = topKg + inc;
-      return { kg: nieuw, op: true, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets → nu ' + fmtNum(nieuw) + ' kg, mik op ' + range.min + '–' + range.max };
+      return { kg: nieuw, op: true, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets → nu ' + fmtNum(nieuw) + ' kg, mik op ' + mik };
     }
     if (minReps < range.min) {
       return { kg: topKg, tekst: 'Zakte naar ' + minReps + ' reps → houd ' + fmtNum(topKg) + ' kg tot alle sets ' + range.min + '+ halen' };
