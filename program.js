@@ -89,6 +89,7 @@ window.PROGRAM = {
         { key: 'overhead_press', group: 'WERK', name: 'Overhead press', cue: 'Machine of barbell — ná het borstwerk', sets: 3, target: '6–10', type: 'strength' },
         { key: 'lateral_raise', group: 'WERK', name: 'Lateral raise', sets: 2, target: '', type: 'strength' },
         { key: 'triceps', group: 'WERK', name: 'Triceps', sets: 2, target: '', type: 'strength' },
+        { key: 'weighted_pullups', group: 'RUG · 2× p/w', name: 'Weighted pullups', cue: 'Jouw zware pullup-dag: grip en lats staan hier het verst van de deadlift. Ga tot 1–2 reps voor falen', sets: 3, target: '6–10', type: 'strength' },
         { key: 'chest_supported_row', group: 'RUG · 2× p/w', name: 'Chest-supported row', cue: 'Tweede rugdag — rugkracht bouw je met frequentie, niet met één zware dag', sets: 3, target: '10–12', type: 'strength' },
         { key: 'rear_delt_facepull', group: 'RUG · 2× p/w', name: 'Rear delt + face pull', cue: 'Bovenrug en schouderhouding — tegenwicht voor al het persen', sets: 2, target: '12–15', type: 'strength' },
         { key: 'copenhagen', group: 'PREHAB', name: 'Copenhagen plank', cue: 'Adductor/lies — benen zijn vandaag vers, dus geen conflict', sets: 3, target: '20–40 sec p/z', type: 'strength' }
@@ -142,7 +143,7 @@ window.PROGRAM = {
       items: [
         { key: 'calf_pull', group: 'WERK', name: 'Kuit (vrij te kiezen)', cue: 'Derde kuitdag — eerst, low fatigue', sets: 3, target: '10–15', type: 'strength' },
         { key: 'bent_over_row', group: 'WERK', name: 'Bent-over row', cue: 'Rugdikte-anker — warm de hinge op met 2 lichte sets vóór je zwaar gaat', sets: 4, target: '6–10', type: 'strength' },
-        { key: 'weighted_pullups', group: 'WERK', name: 'Weighted pullups', cue: 'Blijf je op 6/5/4 hangen? Zet er 2 sets van 4 achter met extra rust, of gebruik een elastiek voor de laatste sets', sets: 3, target: '6–10', type: 'strength' },
+        { key: 'pullups_licht', group: 'WERK', name: 'Pullups (licht)', cue: 'Schone reps, submaximaal — stop 2 reps voor falen. De zware staan dinsdag, hier houd je alleen het patroon warm', sets: 2, target: '5–8', type: 'strength' },
         { key: 'cable_row', group: 'WERK', name: 'Cable row', sets: 3, target: '8–12', type: 'strength' },
         { key: 'shrugs', group: 'WERK', name: 'Shrugs', cue: 'Traps — telt direct mee voor rugdikte', sets: 3, target: '10–12', type: 'strength' },
         { key: 'biceps', group: 'WERK', name: 'Biceps', sets: 2, target: '', type: 'strength' },

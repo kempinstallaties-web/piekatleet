@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '12 · 07-08-2026';
+  var APP_VERSION = '13 · 07-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -328,7 +328,12 @@
   function setsSummary(it) {
     return (it.sets || [])
       .filter(function (s) { return num(s.kg) != null || num(s.reps) != null; })
-      .map(function (s) { return fmtNum(num(s.kg) == null ? 0 : num(s.kg)) + '×' + (num(s.reps) == null ? '?' : fmtNum(num(s.reps))); })
+      .map(function (s) {
+        var kg = num(s.kg), reps = num(s.reps);
+        var r = reps == null ? '?' : fmtNum(reps);
+        // bodyweight (geen of 0 kg) → alleen de reps, geen lelijke "0×6"
+        return (kg == null || kg === 0) ? r : fmtNum(kg) + '×' + r;
+      })
       .join(' · ');
   }
   /* ---------------- Progressie-advies (double progression) ----------------
@@ -367,7 +372,11 @@
     if (bodyweight) {
       if (!range) return null;
       if (compleet && minReps >= range.max) {
-        return { kg: null, tekst: 'Alle sets op ' + range.max + ' — tijd om gewicht toe te voegen (+' + fmtNum(inc) + ' kg)' };
+        return { kg: null, op: true, tekst: 'Alle sets op ' + range.max + ' — tijd om gewicht toe te voegen (+' + fmtNum(inc) + ' kg)' };
+      }
+      // eerst de ondergrens pakken; 3×10 als eerste doel is demotiverend
+      if (minReps < range.min) {
+        return { kg: null, tekst: 'Eerst ' + nWerk + '× ' + range.min + ' schoon (laagste set was ' + minReps + ')' };
       }
       return { kg: null, tekst: 'Mik op ' + nWerk + '× ' + range.max + ' (laagste set was ' + minReps + ')' };
     }
