@@ -39,7 +39,8 @@ window.PROGRAM = {
         key: 'power', title: 'Power', sub: '~3 min · alleen fris',
         items: [
           { name: 'Box/broad jumps 3×3', why: 'verticale + horizontale explosiviteit' },
-          { name: 'Med ball slams', why: 'full-body power, weinig gewrichtsbelasting' },
+          { name: 'KB swing of med ball slam', why: 'explosieve hinge — zelfde motor als je deadlift, maar licht. Swing tot borsthoogte, 24 kg' },
+          { name: 'Med ball throw tegen muur', why: 'overhead of roterend — rotatiepower voor basketbal en padel' },
           { name: 'A-skips / pogo hops', why: 'voetstijfheid & sprintmechaniek' },
           { name: 'Split-step + reactie', why: 'eerste stap voor padel/basketbal' }
         ],
