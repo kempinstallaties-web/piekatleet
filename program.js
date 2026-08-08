@@ -126,10 +126,11 @@ window.PROGRAM = {
       warn: 'Dit is een bonusdag, geen plicht: je essentiële werk staat al op ma/di/do/za. Weinig tijd? Kies alleen het veldwerk. Basketbal morgen? Houd het kort en laat de sprints zitten.',
       items: [
         { key: 'skill_work', group: 'VELD', name: 'Dribbel · schot · fundamentals', cue: 'Skill-werk telt volwaardig mee — log wat je deed en hoe lang', type: 'check' },
+        { key: 'reactie_drill', group: 'VELD', name: 'Reactie & eerste stap — kies 2', cue: 'Closeout (sprint → afremmen → split-step → zijwaarts verdedigen) · Falling start (voorover vallen → 5 m sprint) · Bal tegen muur + split-step · Drop step + crossover · Spiegelen met je maat. 4–6 reps, volle rust, alleen fris', type: 'check' },
         { key: 'ball_jumps', group: 'PLYO', name: 'Med ball jump vanuit zit', cue: 'Pure concentrische explosiviteit — geen stretch-reflex', sets: 3, target: '5 reps', type: 'strength' },
         { key: 'broad_jump_plyo', group: 'PLYO', name: 'Broad jump', cue: 'Horizontale power — meteen je 4-weken test', sets: 3, target: '3 reps', type: 'strength' },
         { key: 'cod_drill', group: 'SPORT · kies 2', name: 'Richting veranderen (5-10-5)', cue: 'Afremmen en weer versnellen — laag blijven bij de draai', type: 'check' },
-        { key: 'footwork', group: 'SPORT · kies 2', name: 'Voetenwerk (ladder · dot drill)', cue: 'Snelle voeten + eerste stap — kort en scherp, niet moe worden', type: 'check' },
+        { key: 'footwork', group: 'SPORT · kies 2', name: 'Voetenwerk (ladder · dot drill)', cue: 'Snelle voeten — kort en scherp, niet moe worden', type: 'check' },
         { key: 'def_slides', group: 'SPORT · kies 2', name: 'Defensive slides / lateral lunge', cue: 'Laag zitten in verdedigingshouding — heupen en liezen onder spanning', type: 'check' },
         { key: 'sprints', group: 'ATLETIEK & HIIT', name: 'Sprints / intervallen', cue: 'Kort & explosief (6–10 × 20–40 m, volle rust) óf intervallen (6 × 1 min, 1:30 rust)', type: 'check' },
         { key: 'carries', group: 'ATLETIEK & HIIT', name: 'Loaded carries (farmer / suitcase)', cue: 'Romp onder last — full body', type: 'check' },
@@ -155,6 +156,7 @@ window.PROGRAM = {
       key: 'zo', label: 'ZO', title: 'Rust — optioneel veld', rest: true,
       items: [
         { key: 'skill_work', group: 'OPTIONEEL', name: 'Veld: dribbel · schot · fundamentals', cue: 'Skill-werk is geen belasting voor je herstel — juist een goede zondag', type: 'check' },
+        { key: 'reactie_drill', group: 'OPTIONEEL', name: 'Reactie & eerste stap', cue: 'Closeout · falling start · bal tegen muur + split-step · drop step. Kort en scherp: 4–6 reps, volle rust — kost je herstel niets', type: 'check' },
         { key: 'zone2_zo', group: 'OPTIONEEL', name: 'Zone 2 kort', cue: 'Alleen als je er zin in hebt — wandelen of rustig fietsen', target: '20–30 min', type: 'check' }
       ]
     }
