@@ -6,7 +6,7 @@ window.PROGRAM = {
     version: 'v4',
     athlete: 'Kaj Kemp',
     motto: 'machine worden, niet alleen groot',
-    block: '12 weken · evalueren op data, niet op spiegelgevoel',
+    block: 'Voorbereiding op het seizoen — blok loopt t/m 15 okt, seizoen start oktober',
     nutritionShort: '3500–3700 kcal · 240 g eiwit',
     weakPoints: 'Sprongkracht · Snelheid & eerste stap · Coördinatie · Core',
     goals: 'Basketbal-atleet worden voor Heren 1: hoger springen, sneller versnellen en remmen, sterke core — kracht is nu het middel, niet het doel'
