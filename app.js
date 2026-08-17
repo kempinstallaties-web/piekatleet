@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '17 · 17-08-2026';
+  var APP_VERSION = '18 · 17-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -757,7 +757,10 @@
         blockEl.insertBefore(el('<div class="callout" style="margin:2px 0 8px"><span class="ic">⚠</span><span>Zware til-dag: houd power licht of sla over.</span></div>'), blockEl.querySelector('.chiprow'));
       }
       var row = blockEl.querySelector('.chiprow');
-      block.items.forEach(function (oi) {
+      // vast voorgeschreven per dag: toon alleen wat vandaag aan de beurt is
+      block.items.filter(function (oi) {
+        return !oi.days || oi.days.indexOf(dayKey) >= 0;
+      }).forEach(function (oi) {
         var naam = oi.name, why = oi.why || '';
         var on = !!(sess && sess.opener && sess.opener[block.key] && sess.opener[block.key][naam]);
         var chip = el('<button class="oitem' + (on ? ' on' : '') + '">' +

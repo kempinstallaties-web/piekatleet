@@ -21,43 +21,43 @@ window.PROGRAM = {
 
   opener: {
     title: 'Atleet-fase',
-    sub: 'Vaste opener van élke sessie — 10 tot 12 min. Kies wat je die dag nodig hebt; achter elke oefening staat waar hij voor is. Core zit niet meer hier — dat doe je als eigen blok.',
+    sub: 'Vaste opener van élke sessie — 10 tot 12 min. Vast voorgeschreven per dag: geen keuzes, gewoon afwerken. Achter elke oefening staat waar hij voor is.',
     blocks: [
       {
-        key: 'reset', title: 'Reset & mobiliteit', sub: '~5 min · kies 3',
+        key: 'reset', title: 'Reset & mobiliteit', sub: '~5 min · vast voor vandaag',
         items: [
-          { name: 'Cat-cow', why: 'rug losmaken, segment voor segment' },
-          { name: 'Open books', why: 'thoracale rotatie — voor persen én rotatiepower' },
-          { name: '90/90 switches', why: 'heup in- en uitdraaien — squat-diepte' },
-          { name: 'Cossack flow', why: 'laag zitten + liezen — direct padel/basketbal' },
-          { name: "World's greatest stretch", why: 'heupbuiger + thoracaal in één beweging' },
-          { name: 'Ankle rocks', why: 'enkelmobiliteit — diepere squat, zachtere landing' },
-          { name: 'Hinge-drill (stok of licht)', why: 'jouw beperkende factor: eerste rep goed bracen' }
+          { name: 'Cat-cow', why: 'rug losmaken, segment voor segment', days: ['ma', 'di', 'do', 'za'] },
+          { name: 'Open books', why: 'thoracale rotatie — voor persen én trekken', days: ['di', 'za'] },
+          { name: '90/90 switches', why: 'heup in- en uitdraaien — squat-diepte', days: ['ma', 'do'] },
+          { name: 'Cossack flow', why: 'laag zitten + liezen — je verdedigingshouding', days: ['wo', 'vr'] },
+          { name: "World's greatest stretch", why: 'heupbuiger + thoracaal in één beweging', days: ['di', 'wo', 'vr'] },
+          { name: 'Ankle rocks', why: 'enkelmobiliteit — diepere squat, zachtere landing', days: ['ma', 'wo', 'vr'] },
+          { name: 'Hinge-drill (stok of licht)', why: 'jouw beperkende factor: eerste rep goed bracen', days: ['do', 'za'] }
         ]
       },
       {
-        key: 'power', title: 'Power', sub: '~5 min · fris — dit is nu je belangrijkste blok',
+        key: 'power', title: 'Power', sub: '~5 min · fris — je belangrijkste blok',
         items: [
-          { name: 'Approach jump (2 stappen + sprong)', why: 'je verticale sprong zoals je hem op het veld gebruikt — 4×3, max hoogte' },
-          { name: 'Box/broad jumps 3×3', why: 'verticale + horizontale explosiviteit' },
-          { name: 'Drop landing / stick landing', why: 'stil landen op één been — remkracht, dé knieblessurepreventie' },
-          { name: 'Acceleratie 4–6 × 10–15 m', why: 'eerste drie stappen — waar basketbal om draait' },
-          { name: 'KB swing of med ball slam', why: 'explosieve hinge — zelfde motor als je deadlift, maar licht. Swing tot borsthoogte, 24 kg' },
-          { name: 'Med ball throw tegen muur', why: 'overhead of roterend — rotatiepower voor pass en schot' },
-          { name: 'A-skips / pogo hops', why: 'voetstijfheid & sprintmechaniek' },
-          { name: 'Split-step + reactie', why: 'eerste stap — verdedigen en losbreken' }
+          { name: 'Approach jump (2 stappen + sprong)', why: 'je verticale sprong zoals op het veld — 4×3, max hoogte', days: ['ma', 'vr'] },
+          { name: 'Drop landing / stick landing', why: 'stil landen op één been — remkracht, dé knieblessurepreventie', days: ['ma', 'wo'] },
+          { name: 'Box/broad jumps 3×3', why: 'verticale + horizontale explosiviteit', days: ['vr'] },
+          { name: 'Acceleratie 4–6 × 10–15 m', why: 'eerste drie stappen — waar basketbal om draait', days: ['vr'] },
+          { name: 'KB swing of med ball slam', why: 'explosieve hinge — zelfde motor als je deadlift, maar licht. 24 kg, tot borsthoogte', days: ['do', 'za'] },
+          { name: 'Med ball throw tegen muur', why: 'overhead of roterend — rotatiepower voor pass en schot', days: ['di'] },
+          { name: 'A-skips / pogo hops', why: 'voetstijfheid & sprintmechaniek', days: ['wo', 'vr'] },
+          { name: 'Split-step + reactie', why: 'eerste stap — verdedigen en losbreken', days: ['di', 'wo'] }
         ],
-        warn: 'Power nooit op een moe zenuwstelsel. Op zware til-dagen (ma / do) houd je dit blok licht of sla je het over — spaar het zenuwstelsel voor de tilarbeid.'
+        warn: 'Op de zware til-dagen (ma / do) staat hier bewust weinig — je zware springwerk komt daar ná het tillen. Voel je je moe of ziek: sla dit blok over, nooit de tilarbeid erna.'
       },
       {
         key: 'balans', title: 'Balans & gewrichten', sub: '~4 min · knie- en enkelbescherming',
         items: [
-          { name: 'Achteruit lopen (2–3 min)', why: 'knie-vriendelijke quad-prep — bouwt de rem op zonder impact' },
-          { name: 'Wall sit 2 × 1 min', why: 'iso-warmte in de knie vóór je gaat laden' },
-          { name: 'Hip airplane', why: 'heupcontrole op één been — basis voor landen' },
-          { name: 'Tibialis raise', why: 'scheenbeen — remkracht, beschermt de knie' },
-          { name: 'Single-leg balance', why: 'enkelstabiliteit — verzwikken voorkomen' },
-          { name: 'Calf raise excentrisch', why: 'achillespees belastbaar maken voor sprinten' }
+          { name: 'Achteruit lopen (2–3 min)', why: 'knie-vriendelijke quad-prep vóór het zware beenwerk', days: ['ma', 'do'] },
+          { name: 'Hip airplane', why: 'heupcontrole op één been — basis voor landen', days: ['ma', 'do'] },
+          { name: 'Tibialis raise', why: 'scheenbeen — remkracht, beschermt de knie', days: ['di', 'wo', 'za'] },
+          { name: 'Single-leg balance', why: 'enkelstabiliteit — je grootste blessurerisico bij basketbal', days: ['di', 'wo', 'vr'] },
+          { name: 'Calf raise excentrisch', why: 'achillespees belastbaar maken voor sprinten en springen', days: ['vr'] },
+          { name: 'Wall sit 2 × 1 min', why: 'iso-prikkel voor de knie op een dag zonder beenwerk', days: ['za'] }
         ]
       }
     ]
