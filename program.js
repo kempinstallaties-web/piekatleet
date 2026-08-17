@@ -21,7 +21,7 @@ window.PROGRAM = {
 
   opener: {
     title: 'Atleet-fase',
-    sub: 'Vaste opener van élke sessie — 10 tot 12 min. Vast voorgeschreven per dag: geen keuzes, gewoon afwerken. Achter elke oefening staat waar hij voor is.',
+    sub: 'Vaste opener van élke sessie — 10 tot 12 min. Voorgeschreven per dag: geen keuzes, gewoon afwerken. Woensdag en vrijdag staan bewust vol met dingen die je zónder gym kunt doen.',
     blocks: [
       {
         key: 'reset', title: 'Reset & mobiliteit', sub: '~5 min · vast voor vandaag',
@@ -40,8 +40,8 @@ window.PROGRAM = {
         items: [
           { name: 'Approach jump (2 stappen + sprong)', why: 'je verticale sprong zoals op het veld — 4×3, max hoogte', days: ['ma', 'vr'] },
           { name: 'Drop landing / stick landing', why: 'stil landen op één been — remkracht, dé knieblessurepreventie', days: ['ma', 'wo'] },
-          { name: 'Box/broad jumps 3×3', why: 'verticale + horizontale explosiviteit', days: ['vr'] },
-          { name: 'Acceleratie 4–6 × 10–15 m', why: 'eerste drie stappen — waar basketbal om draait', days: ['vr'] },
+          { name: 'Box/broad jumps 3×3', why: 'verticale + horizontale explosiviteit. Op het veld: sprong naar de ring of het net aantikken', days: ['vr'] },
+          { name: 'Acceleratie 4–6 × 10–15 m', why: 'eerste drie stappen — waar basketbal om draait. Zwaar sled duwen is hier de beste variant', days: ['vr'] },
           { name: 'KB swing of med ball slam', why: 'explosieve hinge — zelfde motor als je deadlift, maar licht. 24 kg, tot borsthoogte', days: ['do', 'za'] },
           { name: 'Med ball throw tegen muur', why: 'overhead of roterend — rotatiepower voor pass en schot', days: ['di'] },
           { name: 'A-skips / pogo hops', why: 'voetstijfheid & sprintmechaniek', days: ['wo', 'vr'] },
@@ -52,11 +52,11 @@ window.PROGRAM = {
       {
         key: 'balans', title: 'Balans & gewrichten', sub: '~4 min · knie- en enkelbescherming',
         items: [
-          { name: 'Achteruit lopen (2–3 min)', why: 'knie-vriendelijke quad-prep vóór het zware beenwerk', days: ['ma', 'do'] },
+          { name: 'Sled achteruit trekken 3–4 × 20 m', why: 'beste knie-oefening die er is: bouwt quad op zónder spierpijn. Geen sled? Dan achteruit lopen op de loopband met helling', days: ['ma', 'do'] },
           { name: 'Hip airplane', why: 'heupcontrole op één been — basis voor landen', days: ['ma', 'do'] },
-          { name: 'Tibialis raise', why: 'scheenbeen — remkracht, beschermt de knie', days: ['di', 'wo', 'za'] },
-          { name: 'Single-leg balance', why: 'enkelstabiliteit — je grootste blessurerisico bij basketbal', days: ['di', 'wo', 'vr'] },
-          { name: 'Calf raise excentrisch', why: 'achillespees belastbaar maken voor sprinten en springen', days: ['vr'] },
+          { name: 'Tibialis raise', why: 'scheenbeen — remkracht, beschermt de knie. Op het veld: hielen op de grond, tenen omhoog tegen een muur of paal', days: ['di', 'wo', 'za'] },
+          { name: 'Single-leg balance', why: 'enkelstabiliteit — je grootste blessurerisico bij basketbal. Overal te doen, ogen dicht maakt het zwaarder', days: ['di', 'wo', 'vr'] },
+          { name: 'Calf raise excentrisch', why: 'achillespees belastbaar voor sprinten en springen. Op het veld: stoeprand, trap of tribune', days: ['vr'] },
           { name: 'Wall sit 2 × 1 min', why: 'iso-prikkel voor de knie op een dag zonder beenwerk', days: ['za'] }
         ]
       }
@@ -152,7 +152,7 @@ window.PROGRAM = {
         { key: 'cable_row', group: 'WERK', name: 'Cable row', sets: 3, target: '8–12', type: 'strength' },
         { key: 'shrugs', group: 'WERK', name: 'Shrugs', cue: 'Traps — telt direct mee voor rugdikte', sets: 3, target: '10–12', type: 'strength' },
         { key: 'biceps', group: 'WERK', name: 'Biceps', sets: 2, target: '', type: 'strength' },
-        { key: 'nordic', group: 'PREHAB', name: 'Nordic curl (excentrisch)', cue: 'Hamstring-prehab — 5 dagen na de deadlift, dus soreness stoort niets', sets: 3, target: '4–6', type: 'strength' }
+        { key: 'nordic', group: 'PREHAB', name: 'Nordic curl (excentrisch)', cue: 'Je enige nordic-dag — halveert het risico op een hamstringblessure bij sprinten. Sla deze dus nooit over; 5 dagen na de deadlift, dus soreness stoort niets', sets: 3, target: '4–6', type: 'strength' }
       ]
     },
     zo: {
