@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '20 · 18-08-2026';
+  var APP_VERSION = '21 · 18-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1120,8 +1120,18 @@
     clear(root);
     var today = todayStr();
 
+    root.appendChild(el('<div class="section-title">Prestatie-ankers · hier win je dit blok</div>'));
+    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Hier win of verlies je dit blok. Elke 4 weken meten — sprong omhoog, tijden omlaag.</div>'));
+    P.anchors.athletic.forEach(function (a) {
+      var card = el('<div class="card"><div class="h2">' + esc(a.label) + '</div><div class="tiny">' + esc(a.hint) + '</div></div>');
+      card.appendChild(metricAddRow(a.key, a.unit, today));
+      var series = metricSeries(a.key);
+      card.appendChild(lineChart(series.map(function (m) { return { label: fmtDate(m.date), value: m.value }; }), a.unit));
+      root.appendChild(card);
+    });
+
     root.appendChild(el('<div class="section-title">Lichaam · wekelijks</div>'));
-    var wCard = el('<div class="card"><div class="h2">Lichaamsgewicht</div><div class="tiny">Richting: +0,2 kg per week (zie voeding)</div></div>');
+    var wCard = el('<div class="card"><div class="h2">Lichaamsgewicht</div><div class="tiny">Stabiel houden — elke kilo moet zich terugverdienen in sprong of snelheid</div></div>');
     wCard.appendChild(metricAddRow('weight', 'kg', today));
     var wSeries = metricSeries('weight');
     wCard.appendChild(lineChart(wSeries.map(function (m) { return { label: fmtDate(m.date), value: m.value }; }), 'kg'));
@@ -1135,8 +1145,8 @@
     }
     root.appendChild(wCard);
 
-    root.appendChild(el('<div class="section-title">Kracht-ankers · wekelijks (top set)</div>'));
-    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Automatisch afgeleid uit je gelogde sets — hier hoef je niets voor in te vullen.</div>'));
+    root.appendChild(el('<div class="section-title">Kracht — ondersteunend</div>'));
+    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Afgeleid uit je sets. Kracht is het middel: stijgt je squat terwijl je sprong zakt, dan win je dit blok niet.</div>'));
     var noData = [];
     P.anchors.strength.forEach(function (a) {
       var series = weeklyTopSets(a.key);
@@ -1160,15 +1170,6 @@
       // lege ankers samenvouwen: geen muur van "nog geen data"-kaarten
       root.appendChild(el('<div class="card"><div class="tiny">Nog zonder data (vullen zichzelf zodra je sets logt): <b>' + esc(noData.join(' · ')) + '</b></div></div>'));
     }
-
-    root.appendChild(el('<div class="section-title">Atletiek-ankers · elke 4 weken</div>'));
-    P.anchors.athletic.forEach(function (a) {
-      var card = el('<div class="card"><div class="h2">' + esc(a.label) + '</div><div class="tiny">' + esc(a.hint) + '</div></div>');
-      card.appendChild(metricAddRow(a.key, a.unit, today));
-      var series = metricSeries(a.key);
-      card.appendChild(lineChart(series.map(function (m) { return { label: fmtDate(m.date), value: m.value }; }), a.unit));
-      root.appendChild(card);
-    });
 
     root.appendChild(el('<div class="section-title">12-weken evaluatie</div>'));
     var rem = el('<div class="card"><ul class="infolist"></ul></div>');

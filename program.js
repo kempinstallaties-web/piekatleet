@@ -104,6 +104,7 @@ window.PROGRAM = {
         { key: 'accel', group: 'SNELHEID · eerst', name: 'Acceleratie', cue: '4 × 10 m, daarna 3 × 20 m. Volle rust, elke start maximaal', type: 'check' },
         { key: 'decel', group: 'SNELHEID · eerst', name: 'Deceleratie', cue: '4 × 10 m sprint → volledig stoppen en stil staan. Afremmen is 80% van basketbal', type: 'check' },
         { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', cue: '4–5 pogingen. Laag blijven bij de draai, niet omhoog komen', type: 'check' },
+        { key: 'approach_jump_sl', group: 'AGILITY', name: 'Approach jump — 1 been', cue: 'Aanloop, afzet op één been, naar de ring. 3 × 2 per been, meer niet — maximale kwaliteit. Dít is hoe je in een wedstrijd springt', sets: 3, target: '2 p/b', type: 'strength' },
         { key: 'skill_work', group: 'BASKETBAL', name: 'Skills — dribbel & fundamentals', cue: '30–45 min. Dit is waarvoor je de rest doet', type: 'check' },
         { key: 'shooting', group: 'BASKETBAL', name: 'Shooting', cue: '10–15 min afsluiten', type: 'check' }
       ]
@@ -113,9 +114,8 @@ window.PROGRAM = {
       erector: 'ZEER HOOG', power: 'Horizontaal — vol', compound: 'Trap bar deadlift',
       warn: 'Dit is je gevaarlijkste dag: vrijdag moet je kunnen sprinten. RPE 7–8 op de trap bar, geen ego. Geen zware rows, geen extra hamstringvolume, geen zware carries.',
       items: [
-        { key: 'pogos', group: 'POWER · eerst', name: "Pogo's", cue: 'Stijve enkels, minimale grondcontacttijd', sets: 3, target: '15', type: 'strength' },
-        { key: 'lateral_bound', group: 'POWER · eerst', name: 'Bounds', cue: 'Zijwaarts of vooruit springen, 2 tellen stil landen', sets: 3, target: '3 p/z', type: 'strength' },
-        { key: 'ball_jumps', group: 'POWER · eerst', name: 'Med ball jump vanuit zit', cue: 'Pure concentrische explosiviteit — geen stretch-reflex', sets: 3, target: '5 reps', type: 'strength' },
+        { key: 'pogos', group: 'POWER · eerst', name: "Pogo's", cue: 'Stijve enkels, minimale grondcontacttijd', sets: 2, target: '15', type: 'strength' },
+        { key: 'lateral_bound', group: 'POWER · eerst', name: 'Bounds', cue: 'Zijwaarts of vooruit springen, 2 tellen stil landen — dit is je horizontale power van de week', sets: 2, target: '3 p/z', type: 'strength' },
         { key: 'trap_bar_deadlift', group: 'KRACHT', name: 'Trap bar deadlift', cue: 'RPE 7–8, laat 2 reps in de tank. Voeten dichter bij elkaar en recht. Trek élke rep zo snel mogelijk omhoog', sets: 4, target: '3', inc: 5, type: 'strength' },
         { key: 'sl_rdl', group: 'KRACHT', name: 'Single-leg RDL', cue: 'Hamstring + balans in één. Lichter dan je denkt', sets: 3, target: '6 p/b', type: 'strength' },
         { key: 'reverse_nordic', group: 'PREHAB', name: 'Reverse Nordic', cue: 'Quads op lange spierlengte — knieschijfpees belastbaar maken', sets: 3, target: '8', type: 'strength' },
@@ -132,8 +132,7 @@ window.PROGRAM = {
         { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', cue: '4 pogingen, kwaliteit boven kwantiteit', type: 'check' },
         { key: 'def_slides', group: 'AGILITY', name: 'Lateral shuffle → sprint', cue: '5 × zijwaarts verplaatsen en dan explosief wegsprinten', type: 'check' },
         { key: 'reactie_drill', group: 'AGILITY', name: 'Reactief — op signaal', cue: '6–10 reps. Maat wijst een richting, of bal tegen de muur. Pas beslissen als je moet reageren', type: 'check' },
-        { key: 'carries', group: 'KRACHT', name: 'Farmer carry', cue: '3 × 30–40 m. Zwaar maar níét tot uitputting — grip en houding', type: 'check' },
-        { key: 'approach_veld', group: 'OPTIONEEL', name: 'Approach jumps + veldwerk', cue: 'Alleen als je nog fris bent: 3 × 2 approach jumps, daarna skills', type: 'check' }
+        { key: 'carries', group: 'OPTIONEEL', name: 'Farmer carry', cue: 'Alleen als je sprints scherp waren én donderdag niet naijlt. 3 × 30–40 m. Een carry maakt je niet atletischer — hij is ondersteunend', type: 'check' },
       ]
     },
     za: {
@@ -180,9 +179,11 @@ window.PROGRAM = {
       { key: 'weight', label: 'Lichaamsgewicht', unit: 'kg' }
     ],
     reminders: [
-      'Wekelijks: kracht-ankers (top set) + lichaamsgewicht',
-      'Elke 4 weken: verticale sprong · broad jump · 10 m sprint · 5-10-5',
-      'Zwaarder én langzamer = verkeerde kant op. Gewicht en prestatie altijd samen bekijken'
+      'Je KPI: sprong omhoog en tijden omlaag — niet je squat-kilo per week',
+      'Elke 4 weken meten: verticale sprong · broad jump · 10 m · 5-10-5',
+      'Squat 160→170 maar vertical 80→77? Dan heb je dit blok niet gewonnen',
+      'Squat gelijk maar vertical 75→85 en sneller? Dat is precies de bedoeling',
+      'Het experiment: 105 kg behouden en dat gewicht drastisch beter leren verplaatsen'
     ]
   },
 
@@ -208,7 +209,8 @@ window.PROGRAM = {
       { name: 'Borst', sets: '~9 (di)' },
       { name: 'Schouders', sets: '~5' },
       { name: 'Armen', sets: '~4' },
-      { name: 'Sprong/sprint', sets: '~4× p/w — dit is nu de hoofdmoot' }
+      { name: 'Sprongcontacten', sets: '~68 p/w (ma 14 · wo 12 · do 42)' },
+      { name: 'Sprint/agility', sets: '3 dagen (wo · vr + wedstrijd)' }
     ]
   }
 };
