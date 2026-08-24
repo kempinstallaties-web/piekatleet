@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '21 · 18-08-2026';
+  var APP_VERSION = '22 · 24-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -69,7 +69,9 @@
 
   /* ---------------- State + opslag ---------------- */
   var LS_SESS = 'pa_sessions_v1', LS_MET = 'pa_metrics_v1', LS_DIRTY = 'pa_dirty_v1';
-  var S = { sessions: {}, metrics: {}, dirty: { sessions: [], metrics: [] } };
+  var LS_GARMIN = 'pa_garmin_v1';
+  // garmin komt van de horlogesync en is hier ALLEEN-LEZEN — nooit dirty, nooit terugschrijven
+  var S = { sessions: {}, metrics: {}, dirty: { sessions: [], metrics: [] }, garmin: {} };
   var UI = { view: 'vandaag', date: todayStr(), dayKey: null, histMode: 'sessies', histEx: 'back_squat', openerOpen: null, focusIdx: 0 };
   UI.dayKey = dayKeyForDate(UI.date);
 
@@ -77,6 +79,7 @@
     try { S.sessions = JSON.parse(localStorage.getItem(LS_SESS) || '{}'); } catch (e) { S.sessions = {}; }
     try { S.metrics = JSON.parse(localStorage.getItem(LS_MET) || '{}'); } catch (e) { S.metrics = {}; }
     try { S.dirty = JSON.parse(localStorage.getItem(LS_DIRTY) || '{"sessions":[],"metrics":[]}'); } catch (e) { S.dirty = { sessions: [], metrics: [] }; }
+    try { S.garmin = JSON.parse(localStorage.getItem(LS_GARMIN) || '{}'); } catch (e) { S.garmin = {}; }
     if (!S.dirty.sessions) S.dirty.sessions = [];
     if (!S.dirty.metrics) S.dirty.metrics = [];
   }
@@ -87,6 +90,7 @@
       localStorage.setItem(LS_SESS, JSON.stringify(S.sessions));
       localStorage.setItem(LS_MET, JSON.stringify(S.metrics));
       localStorage.setItem(LS_DIRTY, JSON.stringify(S.dirty));
+      localStorage.setItem(LS_GARMIN, JSON.stringify(S.garmin));
     } catch (e) {
       toast('Let op: lokaal opslaan mislukt (' + e.name + ')');
     }
@@ -256,7 +260,14 @@
       }
       return page(0);
     }
-    return Promise.all([fetchAll('pa_sessions'), fetchAll('pa_metrics')]).then(function (results) {
+    // horloge-data: alleen de recente weken, alleen-lezen (mag falen zonder de rest te breken)
+    var vanaf = new Date(Date.now() - 40 * 864e5).toISOString().slice(0, 10);
+    var garminJob = sb.from('pa_garmin').select('*').gte('snapshot_date', vanaf).then(function (res) {
+      if (res.error) throw res.error;
+      (res.data || []).forEach(function (row) { S.garmin[row.snapshot_date] = row; });
+    }).catch(function (err) { console.warn('Garmin-pull overgeslagen:', err && err.message); });
+
+    return Promise.all([fetchAll('pa_sessions'), fetchAll('pa_metrics'), garminJob]).then(function (results) {
       results[0].forEach(function (row) {
         var k = sessKey(row.session_date, row.day_key);
         var local = S.sessions[k];
@@ -656,6 +667,61 @@
   }
 
   /* ---------------- View: Vandaag (workout-editor) ---------------- */
+  /* ---------------- Herstel (Garmin) ----------------
+     Bewust één strook, geen dashboard: Kaj wil dit niet bijhouden, alleen weten
+     of het springwerk vandaag door kan. De sync draait 's ochtends 08:00, dus
+     val terug op de laatste dag mét data en zeg er dan bij van wanneer die is. */
+  function garminVoor(date) {
+    if (S.garmin[date]) return { row: S.garmin[date], date: date, vers: true };
+    var dagen = Object.keys(S.garmin).filter(function (d) { return d <= date; }).sort();
+    if (!dagen.length) return null;
+    var laatste = dagen[dagen.length - 1];
+    return { row: S.garmin[laatste], date: laatste, vers: false };
+  }
+
+  // readiness stuurt alleen het explosieve werk aan; kracht blijft bijna altijd staan
+  function herstelAdvies(r) {
+    var rd = r.readiness_score;
+    if (rd == null) return null;
+    if (rd >= 80) return { kleur: 'good', tekst: 'Groen. Springwerk en sprints op vol vermogen.' };
+    if (rd >= 60) return { kleur: 'good', tekst: 'Normaal. Schema aanhouden zoals het staat.' };
+    if (rd >= 40) return { kleur: 'accent', tekst: 'Halveer de sprong-contacts. Kracht mag blijven staan.' };
+    return { kleur: 'hot', tekst: 'Geen sprongen, geen sprints. Mobiliteit en techniek, of rust.' };
+  }
+
+  function herstelKaart(date) {
+    var g = garminVoor(date);
+    if (!g) return null;
+    var r = g.row;
+    var cel = function (label, waarde, sub) {
+      return '<div class="hcel"><div class="hlab">' + esc(label) + '</div>' +
+        '<div class="hval">' + esc(waarde == null ? '–' : waarde) + '</div>' +
+        (sub ? '<div class="hsub">' + esc(sub) + '</div>' : '') + '</div>';
+    };
+    // PostgREST levert numeric-kolommen als string terug — altijd zelf omzetten
+    var uur = num(r.sleep_hours), hrv = num(r.hrv_last_night);
+    var uren = uur == null ? null : fmtNum(Math.round(uur * 10) / 10) + ' u';
+    var bed = (r.sleep_start && r.sleep_end) ? String(r.sleep_start).slice(0, 5) + '–' + String(r.sleep_end).slice(0, 5) : null;
+
+    var html = '<div class="card herstel">' +
+      '<div class="hkop"><span>Herstel</span><span class="tiny">' +
+      esc(g.vers ? 'vannacht' : 'laatste meting: ' + fmtDate(g.date)) + '</span></div>' +
+      '<div class="hgrid">' +
+      cel('Readiness', r.readiness_score, r.readiness_level || '') +
+      cel('Slaap', uren, bed || (r.sleep_score != null ? 'score ' + r.sleep_score : '')) +
+      cel('HRV', hrv == null ? null : Math.round(hrv), r.hrv_status || '') +
+      cel('Rust-HR', r.resting_hr, r.resting_hr == null ? '' : 'slagen/min') +
+      '</div>';
+
+    var adv = herstelAdvies(r);
+    if (adv) html += '<div class="hadvies h-' + adv.kleur + '">' + esc(adv.tekst) + '</div>';
+    if (uur != null && uur < 6.5) {
+      html += '<div class="tiny" style="margin-top:6px">Onder de 6,5 u — dat kost je morgen readiness, niet vandaag kracht.</div>';
+    }
+    html += '</div>';
+    return el(html);
+  }
+
   function renderVandaag() {
     var root = $('#view');
     clear(root);
@@ -680,6 +746,9 @@
       chips.appendChild(c);
     });
     root.appendChild(chips);
+
+    var herstel = herstelKaart(date);
+    if (herstel) root.appendChild(herstel);
 
     if (day.rest) {
       var idxR = P.weekOrder.indexOf(dayKey);
