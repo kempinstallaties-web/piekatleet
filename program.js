@@ -4,7 +4,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v5',
+    version: 'v5.1',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
     block: 'Basketbal-blok · seizoen start oktober',
@@ -74,7 +74,8 @@ window.PROGRAM = {
         { key: 'atg_split_squat', group: 'KRACHT', name: 'Bulgarian split squat', cue: 'Single-leg kracht — dit is hoe je op het veld beweegt', sets: 3, target: '5–6 p/b', type: 'strength' },
         { key: 'rdl', group: 'KRACHT', name: 'RDL', cue: 'Til hem vanaf de grond zoals een deadlift — dat pakt je eerste rep en haalt de pijn eruit', sets: 3, target: '6', inc: 5, type: 'strength' },
         { key: 'calf_standing', group: 'ONDERHOUD', name: 'Staande kuit', cue: 'Sprongkracht en enkelstabiliteit — low fatigue', sets: 3, target: '8–10', type: 'strength' },
-        { key: 'wall_sit', group: 'ONDERHOUD', name: 'Wall sit', cue: 'Je knie-verzekering. Seconden invullen bij reps', sets: 2, target: '45–60 sec', type: 'strength' },
+        { key: 'sled', group: 'ONDERHOUD', name: 'Slee — duwen & achteruit trekken', cue: '4 × heen duwen, achteruit terug (±20 m). Achteruit is het knie-werk: kleine passen, laag blijven, knie mag voorbij de teen. Geen excentrische fase, dus je betaalt er vrijdag niets voor. Log het gewicht óp de slee', sets: 4, target: '20 m h/t', inc: 10, type: 'strength' },
+        { key: 'wall_sit', group: 'ONDERHOUD', name: 'Wall sit', cue: 'Je knie-verzekering — de isometrische hold die de zeurpijn eruit haalt. Doet ander werk dan de slee, dus die twee vervangen elkaar niet. Seconden invullen bij reps', sets: 2, target: '45–60 sec', type: 'strength' },
         { key: 'ma_core', group: 'CORE', name: 'Core — anti-extensie', cue: 'Dead bug of ab wheel. Romp stil houden terwijl er aan je getrokken wordt', type: 'check' }
       ]
     },
@@ -167,7 +168,8 @@ window.PROGRAM = {
       { key: 'overhead_press', label: 'Overhead press' },
       { key: 'weighted_pullups', label: 'Weighted pullups' },
       { key: 'chest_supported_row', label: 'Chest-supported row' },
-      { key: 'cmj', label: 'Countermovement jump' }
+      { key: 'cmj', label: 'Countermovement jump' },
+      { key: 'sled', label: 'Slee (gewicht)' }
     ],
     athletic: [
       { key: 'vertical', label: 'Verticale sprong', unit: 'cm', hint: 'hoogte' },
