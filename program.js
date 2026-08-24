@@ -4,7 +4,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v5.1',
+    version: 'v5.2',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
     block: 'Basketbal-blok · seizoen start oktober',
@@ -68,13 +68,12 @@ window.PROGRAM = {
       erector: 'HOOG', power: 'Verticaal — vol', compound: 'Back squat',
       warn: 'De sprongen zijn hier geen warming-up maar de hoofdmoot. Volledige rust ertussen: als de hoogte zakt, stop je met springen.',
       items: [
-        { key: 'cmj', group: 'POWER · eerst', name: 'Countermovement jump', cue: 'Max hoogte, volledige rust tussen sets. Log de hoogte of je gevoel', sets: 4, target: '2 reps', type: 'strength' },
-        { key: 'broad_jump_plyo', group: 'POWER · eerst', name: 'Broad jump', cue: 'Horizontale power — meteen je 4-weken test', sets: 3, target: '2 reps', type: 'strength' },
+        { key: 'cmj', group: 'POWER · eerst', name: 'Countermovement jump', cue: 'Precies 2 sprongen per set — meer is geen bonus, dan train je een lágere sprong. Volledige rust. Meet met sprong-en-reik tegen de muur, niet met een boxhoogte', sets: 4, target: '2 reps', type: 'strength' },
+        { key: 'broad_jump_plyo', group: 'POWER · eerst', name: 'Broad jump', cue: '2 sprongen per set, verder niet. Horizontale power — meteen je 4-weken test', sets: 3, target: '2 reps', type: 'strength' },
         { key: 'back_squat', group: 'KRACHT', name: 'Back squat', cue: 'RPE 7–8: laat 2 reps in de tank. Explosief omhoog. Knie zeurt? Blijf op wat pijnvrij is', sets: 4, target: '3–5', inc: 5, type: 'strength' },
         { key: 'atg_split_squat', group: 'KRACHT', name: 'Bulgarian split squat', cue: 'Single-leg kracht — dit is hoe je op het veld beweegt', sets: 3, target: '5–6 p/b', type: 'strength' },
         { key: 'rdl', group: 'KRACHT', name: 'RDL', cue: 'Til hem vanaf de grond zoals een deadlift — dat pakt je eerste rep en haalt de pijn eruit', sets: 3, target: '6', inc: 5, type: 'strength' },
         { key: 'calf_standing', group: 'ONDERHOUD', name: 'Staande kuit', cue: 'Sprongkracht en enkelstabiliteit — low fatigue', sets: 3, target: '8–10', type: 'strength' },
-        { key: 'sled', group: 'ONDERHOUD', name: 'Slee — duwen & achteruit trekken', cue: '4 × heen duwen, achteruit terug (±20 m). Achteruit is het knie-werk: kleine passen, laag blijven, knie mag voorbij de teen. Geen excentrische fase, dus je betaalt er vrijdag niets voor. Log het gewicht óp de slee', sets: 4, target: '20 m h/t', inc: 10, type: 'strength' },
         { key: 'wall_sit', group: 'ONDERHOUD', name: 'Wall sit', cue: 'Je knie-verzekering — de isometrische hold die de zeurpijn eruit haalt. Doet ander werk dan de slee, dus die twee vervangen elkaar niet. Seconden invullen bij reps', sets: 2, target: '45–60 sec', type: 'strength' },
         { key: 'ma_core', group: 'CORE', name: 'Core — anti-extensie', cue: 'Dead bug of ab wheel. Romp stil houden terwijl er aan je getrokken wordt', type: 'check' }
       ]
@@ -120,6 +119,7 @@ window.PROGRAM = {
         { key: 'trap_bar_deadlift', group: 'KRACHT', name: 'Trap bar deadlift', cue: 'RPE 7–8, laat 2 reps in de tank. Voeten dichter bij elkaar en recht. Trek élke rep zo snel mogelijk omhoog', sets: 4, target: '3', inc: 5, type: 'strength' },
         { key: 'sl_rdl', group: 'KRACHT', name: 'Single-leg RDL', cue: 'Hamstring + balans in één. Lichter dan je denkt', sets: 3, target: '6 p/b', type: 'strength' },
         { key: 'reverse_nordic', group: 'PREHAB', name: 'Reverse Nordic', cue: 'Quads op lange spierlengte — knieschijfpees belastbaar maken', sets: 3, target: '8', type: 'strength' },
+        { key: 'sled', group: 'ONDERHOUD', name: 'Slee — duwen & achteruit trekken', cue: '4 × heen duwen, achteruit terug (±20 m). Achteruit is het knie-werk: kleine passen, laag blijven, knie mag voorbij de teen. Geen excentrische fase, dus je betaalt er morgen niets voor op de sprint. Log het gewicht óp de slee', sets: 4, target: '20 m h/t', inc: 10, type: 'strength' },
         { key: 'calf', group: 'ONDERHOUD', name: 'Kuit (machine)', sets: 3, target: '10', type: 'strength' },
         { key: 'do_core', group: 'CORE', name: 'Core — anti-laterale flexie', cue: 'Side plank of suitcase carry', type: 'check' }
       ]
