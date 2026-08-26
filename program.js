@@ -4,7 +4,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v5.2',
+    version: 'v5.3',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
     block: 'Basketbal-blok · seizoen start oktober',
@@ -133,7 +133,7 @@ window.PROGRAM = {
         { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', cue: '4 pogingen, kwaliteit boven kwantiteit', type: 'check' },
         { key: 'def_slides', group: 'AGILITY', name: 'Lateral shuffle → sprint', cue: '5 × zijwaarts verplaatsen en dan explosief wegsprinten', type: 'check' },
         { key: 'reactie_drill', group: 'AGILITY', name: 'Reactief — op signaal', cue: '6–10 reps. Maat wijst een richting, of bal tegen de muur. Pas beslissen als je moet reageren', type: 'check' },
-        { key: 'carries', group: 'OPTIONEEL', name: 'Farmer carry', cue: 'Alleen als je sprints scherp waren én donderdag niet naijlt. 3 × 30–40 m. Een carry maakt je niet atletischer — hij is ondersteunend', type: 'check' },
+        { key: 'carries', group: 'RUG-CAPACITEIT', name: 'Farmer carry', cue: 'Niet meer optioneel: dit is wat je rug op de vloer nodig heeft — lang, rechtop, isometrisch. 3 × 30–40 m, zwaar genoeg om te moeten knijpen. Alleen overslaan als donderdag echt naijlt', type: 'check' },
       ]
     },
     za: {
@@ -144,6 +144,7 @@ window.PROGRAM = {
         { key: 'chest_supported_row', group: 'RUG', name: 'Chest-supported row', cue: 'Zwaar mag hier — je onderrug doet niets mee', sets: 4, target: '6–8', type: 'strength' },
         { key: 'rear_delt_facepull', group: 'RUG', name: 'Rear delt + face pull', cue: 'Houding en achterkant schouder', sets: 2, target: '12–15', type: 'strength' },
         { key: 'shrugs', group: 'RUG', name: 'Shrugs', cue: 'Traps — nek en schouders sterk voor contact', sets: 2, target: '10–12', type: 'strength' },
+        { key: 'back_ext', group: 'PREHAB', name: 'Back extension — uithoudingsvermogen', cue: 'Géén zware sets tot falen: 3 × 45-60 sec vasthouden op de 45°-bank, of 15-20 reps met 2 tel bovenin. Lichaamsgewicht. Dit is de spier die het na 40 min basketbal begeeft — je traint hier de tijd, niet het gewicht. Voelt het als een pomp, goed; voelt het als een zware set, te zwaar', sets: 3, target: '45–60 sec', type: 'strength' },
         { key: 'nordic', group: 'PREHAB', name: 'Nordic curl (excentrisch)', cue: 'Je enige nordic-dag — halveert het risico op een hamstringblessure. Bewust hier: 5 dagen na de deadlift, 2 dagen voor de squat', sets: 3, target: '4–6', type: 'strength' },
         { key: 'biceps', group: 'ACCESSOIRE', name: 'Biceps', sets: 2, target: '10–15', type: 'strength' },
         { key: 'calf_pull', group: 'ONDERHOUD', name: 'Kuit', sets: 3, target: '10–15', type: 'strength' }
@@ -175,7 +176,8 @@ window.PROGRAM = {
       { key: 'vertical', label: 'Verticale sprong', unit: 'cm', hint: 'hoogte' },
       { key: 'broad_jump', label: 'Broad jump', unit: 'm', hint: 'afstand' },
       { key: 'sprint_10m', label: 'Sprint 10 m', unit: 'sec', hint: 'seconden' },
-      { key: 'cod_time', label: '5-10-5 tijd', unit: 'sec', hint: 'seconden' }
+      { key: 'cod_time', label: '5-10-5 tijd', unit: 'sec', hint: 'seconden' },
+      { key: 'rug_hold', label: 'Rug-hold (uithoudingsvermogen)', unit: 'sec', hint: 'seconden horizontaal vasthouden' }
     ],
     body: [
       { key: 'weight', label: 'Lichaamsgewicht', unit: 'kg' }
