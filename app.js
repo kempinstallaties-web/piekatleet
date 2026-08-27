@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '25 · 24-08-2026';
+  var APP_VERSION = '26 · 27-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -689,6 +689,28 @@
     return { kleur: 'hot', tekst: 'Geen sprongen, geen sprints. Mobiliteit en techniek, of rust.' };
   }
 
+  /* Conditie-advies uit Garmin's eigen belastingverdeling.
+     Garmin splitst je maandlast in aeroob-laag (zone 2), aeroob-hoog (tempo/drempel)
+     en anaeroob (sprints). Basketbal en zone-2-werk vullen alleen het eerste bakje —
+     het gat zit bij Kaj in het middelste. Vandaar dat dit apart van readiness staat:
+     readiness zegt of je vandaag KUNT, dit zegt wat er MIST.
+     Tempowerk mag alleen op dagen waar het de vrijdagsprint niet raakt: di en za. */
+  var TEMPO_DAGEN = { di: 1, za: 1 };
+
+  function conditieAdvies(r, dayKey) {
+    var hoog = num(r.load_aerobic_high);
+    var doel = (r.load_targets && r.load_targets.aeroob_hoog) || null;
+    if (hoog == null || !doel || doel[0] == null) return null;
+    if (hoog >= doel[0]) return null; // op peil, niets toe te voegen
+
+    var tekort = Math.round(doel[0] - hoog);
+    if (TEMPO_DAGEN[dayKey]) {
+      return { kleur: 'accent', tekst: 'Tempo-slot vandaag: 5 × 3 min op de fiets of roeier, hartslag 150–160, 2 min rustig ertussen. ' +
+        'Dit is het enige bakje dat leeg staat (' + tekort + ' tekort) — extra basketbal vult het niet, dat telt als zone 2.' };
+    }
+    return { kleur: 'muted', tekst: 'Tempowerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag — dat hoort op dinsdag of zaterdag.' };
+  }
+
   function herstelKaart(date) {
     var g = garminVoor(date);
     if (!g) return null;
@@ -715,6 +737,8 @@
 
     var adv = herstelAdvies(r);
     if (adv) html += '<div class="hadvies h-' + adv.kleur + '">' + esc(adv.tekst) + '</div>';
+    var cond = conditieAdvies(r, UI.dayKey); // de dag die je bekijkt, niet die van de meting
+    if (cond) html += '<div class="hadvies h-' + cond.kleur + '">' + esc(cond.tekst) + '</div>';
     if (uur != null && uur < 6.5) {
       html += '<div class="tiny" style="margin-top:6px">Onder de 6,5 u — dat kost je morgen readiness, niet vandaag kracht.</div>';
     }

@@ -383,3 +383,4 @@ body.focus-open { overflow: hidden; }
 .herstel .h-good { background: var(--good-soft); color: var(--good); }
 .herstel .h-accent { background: var(--accent-soft); color: var(--accent); }
 .herstel .h-hot { background: var(--hot-soft); color: var(--hot); }
+.herstel .h-muted { background: var(--surface2); color: var(--ink2); border: 1px solid var(--border); }
