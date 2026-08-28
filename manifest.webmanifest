@@ -1,7 +1,7 @@
 {
   "name": "PiekAtleet",
   "short_name": "PiekAtleet",
-  "description": "PiekAtleet v4 — 12-weken workout tracker",
+  "description": "PiekAtleet — workout tracker voor het basketbal-blok",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

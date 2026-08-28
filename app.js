@@ -8,8 +8,8 @@
   var P = window.PROGRAM;
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
-  // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '29 · 28-08-2026';
+  // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
+  var APP_VERSION = '30 · 28-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1313,7 +1313,7 @@
   }
   function exportJSON() {
     download('piekatleet-export-' + todayStr() + '.json',
-      JSON.stringify({ exported: nowIso(), program: 'PiekAtleet v4', sessions: S.sessions, metrics: S.metrics }, null, 2),
+      JSON.stringify({ exported: nowIso(), program: 'PiekAtleet ' + P.meta.version, sessions: S.sessions, metrics: S.metrics }, null, 2),
       'application/json');
     toast('JSON-export gedownload');
   }
@@ -1466,6 +1466,9 @@
 
   loadLocal();
   initSupabase();
+  // programma-versie in de header uit program.js, niet hardcoded in de HTML
+  var brandV = $('#brandV');
+  if (brandV) brandV.textContent = P.meta.version;
   setActiveTab();
   renderVandaag();
   refreshSyncUI();
