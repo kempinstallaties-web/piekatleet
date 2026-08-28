@@ -4,7 +4,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v5.3',
+    version: 'v5.4',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
     block: 'Basketbal-blok · seizoen start oktober',
@@ -42,7 +42,7 @@ window.PROGRAM = {
           { name: 'Pogo hops 2 × 15', why: 'voetstijfheid — maakt je klaar voor het echte springwerk', days: ['ma', 'do'] },
           { name: 'Band pull-apart 2 × 15', why: 'schouders wakker vóór het persen', days: ['di', 'za'] },
           { name: 'Med ball chest pass licht 2 × 5', why: 'bovenlichaam op scherp', days: ['di'] },
-          { name: 'A-skips 2 × 20 m', why: 'sprintmechaniek instellen', days: ['wo', 'vr'] },
+          { name: 'A-skips 2 × 20 m', why: 'sprintmechaniek instellen', video: 'https://www.youtube.com/watch?v=2LAg2FFAXbo', days: ['wo', 'vr'] },
           { name: 'Buildups 3 × 30 m (60→90%)', why: 'opbouwen naar volle snelheid zonder koud te knallen', days: ['vr'] },
           { name: 'Split-step + reactie', why: 'eerste stap scherp zetten vóór je gaat spelen', days: ['wo'] },
           { name: 'Dead hang 2 × max', why: 'grip en decompressie vóór het trekken', days: ['za'] }
@@ -101,9 +101,9 @@ window.PROGRAM = {
       erector: 'LAAG', power: 'Sprint & COD', compound: 'Acceleratie',
       warn: 'Geen zware conditioning erachteraan — donderdag deadlift je. Kwaliteit boven vermoeidheid: als je trager wordt, ben je klaar.',
       items: [
-        { key: 'accel', group: 'SNELHEID · eerst', name: 'Acceleratie', cue: '4 × 10 m, daarna 3 × 20 m. Volle rust, elke start maximaal', type: 'check' },
-        { key: 'decel', group: 'SNELHEID · eerst', name: 'Deceleratie', cue: '4 × 10 m sprint → volledig stoppen en stil staan. Afremmen is 80% van basketbal', type: 'check' },
-        { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', cue: '4–5 pogingen. Laag blijven bij de draai, niet omhoog komen', type: 'check' },
+        { key: 'accel', group: 'SNELHEID · eerst', name: 'Acceleratie', video: 'https://www.youtube.com/watch?v=MHyM1uuMIwc', let: 'Eerste meters voorover, niet rechtop. Pas rond 10-15 m overeind komen',  cue: '4 × 10 m, daarna 3 × 20 m. Volle rust, elke start maximaal', type: 'check' },
+        { key: 'decel', group: 'SNELHEID · eerst', name: 'Deceleratie', video: 'https://www.youtube.com/watch?v=GqVqQK_j_zQ', let: 'Zak op de laatste twee passen, borst blijft boven de knie. Niet met gestrekt been remmen',  cue: '4 × 10 m sprint → volledig stoppen en stil staan. Afremmen is 80% van basketbal', type: 'check' },
+        { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', video: 'https://www.youtube.com/watch?v=tYhCJd7LaBU', let: 'De tijd win je in de twee draaien, niet op het rechte stuk. Laag zakken, hand naar de lijn',  cue: '4–5 pogingen. Laag blijven bij de draai, niet omhoog komen', type: 'check' },
         { key: 'approach_jump_sl', group: 'AGILITY', name: 'Approach jump — 1 been', cue: 'Aanloop, afzet op één been, naar de ring. 3 × 2 per been, meer niet — maximale kwaliteit. Dít is hoe je in een wedstrijd springt', sets: 3, target: '2 p/b', type: 'strength' },
         { key: 'skill_work', group: 'BASKETBAL', name: 'Skills — dribbel & fundamentals', cue: '30–45 min. Dit is waarvoor je de rest doet', type: 'check' },
         { key: 'shooting', group: 'BASKETBAL', name: 'Shooting', cue: '10–15 min afsluiten', type: 'check' }
@@ -129,11 +129,11 @@ window.PROGRAM = {
       erector: 'LAAG', power: 'Maximaal', compound: 'Sprint',
       warn: 'Hier meet je of je écht atletischer wordt. Volle rust tussen alles, geen conditioning. Word je moe, dan stop je — vermoeid sprinten traint traagheid.',
       items: [
-        { key: 'sprints', group: 'SNELHEID · eerst', name: 'Sprint', cue: '4 × 10 m · 4 × 20 m · 2 × 30 m. Volledige rust, elke rep maximaal', type: 'check' },
-        { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', cue: '4 pogingen, kwaliteit boven kwantiteit', type: 'check' },
-        { key: 'def_slides', group: 'AGILITY', name: 'Lateral shuffle → sprint', cue: '5 × zijwaarts verplaatsen en dan explosief wegsprinten', type: 'check' },
-        { key: 'reactie_drill', group: 'AGILITY', name: 'Reactief — op signaal', cue: '6–10 reps. Maat wijst een richting, of bal tegen de muur. Pas beslissen als je moet reageren', type: 'check' },
-        { key: 'carries', group: 'RUG-CAPACITEIT', name: 'Farmer carry', cue: 'Niet meer optioneel: dit is wat je rug op de vloer nodig heeft — lang, rechtop, isometrisch. 3 × 30–40 m, zwaar genoeg om te moeten knijpen. Alleen overslaan als donderdag echt naijlt', type: 'check' },
+        { key: 'sprints', group: 'SNELHEID · eerst', name: 'Sprint', video: 'https://www.youtube.com/watch?v=MHyM1uuMIwc', let: 'Eerste meters voorover, niet rechtop. Pas rond 10-15 m overeind komen',  cue: '4 × 10 m · 4 × 20 m · 2 × 30 m. Volledige rust, elke rep maximaal', type: 'check' },
+        { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', video: 'https://www.youtube.com/watch?v=tYhCJd7LaBU', let: 'De tijd win je in de twee draaien, niet op het rechte stuk. Laag zakken, hand naar de lijn',  cue: '4 pogingen, kwaliteit boven kwantiteit', type: 'check' },
+        { key: 'def_slides', group: 'AGILITY', name: 'Lateral shuffle → sprint', video: 'https://www.youtube.com/watch?v=aFtFDwHAso4', let: 'Voeten kruisen nooit, heupen laag. Overgang naar sprint is een draai, niet eerst rechtop komen',  cue: '5 × zijwaarts verplaatsen en dan explosief wegsprinten', type: 'check' },
+        { key: 'reactie_drill', group: 'AGILITY', name: 'Reactief — op signaal', video: 'https://www.youtube.com/watch?v=TZC-Pl_quoc', let: 'Je mag pas beslissen op het signaal. Weet je het vooraf, dan train je iets anders',  cue: '6–10 reps. Maat wijst een richting, of bal tegen de muur. Pas beslissen als je moet reageren', type: 'check' },
+        { key: 'carries', group: 'RUG-CAPACITEIT', name: 'Farmer carry', video: 'https://www.youtube.com/watch?v=P8iSOHX73FE', let: 'Schouders naar achteren, ribben omlaag. Zodra je gaat hangen is de set klaar',  cue: 'Niet meer optioneel: dit is wat je rug op de vloer nodig heeft — lang, rechtop, isometrisch. 3 × 30–40 m, zwaar genoeg om te moeten knijpen. Alleen overslaan als donderdag echt naijlt', type: 'check' },
       ]
     },
     za: {

@@ -384,3 +384,22 @@ body.focus-open { overflow: hidden; }
 .herstel .h-accent { background: var(--accent-soft); color: var(--accent); }
 .herstel .h-hot { background: var(--hot-soft); color: var(--hot); }
 .herstel .h-muted { background: var(--surface2); color: var(--ink2); border: 1px solid var(--border); }
+
+/* Techniek-link bij oefeningen waar het "hoe" de rem is */
+.ex-video {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px;
+  margin: 6px 0 2px; font-size: 12px; line-height: 1.4;
+}
+.ex-video a {
+  color: var(--accent); text-decoration: none; font-weight: 600;
+  background: var(--accent-soft); border-radius: 8px;
+  padding: 3px 9px; white-space: nowrap; min-height: 26px;
+  display: inline-flex; align-items: center;
+}
+.ex-video .sep { color: var(--muted); }
+.ex-video .let { color: var(--ink2); flex: 1; min-width: 0; }
+.oitem-video {
+  color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 600;
+  background: var(--accent-soft); border-radius: 8px; padding: 0 10px;
+  display: inline-flex; align-items: center; min-height: var(--tap);
+}

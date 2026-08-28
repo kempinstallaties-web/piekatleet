@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '26 · 27-08-2026';
+  var APP_VERSION = '27 · 28-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -872,6 +872,11 @@
           opener.querySelector('.opener-n').textContent = n;
         });
         row.appendChild(chip);
+        // een <a> mag niet in een <button>, dus de techniek-link komt naast de chip
+        if (oi.video) {
+          row.appendChild(el('<a class="oitem-video" href="' + esc(oi.video) +
+            '" target="_blank" rel="noopener noreferrer">▶ techniek</a>'));
+        }
       });
       openerBody.appendChild(blockEl);
     });
@@ -911,6 +916,9 @@
       (item.cue ? '<div class="ex-cue">' + esc(item.cue) + '</div>' : '') + '</div>' +
       '<span class="badge badge-target">' + item.sets + ' × ' + (item.target ? esc(item.target) : 'vrij') + '</span></div>' +
       '</div>');
+
+    var vrs = videoRegel(item);
+    if (vrs) card.appendChild(vrs);
 
     var prev = prevSessionFor(item.key, date, skey);
     var advies = null;
@@ -1038,6 +1046,19 @@
     return card;
   }
 
+  /* Techniek-link + aandachtspunt. Staat bij oefeningen waar "hoe doe ik dit"
+     de rem is (sprint, COD, shuffle, reactief, carry) — niet bij squat en bank. */
+  function videoRegel(item) {
+    if (!item.video && !item.let) return null;
+    var html = '<div class="ex-video">';
+    if (item.video) {
+      html += '<a href="' + esc(item.video) + '" target="_blank" rel="noopener noreferrer">▶ techniek</a>';
+      if (item.let) html += '<span class="sep">·</span>';
+    }
+    if (item.let) html += '<span class="let">' + esc(item.let) + '</span>';
+    return el(html + '</div>');
+  }
+
   function checkCard(date, dayKey, item) {
     var sess = getSession(date, dayKey, false);
     var logged = sess && sess.items && sess.items[item.key];
@@ -1049,6 +1070,10 @@
       (item.cue ? '<div class="ex-cue">' + esc(item.cue) + (item.target ? ' · ' + esc(item.target) : '') + '</div>' : (item.target ? '<div class="ex-cue">' + esc(item.target) + '</div>' : '')) +
       '<textarea class="ex-note" rows="1" placeholder="Notitie (bv. afstand, tijd, gewicht)…"></textarea></div>' +
       '</div></div>');
+    var vr = videoRegel(item);
+    // vóór het notitieveld, zodat de cue en de techniek bij elkaar staan
+    if (vr) { var tav = card.querySelector('textarea'); tav.parentNode.insertBefore(vr, tav); }
+
     var btn = card.querySelector('.bigcheck');
     var ta = card.querySelector('textarea');
     ta.value = (logged && logged.note) || '';
