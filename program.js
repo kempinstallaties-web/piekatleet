@@ -152,6 +152,7 @@ window.PROGRAM = {
       erector: 'LAAG', power: 'Licht', compound: 'Vrije worpen',
       warn: 'Bewust licht: je komt van een zware zaterdag en maandag til je weer. Schot en gevoel, geen wedstrijdtempo, geen maximale sprongen.',
       items: [
+        { key: 'skill_work', group: 'BAL · eerst', name: 'Dribbelwerk', cue: '15-20 min, als warming-up. Zwakke hand krijgt het dubbele. Bal laag en hard, ogen omhoog - bij jouw lengte is laag houden het lastigst en precies wat je nodig hebt. Eindig met tempowisselingen en een crossover in beweging, niet stilstaand', video: 'https://www.youtube.com/watch?v=JWPvIxiv9q0', let: 'Als je erbij moet kijken, gaat hij te hoog. Liever langzamer en laag dan snel en hoog', type: 'check' },
         { key: 'free_throws', group: 'SCHOT', name: 'Vrije worpen — 5 × 10', cue: 'Tel ze en noteer het aantal. Zelfde aanloop elke worp: zelfde dribbels, zelfde pauze, zelfde kniebuiging. Ritme is hier het doel, niet het aantal', type: 'check' },
         { key: 'skill_work_zo', group: 'SPEL', name: 'Casual shooting', cue: 'Schieten mag. Géén sprints, géén maximale sprongen, géén agility', type: 'check' },
         { key: 'mobility_zo', group: 'HERSTEL', name: 'Mobility', cue: 'Rustig doorbewegen wat stijf voelt', type: 'check' }
@@ -205,7 +206,7 @@ window.PROGRAM = {
   volumeCheck: {
     title: 'Volume-check', sub: 'Basketbal is nu het skelet: 3 vaste balmomenten per week. Het tilwerk is teruggebracht naar 3 dagen — kracht is het middel, niet het doel.',
     rows: [
-      { name: 'Basketbal', sets: '3 vast (wo eigen · do team · zo licht)' },
+      { name: 'Basketbal', sets: '3 vast (wo agility · do team · zo bal & schot)' },
       { name: 'Tildagen', sets: '3 (ma · di · za) + vr optioneel' },
       { name: 'Rug', sets: '~10 (di + za)' },
       { name: 'Hamstrings', sets: '~6 (ma · za) + vr optioneel' },
