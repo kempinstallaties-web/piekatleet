@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '30 · 28-08-2026';
+  var APP_VERSION = '31 · 28-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -694,7 +694,10 @@
      en anaeroob (sprints). Basketbal en zone-2-werk vullen alleen het eerste bakje —
      het gat zit bij Kaj in het middelste. Vandaar dat dit apart van readiness staat:
      readiness zegt of je vandaag KUNT, dit zegt wat er MIST.
-     Tempowerk mag alleen op dagen waar het de vrijdagsprint niet raakt: di en za. */
+     165-178 komt uit Kaj's inspanningstest van 28-03: aerobe drempel 161-165,
+     anaerobe drempel 179-182, max 198. Niet schatten op de hoogst waargenomen
+     hartslag (~175) - hij gaat zelden echt tot zijn maximum.
+     Tempowerk mag alleen op dagen waar het de zaterdag-deadlift niet raakt: di en za. */
   var TEMPO_DAGEN = { di: 1, za: 1 };
 
   function conditieAdvies(r, dayKey) {
@@ -705,7 +708,7 @@
 
     var tekort = Math.round(doel[0] - hoog);
     if (TEMPO_DAGEN[dayKey]) {
-      return { kleur: 'accent', tekst: 'Tempo-slot vandaag: 5 × 3 min op de fiets of roeier, hartslag 150–160, 2 min rustig ertussen. ' +
+      return { kleur: 'accent', tekst: 'Tempo-slot vandaag: 5 × 3 min op de fiets of roeier, hartslag 165–178, 2 min rustig ertussen. ' +
         'Dit is het enige bakje dat leeg staat (' + tekort + ' tekort) — extra basketbal vult het niet, dat telt als zone 2.' };
     }
     return { kleur: 'muted', tekst: 'Tempowerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag — dat hoort op dinsdag of zaterdag.' };
