@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. (Let op: de "v4" in de header is de PROGRAMMA-versie, niet deze.)
-  var APP_VERSION = '27 · 28-08-2026';
+  var APP_VERSION = '28 · 28-08-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }

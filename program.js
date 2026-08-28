@@ -4,10 +4,10 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v5.4',
+    version: 'v6',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
-    block: 'Basketbal-blok · seizoen start oktober',
+    block: 'Basketbal-blok · teamtraining donderdag · seizoen start oktober',
     nutritionShort: '3500–3700 kcal · 240 g eiwit · performance bulk',
     weakPoints: 'Agility & COD · Reactiviteit · Basketbalspecificiteit',
     goals: '105 kg explosief leren verplaatsen: hoger springen, sneller versnellen én afremmen. Kracht is het middel, atletiek het doel.'
@@ -15,7 +15,7 @@ window.PROGRAM = {
 
   rules: [
     'Power vóór kracht. Springen en sprinten doe je fris, nooit als toetje na het tillen.',
-    'Herstel is het plafond. Vrijdag moet je kunnen sprinten — dus donderdag geen ego-deadlift.',
+    'Herstel is het plafond. Donderdag moet je fris op de teamtraining staan — dus woensdag geen conditioning en zaterdag geen ego-deadlift.',
     'Elke oefening door één filter: maakt dit mij beter op het veld? Zo nee, alleen als er herstel over is.',
     'Word je zwaarder maar langzamer, dan ga je de verkeerde kant op.'
   ],
@@ -59,12 +59,12 @@ window.PROGRAM = {
     ]
   },
 
-  weekRule: 'Power staat vóór kracht op elke tildag. Vrijdag is je belangrijkste atletiekdag — donderdag mag die nooit slopen. Zondag is écht rust: max 45 min, RPE ≤ 4.',
+  weekRule: 'Basketbal is nu het skelet: donderdag teamtraining, woensdag je eigen agility-sessie, zondag schot en licht spel. Het tilwerk vult de gaten — maandag, dinsdag en zaterdag. Vrijdag is rust, tenzij er iets is uitgevallen én je fris bent.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
 
   days: {
     ma: {
-      key: 'ma', label: 'MA', title: 'Vertical + Lower Strength', sub: 'springen fris, dan pas tillen',
+      key: 'ma', label: 'MA', title: 'Onderlichaam + verticale power', sub: 'springen fris, dan pas tillen',
       erector: 'HOOG', power: 'Verticaal — vol', compound: 'Back squat',
       warn: 'De sprongen zijn hier geen warming-up maar de hoofdmoot. Volledige rust ertussen: als de hoogte zakt, stop je met springen.',
       items: [
@@ -79,6 +79,7 @@ window.PROGRAM = {
       ]
     },
     di: {
+
       key: 'di', label: 'DI', title: 'Upper Push + Throwing', sub: 'gooien vóór persen',
       erector: 'LAAG', power: 'Med ball — vol', compound: 'Incline press',
       warn: 'Med-ball werk is hier geen opwarmer maar training: max intentie, volle rust. Daarna pas het ijzer.',
@@ -97,70 +98,67 @@ window.PROGRAM = {
       ]
     },
     wo: {
-      key: 'wo', label: 'WO', title: 'Basketball Athleticism', sub: 'versnellen · afremmen · draaien · spelen',
+      key: 'wo', label: 'WO', title: 'Basketbal 1 — snelheid & agility', sub: 'alles wat je op de vloer nodig hebt, mét bal',
       erector: 'LAAG', power: 'Sprint & COD', compound: 'Acceleratie',
-      warn: 'Geen zware conditioning erachteraan — donderdag deadlift je. Kwaliteit boven vermoeidheid: als je trager wordt, ben je klaar.',
+      warn: 'Dit is je eigen sessie, dus hier bepaal jij de kwaliteit. Volle rust tussen de sprints; word je trager, dan ben je klaar. Geen conditioning erachteraan — morgen is de teamtraining.',
       items: [
         { key: 'accel', group: 'SNELHEID · eerst', name: 'Acceleratie', video: 'https://www.youtube.com/watch?v=MHyM1uuMIwc', let: 'Eerste meters voorover, niet rechtop. Pas rond 10-15 m overeind komen',  cue: '4 × 10 m, daarna 3 × 20 m. Volle rust, elke start maximaal', type: 'check' },
         { key: 'decel', group: 'SNELHEID · eerst', name: 'Deceleratie', video: 'https://www.youtube.com/watch?v=GqVqQK_j_zQ', let: 'Zak op de laatste twee passen, borst blijft boven de knie. Niet met gestrekt been remmen',  cue: '4 × 10 m sprint → volledig stoppen en stil staan. Afremmen is 80% van basketbal', type: 'check' },
         { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', video: 'https://www.youtube.com/watch?v=tYhCJd7LaBU', let: 'De tijd win je in de twee draaien, niet op het rechte stuk. Laag zakken, hand naar de lijn',  cue: '4–5 pogingen. Laag blijven bij de draai, niet omhoog komen', type: 'check' },
-        { key: 'approach_jump_sl', group: 'AGILITY', name: 'Approach jump — 1 been', cue: 'Aanloop, afzet op één been, naar de ring. 3 × 2 per been, meer niet — maximale kwaliteit. Dít is hoe je in een wedstrijd springt', sets: 3, target: '2 p/b', type: 'strength' },
-        { key: 'skill_work', group: 'BASKETBAL', name: 'Skills — dribbel & fundamentals', cue: '30–45 min. Dit is waarvoor je de rest doet', type: 'check' },
+        { key: 'def_slides', group: 'AGILITY', name: 'Lateral shuffle → sprint', video: 'https://www.youtube.com/watch?v=aFtFDwHAso4', let: 'Voeten kruisen nooit, heupen laag. Overgang naar sprint is een draai, niet eerst rechtop komen',  cue: '5 × zijwaarts verplaatsen en dan explosief wegsprinten', type: 'check' },
+        { key: 'reactie_drill', group: 'AGILITY', name: 'Reactief — op signaal', video: 'https://www.youtube.com/watch?v=TZC-Pl_quoc', let: 'Je mag pas beslissen op het signaal. Weet je het vooraf, dan train je iets anders',  cue: '6–10 reps. Maat wijst een richting, of bal tegen de muur. Pas beslissen als je moet reageren', type: 'check' },
+        { key: 'approach_jump_sl', group: 'SPRONG', name: 'Approach jump — 1 been', cue: 'Aanloop, afzet op één been, naar de ring. 3 × 2 per been, meer niet — maximale kwaliteit. Dít is hoe je in een wedstrijd springt', sets: 3, target: '2 p/b', type: 'strength' },
         { key: 'shooting', group: 'BASKETBAL', name: 'Shooting', cue: '10–15 min afsluiten', type: 'check' }
       ]
     },
     do: {
-      key: 'do', label: 'DO', title: 'Deadlift + Horizontal Power', sub: 'explosief eerst, dan zwaar — en dan stoppen',
+      key: 'do', label: 'DO', title: 'Teamtraining', sub: 'de belangrijkste basketbaldag van je week',
+      erector: 'WISSELEND', power: 'Wedstrijdvorm', compound: 'Live spel',
+      warn: 'Kom fris binnen: woensdag geen extra conditioning, en het zware tilwerk staat bewust op zaterdag. Dit is de sessie waar je selectie wordt bepaald, niet je squat.',
+      items: [
+        { key: 'team_training', group: 'TEAMTRAINING', name: 'Teamtraining', cue: 'De coach bepaalt de inhoud — jij bepaalt alleen of je fris binnenkomt. Noteer achteraf wat er gedaan is en hoe je rug na 40 min voelde: dat is de test die we willen zien', type: 'check' },
+        { key: 'team_note', group: 'TEAMTRAINING', name: 'Vrije worpen na afloop', cue: '2 × 10 aan het eind, vermoeid. Tel ze. Dit is de enige plek waar je je schot onder wedstrijdvermoeidheid meet', type: 'check' }
+      ]
+    },
+    vr: {
+      key: 'vr', label: 'VR', title: 'Vrij — rust of inhalen', sub: 'standaard rust; alleen invullen als je fris bent',
+      erector: 'LAAG', power: 'Geen', compound: '—', rest: true,
+      warn: 'Dit is je herstel-klep na de teamtraining. Alleen invullen als er iets is uitgevallen én je je goed voelt. Twijfel je, dan rust je.',
+      items: [
+        { key: 'carries', group: 'ALS ER TIJD IS', name: 'Farmer carry', video: 'https://www.youtube.com/watch?v=P8iSOHX73FE', let: 'Schouders naar achteren, ribben omlaag. Zodra je gaat hangen is de set klaar',  cue: 'Niet meer optioneel: dit is wat je rug op de vloer nodig heeft — lang, rechtop, isometrisch. 3 × 30–40 m, zwaar genoeg om te moeten knijpen. Alleen overslaan als donderdag echt naijlt', type: 'check' },
+        { key: 'nordic', group: 'ALS ER TIJD IS', name: 'Nordic curl (excentrisch)', cue: 'Je enige nordic-dag — halveert het risico op een hamstringblessure. Bewust hier: 5 dagen na de deadlift, 2 dagen voor de squat', sets: 3, target: '4–6', type: 'strength' },
+        { key: 'reverse_nordic', group: 'ALS ER TIJD IS', name: 'Reverse Nordic', cue: 'Quads op lange spierlengte — knieschijfpees belastbaar maken', sets: 3, target: '8', type: 'strength' },
+        { key: 'sl_rdl', group: 'ALS ER TIJD IS', name: 'Single-leg RDL', cue: 'Hamstring + balans in één. Lichter dan je denkt', sets: 3, target: '6 p/b', type: 'strength' },
+        { key: 'rear_delt_facepull', group: 'ALS ER TIJD IS', name: 'Rear delt + face pull', cue: 'Houding en achterkant schouder', sets: 2, target: '12–15', type: 'strength' }
+      ]
+    },
+    za: {
+      key: 'za', label: 'ZA', title: 'Deadlift + trekken + rug', sub: 'de zware tildag, ver van de teamtraining',
       erector: 'ZEER HOOG', power: 'Horizontaal — vol', compound: 'Trap bar deadlift',
-      warn: 'Dit is je gevaarlijkste dag: vrijdag moet je kunnen sprinten. RPE 7–8 op de trap bar, geen ego. Geen zware rows, geen extra hamstringvolume, geen zware carries.',
+      warn: 'Bewust op zaterdag: twee dagen na de teamtraining en twee dagen voor de volgende. RPE 7–8, laat 2 reps in de tank — zondag speel je nog.',
       items: [
         { key: 'pogos', group: 'POWER · eerst', name: "Pogo's", cue: 'Stijve enkels, minimale grondcontacttijd', sets: 2, target: '15', type: 'strength' },
         { key: 'lateral_bound', group: 'POWER · eerst', name: 'Bounds', cue: 'Zijwaarts of vooruit springen, 2 tellen stil landen — dit is je horizontale power van de week', sets: 2, target: '3 p/z', type: 'strength' },
         { key: 'trap_bar_deadlift', group: 'KRACHT', name: 'Trap bar deadlift', cue: 'RPE 7–8, laat 2 reps in de tank. Voeten dichter bij elkaar en recht. Trek élke rep zo snel mogelijk omhoog', sets: 4, target: '3', inc: 5, type: 'strength' },
-        { key: 'sl_rdl', group: 'KRACHT', name: 'Single-leg RDL', cue: 'Hamstring + balans in één. Lichter dan je denkt', sets: 3, target: '6 p/b', type: 'strength' },
-        { key: 'reverse_nordic', group: 'PREHAB', name: 'Reverse Nordic', cue: 'Quads op lange spierlengte — knieschijfpees belastbaar maken', sets: 3, target: '8', type: 'strength' },
+        { key: 'chest_supported_row', group: 'KRACHT', name: 'Chest-supported row', cue: 'Zwaar mag hier — je onderrug doet niets mee', sets: 4, target: '6–8', type: 'strength' },
         { key: 'sled', group: 'ONDERHOUD', name: 'Slee — duwen & achteruit trekken', cue: '4 × heen duwen, achteruit terug (±20 m). Achteruit is het knie-werk: kleine passen, laag blijven, knie mag voorbij de teen. Geen excentrische fase, dus je betaalt er morgen niets voor op de sprint. Log het gewicht óp de slee', sets: 4, target: '20 m h/t', inc: 10, type: 'strength' },
+        { key: 'back_ext', group: 'RUG-CAPACITEIT', name: 'Back extension — uithoudingsvermogen', cue: 'Géén zware sets tot falen: 3 × 45-60 sec vasthouden op de 45°-bank, of 15-20 reps met 2 tel bovenin. Lichaamsgewicht. Dit is de spier die het na 40 min basketbal begeeft — je traint hier de tijd, niet het gewicht. Voelt het als een pomp, goed; voelt het als een zware set, te zwaar', sets: 3, target: '45–60 sec', type: 'strength' },
         { key: 'calf', group: 'ONDERHOUD', name: 'Kuit (machine)', sets: 3, target: '10', type: 'strength' },
         { key: 'do_core', group: 'CORE', name: 'Core — anti-laterale flexie', cue: 'Side plank of suitcase carry', type: 'check' }
       ]
     },
-    vr: {
-      key: 'vr', label: 'VR', title: 'Speed + Agility', sub: 'je belangrijkste sessie van de week',
-      erector: 'LAAG', power: 'Maximaal', compound: 'Sprint',
-      warn: 'Hier meet je of je écht atletischer wordt. Volle rust tussen alles, geen conditioning. Word je moe, dan stop je — vermoeid sprinten traint traagheid.',
-      items: [
-        { key: 'sprints', group: 'SNELHEID · eerst', name: 'Sprint', video: 'https://www.youtube.com/watch?v=MHyM1uuMIwc', let: 'Eerste meters voorover, niet rechtop. Pas rond 10-15 m overeind komen',  cue: '4 × 10 m · 4 × 20 m · 2 × 30 m. Volledige rust, elke rep maximaal', type: 'check' },
-        { key: 'cod_drill', group: 'AGILITY', name: 'Change of direction (5-10-5)', video: 'https://www.youtube.com/watch?v=tYhCJd7LaBU', let: 'De tijd win je in de twee draaien, niet op het rechte stuk. Laag zakken, hand naar de lijn',  cue: '4 pogingen, kwaliteit boven kwantiteit', type: 'check' },
-        { key: 'def_slides', group: 'AGILITY', name: 'Lateral shuffle → sprint', video: 'https://www.youtube.com/watch?v=aFtFDwHAso4', let: 'Voeten kruisen nooit, heupen laag. Overgang naar sprint is een draai, niet eerst rechtop komen',  cue: '5 × zijwaarts verplaatsen en dan explosief wegsprinten', type: 'check' },
-        { key: 'reactie_drill', group: 'AGILITY', name: 'Reactief — op signaal', video: 'https://www.youtube.com/watch?v=TZC-Pl_quoc', let: 'Je mag pas beslissen op het signaal. Weet je het vooraf, dan train je iets anders',  cue: '6–10 reps. Maat wijst een richting, of bal tegen de muur. Pas beslissen als je moet reageren', type: 'check' },
-        { key: 'carries', group: 'RUG-CAPACITEIT', name: 'Farmer carry', video: 'https://www.youtube.com/watch?v=P8iSOHX73FE', let: 'Schouders naar achteren, ribben omlaag. Zodra je gaat hangen is de set klaar',  cue: 'Niet meer optioneel: dit is wat je rug op de vloer nodig heeft — lang, rechtop, isometrisch. 3 × 30–40 m, zwaar genoeg om te moeten knijpen. Alleen overslaan als donderdag echt naijlt', type: 'check' },
-      ]
-    },
-    za: {
-      key: 'za', label: 'ZA', title: 'Upper Pull', sub: 'rug zonder je onderrug te slopen',
-      erector: 'LAAG', power: 'Licht', compound: 'Chest-supported row',
-      warn: 'Bewust géén bent-over row meer: je erector krijgt al genoeg van squat, deadlift en carries. Dit is de dag waar je herstelcapaciteit spaart.',
-      items: [
-        { key: 'chest_supported_row', group: 'RUG', name: 'Chest-supported row', cue: 'Zwaar mag hier — je onderrug doet niets mee', sets: 4, target: '6–8', type: 'strength' },
-        { key: 'rear_delt_facepull', group: 'RUG', name: 'Rear delt + face pull', cue: 'Houding en achterkant schouder', sets: 2, target: '12–15', type: 'strength' },
-        { key: 'shrugs', group: 'RUG', name: 'Shrugs', cue: 'Traps — nek en schouders sterk voor contact', sets: 2, target: '10–12', type: 'strength' },
-        { key: 'back_ext', group: 'PREHAB', name: 'Back extension — uithoudingsvermogen', cue: 'Géén zware sets tot falen: 3 × 45-60 sec vasthouden op de 45°-bank, of 15-20 reps met 2 tel bovenin. Lichaamsgewicht. Dit is de spier die het na 40 min basketbal begeeft — je traint hier de tijd, niet het gewicht. Voelt het als een pomp, goed; voelt het als een zware set, te zwaar', sets: 3, target: '45–60 sec', type: 'strength' },
-        { key: 'nordic', group: 'PREHAB', name: 'Nordic curl (excentrisch)', cue: 'Je enige nordic-dag — halveert het risico op een hamstringblessure. Bewust hier: 5 dagen na de deadlift, 2 dagen voor de squat', sets: 3, target: '4–6', type: 'strength' },
-        { key: 'biceps', group: 'ACCESSOIRE', name: 'Biceps', sets: 2, target: '10–15', type: 'strength' },
-        { key: 'calf_pull', group: 'ONDERHOUD', name: 'Kuit', sets: 3, target: '10–15', type: 'strength' }
-      ]
-    },
     zo: {
-      key: 'zo', label: 'ZO', title: 'Herstel — max 45 min, RPE ≤ 4', rest: true,
+      key: 'zo', label: 'ZO', title: 'Basketbal 2 — schot & licht spel', sub: 'max 60 min · RPE ≤ 6',
+      erector: 'LAAG', power: 'Licht', compound: 'Vrije worpen',
+      warn: 'Bewust licht: je komt van een zware zaterdag en maandag til je weer. Schot en gevoel, geen wedstrijdtempo, geen maximale sprongen.',
       items: [
-        { key: 'zone2_zo', group: 'OPTIONEEL', name: 'Zone 2 of wandelen', cue: 'Rustig. Je moet erna frisser zijn dan ervoor', target: '30–45 min', type: 'check' },
-        { key: 'skill_work_zo', group: 'OPTIONEEL', name: 'Casual shooting', cue: 'Schieten mag. Géén sprints, géén maximale sprongen, géén agility', type: 'check' },
-        { key: 'mobility_zo', group: 'OPTIONEEL', name: 'Mobility', cue: 'Rustig doorbewegen wat stijf voelt', type: 'check' }
+        { key: 'free_throws', group: 'SCHOT', name: 'Vrije worpen — 5 × 10', cue: 'Tel ze en noteer het aantal. Zelfde aanloop elke worp: zelfde dribbels, zelfde pauze, zelfde kniebuiging. Ritme is hier het doel, niet het aantal', type: 'check' },
+        { key: 'skill_work_zo', group: 'SPEL', name: 'Casual shooting', cue: 'Schieten mag. Géén sprints, géén maximale sprongen, géén agility', type: 'check' },
+        { key: 'mobility_zo', group: 'HERSTEL', name: 'Mobility', cue: 'Rustig doorbewegen wat stijf voelt', type: 'check' }
       ]
     }
   },
 
-  // Tracking — meet of je écht atletischer wordt
   anchors: {
     strength: [
       { key: 'back_squat', label: 'Back squat' },
@@ -205,16 +203,16 @@ window.PROGRAM = {
   },
 
   volumeCheck: {
-    title: 'Volume-check', sub: 'Bewust lager dan een bodybuildingschema — die ruimte gaat naar sprint, sprong en agility.',
+    title: 'Volume-check', sub: 'Basketbal is nu het skelet: 3 vaste balmomenten per week. Het tilwerk is teruggebracht naar 3 dagen — kracht is het middel, niet het doel.',
     rows: [
-      { name: 'Rug', sets: '~14 (di + za)' },
-      { name: 'Hamstrings', sets: '~9 (ma · do · za)' },
+      { name: 'Basketbal', sets: '3 vast (wo eigen · do team · zo licht)' },
+      { name: 'Tildagen', sets: '3 (ma · di · za) + vr optioneel' },
+      { name: 'Rug', sets: '~10 (di + za)' },
+      { name: 'Hamstrings', sets: '~6 (ma · za) + vr optioneel' },
       { name: 'Quads', sets: '~7 + sprongwerk' },
       { name: 'Borst', sets: '~9 (di)' },
-      { name: 'Schouders', sets: '~5' },
-      { name: 'Armen', sets: '~4' },
-      { name: 'Sprongcontacten', sets: '~68 p/w (ma 14 · wo 12 · do 42)' },
-      { name: 'Sprint/agility', sets: '3 dagen (wo · vr + wedstrijd)' }
+      { name: 'Sprongcontacten', sets: '~56 p/w (ma 14 · wo 6 · za 36)' },
+      { name: 'Rustdag', sets: 'vrijdag — standaard leeg' }
     ]
   }
 };
