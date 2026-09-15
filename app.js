@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '31 · 28-08-2026';
+  var APP_VERSION = '33 · 15-09-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -133,26 +133,51 @@
     updateDayProgress();
   }
 
-  // live voortgang in de dag-header ("X sets gelogd · Y/Z onderdelen klaar")
-  function updateDayProgress() {
-    var elP = $('#dayProgress');
-    if (!elP) return;
-    var day = P.days[UI.dayKey];
-    if (!day || day.rest) return;
-    var sess = getSession(UI.date, UI.dayKey, false);
-    var setsLogged = 0, itemsDone = 0, total = day.items.length;
+  // Voortgang van een dag: sets/onderdelen gelogd t.o.v. wat er gepland staat.
+  // Check-items tellen als één "eenheid", krachtoefeningen als hun aantal sets.
+  function dagVoortgang(date, dayKey) {
+    var day = P.days[dayKey];
+    var out = { setsLogged: 0, itemsDone: 0, total: 0, gepland: 0, gedaan: 0, pct: 0 };
+    if (!day || !day.items) return out;
+    var sess = getSession(date, dayKey, false);
+    out.total = day.items.length;
     day.items.forEach(function (it) {
       var l = sess && sess.items && sess.items[it.key];
-      if (!l) return;
       if (it.type === 'strength') {
-        (l.sets || []).forEach(function (st) { if (num(st.kg) != null || num(st.reps) != null || st.done) setsLogged++; });
-        var prog = (l.sets || []).slice(0, it.sets || 0);
-        if (prog.length && prog.every(function (st) { return st.done; })) itemsDone++;
-      } else if (l.done) {
-        itemsDone++;
+        var n = it.sets || 0;
+        out.gepland += n;
+        var arr = (l && l.sets) || [];
+        arr.forEach(function (st) { if (num(st.kg) != null || num(st.reps) != null || st.done) out.setsLogged++; });
+        var prog = arr.slice(0, n);
+        prog.forEach(function (st) { if (num(st.kg) != null || num(st.reps) != null || st.done) out.gedaan++; });
+        if (n && prog.length === n && prog.every(function (st) { return st.done; })) out.itemsDone++;
+      } else {
+        out.gepland += 1;
+        if (l && l.done) { out.gedaan += 1; out.itemsDone++; }
       }
     });
-    elP.textContent = (setsLogged || itemsDone) ? setsLogged + ' sets gelogd · ' + itemsDone + '/' + total + ' onderdelen klaar' : '';
+    out.pct = out.gepland ? Math.min(100, Math.round(100 * out.gedaan / out.gepland)) : 0;
+    return out;
+  }
+  var RING_C = 2 * Math.PI * 31; // straal 31 in de 72×72 viewBox van de voortgangsring
+
+  // live voortgang in de hero-kaart (ring + regel), zonder de hele view te hertekenen
+  function updateDayProgress() {
+    var elP = $('#dayProgress');
+    var day = P.days[UI.dayKey];
+    if (!day || day.rest) return;
+    var v = dagVoortgang(UI.date, UI.dayKey);
+    if (elP) {
+      elP.textContent = (v.setsLogged || v.itemsDone)
+        ? v.setsLogged + ' sets gelogd · ' + v.itemsDone + '/' + v.total + ' onderdelen klaar'
+        : 'Nog niets gelogd vandaag';
+    }
+    var pct = $('#dayPct'); if (pct) pct.textContent = v.pct + '%';
+    var ring = $('#dayRing');
+    if (ring) {
+      ring.setAttribute('stroke-dasharray', RING_C.toFixed(1));
+      ring.setAttribute('stroke-dashoffset', (RING_C * (1 - v.pct / 100)).toFixed(1));
+    }
   }
   function markMetricDirty(k) {
     if (S.dirty.metrics.indexOf(k) < 0) S.dirty.metrics.push(k);
@@ -336,14 +361,18 @@
     });
     return best;
   }
-  function setsSummary(it) {
+  // unit = de eenheid van het eerste invulveld ('kg' standaard, 'cm' bij de CMJ-hoogte)
+  function setsSummary(it, unit) {
+    var u = unit || 'kg';
     return (it.sets || [])
       .filter(function (s) { return num(s.kg) != null || num(s.reps) != null; })
       .map(function (s) {
         var kg = num(s.kg), reps = num(s.reps);
         var r = reps == null ? '?' : fmtNum(reps);
         // bodyweight (geen of 0 kg) → alleen de reps, geen lelijke "0×6"
-        return (kg == null || kg === 0) ? r : fmtNum(kg) + '×' + r;
+        if (kg == null || kg === 0) return r;
+        if (u !== 'kg') return fmtNum(kg) + ' ' + u + ' × ' + r;
+        return fmtNum(kg) + '×' + r;
       })
       .join(' · ');
   }
@@ -361,8 +390,32 @@
     return null;
   }
 
+  /* FR-002 — power, worpen en sprongen krijgen NOOIT een kg-advies.
+     Daar is de intentie de progressie: hoger, harder, korter op de grond.
+     Double progression op een med ball gaf "9 × 3 → nu 11,5 kg"; dat is onzin. */
+  var POWER_BAL = { medball_rot: 1, medball_chest: 1 };
+  var POWER_REACTIEF = { pogos: 1, lateral_bound: 1 };
+  var POWER_WOORD = { broad_jump_plyo: 'verder' }; // broad jump meet je in afstand, niet in hoogte
+
+  function powerAdvies(item, prevItem) {
+    if (POWER_BAL[item.key]) return { kg: null, power: true, tekst: 'Zelfde bal, harder — snelheid is de progressie' };
+    if (POWER_REACTIEF[item.key]) return { kg: null, power: true, tekst: 'Korter grondcontact, niet meer reps' };
+    var best = null;
+    ((prevItem && prevItem.sets) || []).forEach(function (s) {
+      var v = num(s.kg);
+      if (v != null && v > 0 && (best == null || v > best)) best = v;
+    });
+    if (best != null) {
+      var u = item.unit ? ' ' + item.unit : '';
+      return { kg: null, power: true, tekst: 'Zelfde sets, mik ' + (POWER_WOORD[item.key] || 'hoger') + ' dan ' + fmtNum(best) + u };
+    }
+    return { kg: null, power: true, tekst: 'Elke sprong maximaal, volledige rust' };
+  }
+
   function progressieAdvies(item, prevItem) {
-    if (!prevItem || item.type !== 'strength') return null;
+    if (item.type !== 'strength') return null;
+    if (item.mode === 'power') return powerAdvies(item, prevItem);
+    if (!prevItem) return null;
     var nWerk = item.sets || 0;
     // 0 reps = set niet uitgevoerd (bv. afgebroken) → telt niet als prestatie
     var werksets = (prevItem.sets || []).slice(0, nWerk).filter(function (s) {
@@ -418,6 +471,11 @@
     });
     return found;
   }
+  // eenheid van het eerste invulveld van een oefening ('kg' tenzij het programma iets anders zegt)
+  function unitForKey(exKey) {
+    var f = findProgramItem(exKey);
+    return (f && f.item.unit) || 'kg';
+  }
   function allStrengthItems() {
     var out = [];
     P.weekOrder.forEach(function (dk) {
@@ -430,6 +488,7 @@
   // Wekelijkse top set per anker (zwaarste kg; bij gelijk: meeste reps)
   function weeklyTopSets(exKey) {
     var byWeek = {};
+    var isCm = unitForKey(exKey) === 'cm';
     Object.keys(S.sessions).forEach(function (k) {
       var s = S.sessions[k];
       var it = s.items && s.items[exKey];
@@ -437,6 +496,9 @@
       (it.sets || []).forEach(function (st) {
         var kg = num(st.kg), reps = num(st.reps);
         if (reps == null) return;
+        // cm-oefening (CMJ): een set zonder hoogte is geen meting. Als 0 meetellen
+        // zou oude sessies (reps, geen hoogte) als "0 cm gesprongen" plotten.
+        if (kg == null && isCm) return;
         if (kg == null) kg = 0; // bodyweight (bv. pullups) telt gewoon mee
         var wp = isoWeekParts(s.date);
         var wkKey = wp.year + '-' + wp.week; // jaar erbij: wk 30 van 2026 ≠ wk 30 van 2027
@@ -657,11 +719,95 @@
       '<button class="fnav-next">' + (last ? 'Workout afronden ✓' : 'Volgende ›') + '</button></div>');
     nav.querySelector('.fnav-prev').addEventListener('click', function () { if (UI.focusIdx > 0) { UI.focusIdx--; renderFocus(); } });
     nav.querySelector('.fnav-next').addEventListener('click', function () {
-      if (last) exitFocus();
+      if (last) renderAfsluiting();
       else { UI.focusIdx++; renderFocus(); }
     });
     o.appendChild(nav);
 
+    document.body.appendChild(o);
+    o.scrollTop = 0;
+  }
+
+  /* FR-009 — afsluitscherm: wat heb je gelogd, wat was beter dan vorige keer,
+     en wat verandert er de volgende keer. Het advies is exact dezelfde functie als
+     op de kaart zelf, maar dan met de sessie van vandaag als "vorige keer". */
+  function renderAfsluiting() {
+    var date = UI.date, dayKey = UI.dayKey, day = P.days[dayKey];
+    var skey = sessKey(date, dayKey);
+    var sess = getSession(date, dayKey, false);
+    stopRest();
+
+    var setsGelogd = 0, onderdelen = 0, prs = [], volgende = [];
+    (day.items || []).forEach(function (it) {
+      var l = sess && sess.items && sess.items[it.key];
+      if (!l) return;
+      var unit = it.unit || 'kg';
+      if (it.type !== 'strength') { if (l.done) onderdelen++; return; }
+
+      var top = null, topReps = null, n = 0;
+      (l.sets || []).forEach(function (st) {
+        var kg = num(st.kg), reps = num(st.reps);
+        if (kg == null && reps == null && !st.done) return;
+        n++;
+        if (kg != null && (top == null || kg > top)) top = kg;
+        if (reps != null && (topReps == null || reps > topReps)) topReps = reps;
+      });
+      if (!n) return;
+      setsGelogd += n;
+
+      var prev = prevSessionFor(it.key, date, skey);
+      if (prev) {
+        var pTop = null, pReps = null;
+        (prev.items[it.key].sets || []).forEach(function (st) {
+          var kg = num(st.kg), reps = num(st.reps);
+          if (kg != null && (pTop == null || kg > pTop)) pTop = kg;
+          if (reps != null && (pReps == null || reps > pReps)) pReps = reps;
+        });
+        if (top != null && top > 0 && pTop != null && top > pTop) {
+          prs.push(it.name + ': ' + fmtNum(top) + ' ' + unit + ' (was ' + fmtNum(pTop) + ')');
+        } else if ((top == null || top === 0) && topReps != null && pReps != null && topReps > pReps) {
+          prs.push(it.name + ': ' + fmtNum(topReps) + ' reps (was ' + fmtNum(pReps) + ')');
+        }
+      }
+      var adv = progressieAdvies(it, l);
+      if (adv) volgende.push({ naam: it.name, tekst: adv.tekst });
+    });
+
+    var old = $('#focusOverlay'); if (old) old.remove();
+    document.body.classList.add('focus-open');
+    var o = el('<div id="focusOverlay" class="focus focus-end"></div>');
+    var body = el('<div class="focus-body end-body"></div>');
+
+    body.appendChild(el('<div class="end-kop">Sessie afgerond</div>'));
+    body.appendChild(el('<div class="end-sub">' + esc(fmtDate(date) + ' — ' + day.title) + '</div>'));
+    body.appendChild(el('<div class="end-stats">' +
+      '<div class="end-stat"><b>' + setsGelogd + '</b><span>sets gelogd</span></div>' +
+      '<div class="end-stat"><b>' + onderdelen + '</b><span>onderdelen af</span></div>' +
+      '<div class="end-stat"><b>' + prs.length + '</b><span>persoonlijk record</span></div>' +
+      '</div>'));
+
+    var prCard = el('<div class="card end-card"><div class="end-h2">Beter dan vorige keer</div></div>');
+    if (prs.length) {
+      prs.forEach(function (p) { prCard.appendChild(el('<div class="end-pr">▲ ' + esc(p) + '</div>')); });
+    } else {
+      prCard.appendChild(el('<div class="tiny">Geen zwaardere set dan de vorige sessie. Dat hoeft ook niet elke week.</div>'));
+    }
+    body.appendChild(prCard);
+
+    var nxt = el('<div class="card end-card"><div class="end-h2">Volgende keer</div></div>');
+    if (volgende.length) {
+      volgende.forEach(function (v) {
+        nxt.appendChild(el('<div class="end-next"><b>' + esc(v.naam) + '</b><span>' + esc(v.tekst) + '</span></div>'));
+      });
+    } else {
+      nxt.appendChild(el('<div class="tiny">Log je sets, dan staat hier de volgende keer wat je moet doen.</div>'));
+    }
+    body.appendChild(nxt);
+    o.appendChild(body);
+
+    var nav = el('<div class="focus-nav"><button class="fnav-next end-close">Sluiten</button></div>');
+    nav.querySelector('.end-close').addEventListener('click', exitFocus);
+    o.appendChild(nav);
     document.body.appendChild(o);
     o.scrollTop = 0;
   }
@@ -671,12 +817,20 @@
      Bewust één strook, geen dashboard: Kaj wil dit niet bijhouden, alleen weten
      of het springwerk vandaag door kan. De sync draait 's ochtends 08:00, dus
      val terug op de laatste dag mét data en zeg er dan bij van wanneer die is. */
+  /* FR-003 — de sync maakt 's ochtends soms al een rij aan vóórdat het horloge heeft
+     gesynct. Die lege rij van vandaag mag de strook niet op "—" zetten: zoek de laatste
+     rij ≤ datum die écht een readiness, slaap óf rust-HR heeft. "vannacht" staat er
+     alleen als die rij van de bekeken dag zelf is. */
+  function garminRijHeeftData(r) {
+    return !!r && (r.readiness_score != null || r.sleep_hours != null || r.resting_hr != null);
+  }
   function garminVoor(date) {
-    if (S.garmin[date]) return { row: S.garmin[date], date: date, vers: true };
     var dagen = Object.keys(S.garmin).filter(function (d) { return d <= date; }).sort();
-    if (!dagen.length) return null;
-    var laatste = dagen[dagen.length - 1];
-    return { row: S.garmin[laatste], date: laatste, vers: false };
+    for (var i = dagen.length - 1; i >= 0; i--) {
+      var r = S.garmin[dagen[i]];
+      if (garminRijHeeftData(r)) return { row: r, date: dagen[i], vers: dagen[i] === date };
+    }
+    return null;
   }
 
   // readiness stuurt alleen het explosieve werk aan; kracht blijft bijna altijd staan
@@ -708,8 +862,8 @@
 
     var tekort = Math.round(doel[0] - hoog);
     if (TEMPO_DAGEN[dayKey]) {
-      return { kleur: 'accent', tekst: 'Tempo-slot vandaag: 5 × 3 min op de fiets of roeier, hartslag 165–178, 2 min rustig ertussen. ' +
-        'Dit is het enige bakje dat leeg staat (' + tekort + ' tekort) — extra basketbal vult het niet, dat telt als zone 2.' };
+      return { kleur: 'accent', tekst: 'Doe het tempo-blok onderaan deze dag: dit is het enige bakje dat leeg staat (' +
+        tekort + ' tekort) — extra basketbal vult het niet, dat telt als zone 2.' };
     }
     return { kleur: 'muted', tekst: 'Tempowerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag — dat hoort op dinsdag of zaterdag.' };
   }
@@ -718,9 +872,10 @@
     var g = garminVoor(date);
     if (!g) return null;
     var r = g.row;
+    // cijfer bovenaan, label eronder — het getal is waar je naar kijkt
     var cel = function (label, waarde, sub) {
-      return '<div class="hcel"><div class="hlab">' + esc(label) + '</div>' +
-        '<div class="hval">' + esc(waarde == null ? '–' : waarde) + '</div>' +
+      return '<div class="hcel"><div class="hval">' + esc(waarde == null ? '–' : waarde) + '</div>' +
+        '<div class="hlab">' + esc(label) + '</div>' +
         (sub ? '<div class="hsub">' + esc(sub) + '</div>' : '') + '</div>';
     };
     // PostgREST levert numeric-kolommen als string terug — altijd zelf omzetten
@@ -749,6 +904,66 @@
     return el(html);
   }
 
+  /* FR-005 — Nulmeting-kaart. De vijf prestatie-ankers zijn nog nooit gemeten en het
+     gewicht verloopt; die herinnering hoort bovenaan Vandaag te staan, niet weggestopt
+     in Ankers. Schrijft via dezelfde metrics-opslag als de Ankers-tab (key: datum|metric). */
+  function metricLaatste(key) {
+    var s = metricSeries(key);
+    return s.length ? s[s.length - 1] : null;
+  }
+  function dagenGeleden(dateStr) {
+    var a = new Date(todayStr() + 'T12:00:00').getTime();
+    var b = new Date(dateStr + 'T12:00:00').getTime();
+    return Math.round((a - b) / 864e5);
+  }
+  function nulmetingKaart() {
+    var mist = P.anchors.athletic.filter(function (a) { return !metricLaatste(a.key); });
+    var w = metricLaatste('weight');
+    var weegOud = !w || dagenGeleden(w.date) > 7;
+    if (!mist.length && !weegOud) return null;
+
+    var titel = mist.length ? 'Nulmeting ontbreekt' : 'Weeg je';
+    var sub = mist.length
+      ? (mist.length + ' van de 5 ankers ' + (mist.length === 1 ? 'is' : 'zijn') + ' nog nooit gemeten. Vul in wat je hebt — de rest kan later.')
+      : (w ? 'Je laatste weging is ' + dagenGeleden(w.date) + ' dagen oud.' : 'Nog nooit gewogen in de app.');
+
+    var card = el('<div class="card nulmeting">' +
+      '<div class="nm-kop">' + esc(titel) + '</div>' +
+      '<div class="tiny nm-sub">' + esc(sub) + '</div>' +
+      '<div class="nm-rows"></div></div>');
+    var rowsEl = card.querySelector('.nm-rows');
+    var velden = [];
+
+    function veld(label, key, unit, hint) {
+      var r = el('<label class="nm-row">' +
+        '<span class="nm-lab">' + esc(label) + (hint ? '<small>' + esc(hint) + '</small>' : '') + '</span>' +
+        '<input type="text" inputmode="decimal" placeholder="' + esc(unit) + '" aria-label="' + esc(label + ' in ' + unit) + '">' +
+        '<span class="nm-unit">' + esc(unit) + '</span></label>');
+      velden.push({ key: key, input: r.querySelector('input') });
+      rowsEl.appendChild(r);
+    }
+    mist.forEach(function (a) { veld(a.label, a.key, a.unit, a.hint); });
+    if (weegOud) veld('Weeg je', 'weight', 'kg', w ? 'laatste: ' + fmtDate(w.date) : 'nog nooit gelogd');
+
+    var btn = el('<button class="btn nm-save">Opslaan</button>');
+    btn.addEventListener('click', function () {
+      var d = todayStr(), n = 0;
+      velden.forEach(function (v) {
+        var val = num(v.input.value);
+        if (val == null) return;
+        var k = d + '|' + v.key;
+        S.metrics[k] = { date: d, key: v.key, value: val, note: '', updatedAt: nowIso() };
+        markMetricDirty(k);
+        n++;
+      });
+      if (!n) { toast('Vul minstens één waarde in'); return; }
+      toast(n === 1 ? '1 meting gelogd' : n + ' metingen gelogd');
+      renderVandaag();
+    });
+    card.appendChild(btn);
+    return card;
+  }
+
   function renderVandaag() {
     var root = $('#view');
     clear(root);
@@ -773,6 +988,9 @@
       chips.appendChild(c);
     });
     root.appendChild(chips);
+
+    var nulmeting = nulmetingKaart();
+    if (nulmeting) root.appendChild(nulmeting);
 
     var herstel = herstelKaart(date);
     if (herstel) root.appendChild(herstel);
@@ -810,21 +1028,31 @@
 
     var sess = getSession(date, dayKey, false);
 
-    var head = el('<div class="card">' +
-      '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">' +
-      '<div><div class="h1">' + esc(day.title) + '</div><div class="sub">' + esc(day.sub || '') + '</div></div>' +
-      '<span class="badge badge-erector-' + esc(day.erector.toLowerCase().replace(/\s+/g, '-')) + '">erector ' + esc(day.erector) + '</span>' +
+    // hero-dagkaart: voortgangsring links (sets gelogd / gepland), titel en status rechts
+    var head = el('<div class="card hero">' +
+      '<div class="hero-top">' +
+      '<div class="hero-ring">' +
+      '<svg viewBox="0 0 72 72" aria-hidden="true">' +
+      '<defs><linearGradient id="ringgrad" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0%" stop-color="#35e0ff"/><stop offset="100%" stop-color="#a3ff4e"/>' +
+      '</linearGradient></defs>' +
+      '<circle class="ring-bg" cx="36" cy="36" r="31"/>' +
+      '<circle class="ring-fg" id="dayRing" cx="36" cy="36" r="31" stroke-dasharray="' + RING_C.toFixed(1) + '" stroke-dashoffset="' + RING_C.toFixed(1) + '"/>' +
+      '</svg>' +
+      '<div class="ring-txt"><span class="ring-pct" id="dayPct">0%</span><span class="ring-lbl">klaar</span></div>' +
       '</div>' +
-      '<div class="tiny" style="margin-top:7px">Power: ' + esc(day.power) + '</div>' +
-      '<div class="tiny" id="dayProgress" style="margin-top:5px;color:var(--good)"></div>' +
+      '<div class="hero-main">' +
+      '<div class="hero-title">' + esc(day.title) + '</div>' +
+      '<div class="hero-sub">' + esc(day.sub || '') + '</div>' +
+      '<div class="pillrow">' +
+      '<span class="badge badge-erector-' + esc(day.erector.toLowerCase().replace(/\s+/g, '-')) + '">erector ' + esc(day.erector) + '</span>' +
+      '<span class="badge badge-power">' + esc(day.power) + '</span>' +
+      '</div>' +
+      '<div class="tiny hero-prog" id="dayProgress"></div>' +
+      '</div></div>' +
       (day.warn ? '<div class="callout"><span class="ic">⚠</span><span>' + esc(day.warn) + '</span></div>' : '') +
       '</div>');
     root.appendChild(head);
-
-    // workout-modus: oefening-voor-oefening met grote knoppen + rust-timer
-    var startBtn = el('<button class="btn btn-focus">▶  Start workout-modus</button>');
-    startBtn.addEventListener('click', function () { enterFocus(0); });
-    root.appendChild(startBtn);
 
     // atleet-fase: inklapbaar zodat de compound-kern direct in beeld staat
     var skeyOpener = sessKey(date, dayKey);
@@ -906,36 +1134,84 @@
       markSessionDirty(date, dayKey);
     });
     root.appendChild(noteCard);
+
+    // primaire actie: plakt onderaan het scherm boven de tabbar, verdwijnt in workout-modus
+    var startBtn = el('<button class="cta-start">▶ Start workout-modus</button>');
+    startBtn.addEventListener('click', function () { enterFocus(0); });
+    root.appendChild(startBtn);
+
     updateDayProgress();
+  }
+
+  /* Naam-doel-cue-blok. `doel` zegt waaróm, `cue` wat je nu doet. De cue is afgekapt
+     op 3 regels met een "meer…"-knop; zo staat het eerste invulveld altijd binnen bereik. */
+  function cueBlok(item) {
+    if (!item.doel && !item.cue) return null;
+    var wrap = el('<div class="ex-text">' +
+      (item.doel ? '<div class="ex-doel">' + esc(item.doel) + '</div>' : '') +
+      (item.cue ? '<div class="ex-cue clamp">' + esc(item.cue) + '</div>' : '') +
+      '</div>');
+    var cue = wrap.querySelector('.ex-cue');
+    if (cue) {
+      var more = el('<button class="cue-more">meer…</button>');
+      more.hidden = true; // pas tonen als de tekst echt niet past
+      more.addEventListener('click', function () {
+        var open = cue.classList.toggle('open');
+        cue.classList.toggle('clamp', !open);
+        more.textContent = open ? 'minder' : 'meer…';
+      });
+      wrap.appendChild(more);
+      // meerdere keren meten: vlak na het tekenen zijn de fontmetrics soms nog niet klaar
+      // en lijkt een cue van 2 regels er 4 — de knop mag dan weer verdwijnen.
+      function meet() {
+        if (!cue.classList.contains('clamp')) return; // uitgeklapt door de gebruiker
+        more.hidden = !(cue.scrollHeight - cue.clientHeight > 2);
+      }
+      requestAnimationFrame(meet);
+      setTimeout(meet, 350);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(meet).catch(function () {});
+    }
+    return wrap;
+  }
+
+  // reps-voorstel uit het programma-target, maar nooit uit een afstand/tijd-target
+  function repsVoorstel(item) {
+    var t = String(item.target || '');
+    if (!t || /\bm\b|sec|min/i.test(t)) return '';
+    var r = parseTarget(t);
+    return r ? String(r.min) : '';
   }
 
   function strengthCard(date, dayKey, item) {
     var skey = sessKey(date, dayKey);
     var sess = getSession(date, dayKey, false);
     var logged = sess && sess.items && sess.items[item.key];
+    var unit = item.unit || 'kg'; // CMJ logt centimeters in plaats van kilo's
 
-    var card = el('<div class="card">' +
-      '<div class="ex-head"><div><div class="ex-name">' + esc(item.name) + '</div>' +
-      (item.cue ? '<div class="ex-cue">' + esc(item.cue) + '</div>' : '') + '</div>' +
-      '<span class="badge badge-target">' + item.sets + ' × ' + (item.target ? esc(item.target) : 'vrij') + '</span></div>' +
+    var card = el('<div class="card ex">' +
+      '<div class="ex-head"><div class="ex-name">' + esc(item.name) + '</div>' +
+      '<span class="badge badge-target">' + esc(String(item.sets || '')) + ' × ' + (item.target ? esc(item.target) : 'vrij') + '</span></div>' +
       '</div>');
+    var tekst = cueBlok(item);
+    if (tekst) card.appendChild(tekst);
 
     var vrs = videoRegel(item);
     if (vrs) card.appendChild(vrs);
 
     var prev = prevSessionFor(item.key, date, skey);
-    var advies = null;
-    if (prev) {
-      var summary = setsSummary(prev.items[item.key]);
+    var prevItem = prev ? prev.items[item.key] : null;
+    if (prevItem) {
+      var summary = setsSummary(prevItem, unit);
       if (summary) card.appendChild(el('<div class="ex-prev">Vorige (' + esc(fmtDate(prev.date)) + '): <b>' + esc(summary) + '</b>' +
-        (prev.items[item.key].note ? ' · „' + esc(prev.items[item.key].note) + '”' : '') + '</div>'));
-      // alleen adviseren zolang je vandaag nog niets gelogd hebt
-      var alGelogd = logged && (logged.sets || []).some(function (s) { return num(s.kg) != null || num(s.reps) != null; });
-      if (!alGelogd) {
-        advies = progressieAdvies(item, prev.items[item.key]);
-        if (advies) card.appendChild(el('<div class="ex-next' + (advies.op ? ' ex-next-up' : '') + '">' +
-          (advies.op ? '▲ ' : '→ ') + esc(advies.tekst) + '</div>'));
-      }
+        (prevItem.note ? ' · „' + esc(prevItem.note) + '”' : '') + '</div>'));
+    }
+    // alleen adviseren zolang je vandaag nog niets gelogd hebt
+    var alGelogd = logged && (logged.sets || []).some(function (s) { return num(s.kg) != null || num(s.reps) != null; });
+    var advies = null;
+    if (!alGelogd) {
+      advies = progressieAdvies(item, prevItem);
+      if (advies) card.appendChild(el('<div class="ex-next' + (advies.op ? ' ex-next-up' : '') + (advies.power ? ' ex-next-power' : '') + '">' +
+        (advies.op ? '▲ ' : '→ ') + esc(advies.tekst) + '</div>'));
     }
 
     var rows = el('<div class="setrows"></div>');
@@ -943,30 +1219,64 @@
 
     var nSets = Math.max(item.sets || 0, logged && logged.sets ? logged.sets.length : 0);
     function prevSet(i) {
-      if (!prev) return null;
-      var ps = prev.items[item.key].sets || [];
+      if (!prevItem) return null;
+      var ps = prevItem.sets || [];
       return ps[i] && (ps[i].kg !== '' || ps[i].reps !== '') ? ps[i] : null;
     }
 
-    // wat de app voorstelt in het kg-veld: het advies, anders wat je vorige keer deed
+    // Wat de app voorstelt in het eerste veld: het advies, anders wat je vorige keer deed.
+    // Bij een andere eenheid dan kg (hoogte) stelt de app NIETS voor — die meet je vers,
+    // anders log je stilzwijgend de hoogte van vorige week.
     function suggestieKg(ph) {
+      if (unit !== 'kg') return '';
       if (advies && advies.kg != null) return fmtNum(advies.kg);
-      if (ph && ph.kg !== '') return fmtNum(num(ph.kg));
+      if (ph && ph.kg !== '' && ph.kg != null) return fmtNum(num(ph.kg));
       return '';
     }
+    function suggestieReps(ph) {
+      if (ph && ph.reps !== '' && ph.reps != null) return fmtNum(num(ph.reps));
+      return repsVoorstel(item);
+    }
+    function voorstelLabel(ph) {
+      var fk = suggestieKg(ph), fr = suggestieReps(ph);
+      if (fk && fr) return '✓ ' + fk + ' × ' + fr;
+      if (fk) return '✓ ' + fk;
+      if (fr) return '✓ ' + fr;
+      return '✓';
+    }
+    // FR-001: de ✓-knop laat zien wát hij logt. De kolombreedte zetten we één keer vast
+    // op het langste voorstel, zodat de rijen niet verspringen zodra je er een afvinkt.
+    var maxChars = 1;
+    for (var j = 0; j < nSets; j++) {
+      var lj = voorstelLabel(prevSet(j));
+      if (lj.length > maxChars) maxChars = lj.length;
+    }
+    rows.style.setProperty('--donew', Math.round(Math.max(56, 18 + maxChars * 7.4)) + 'px');
 
     function setRow(i) {
       var st = (logged && logged.sets && logged.sets[i]) || { kg: '', reps: '', done: false };
       var ph = prevSet(i);
+      var valPh = unit === 'kg' ? (suggestieKg(ph) || 'kg') : unit;
+      var valAria = (unit === 'kg' ? 'Gewicht set ' : 'Hoogte set ') + (i + 1) + ' in ' + unit;
       var row = el('<div class="setrow">' +
         '<span class="setnum">' + (i + 1) + '</span>' +
-        '<input type="text" inputmode="decimal" placeholder="' + esc(suggestieKg(ph) || 'kg') + '" aria-label="Gewicht set ' + (i + 1) + '">' +
-        '<input type="text" inputmode="numeric" placeholder="' + esc(ph && ph.reps !== '' ? fmtNum(num(ph.reps)) : 'reps') + '" aria-label="Reps set ' + (i + 1) + '">' +
-        '<button class="setdone' + (st.done ? ' on' : '') + '" aria-label="Set ' + (i + 1) + ' klaar">✓</button>' +
+        '<input class="in-val" type="text" inputmode="decimal" placeholder="' + esc(valPh) + '" aria-label="' + esc(valAria) + '">' +
+        '<input class="in-reps" type="text" inputmode="numeric" placeholder="' + esc(suggestieReps(ph) || 'reps') + '" aria-label="Reps set ' + (i + 1) + '">' +
+        '<button class="setdone' + (st.done ? ' on' : '') + '" aria-label="Set ' + (i + 1) + ' loggen">✓</button>' +
         '</div>');
-      var kgIn = row.children[1], repsIn = row.children[2], doneBtn = row.children[3];
+      var kgIn = row.querySelector('.in-val'), repsIn = row.querySelector('.in-reps'), doneBtn = row.querySelector('.setdone');
       kgIn.value = st.kg === '' ? '' : fmtNum(num(st.kg));
       repsIn.value = st.reps === '' ? '' : fmtNum(num(st.reps));
+
+      function paintBtn() {
+        var aan = doneBtn.classList.contains('on');
+        var leeg = kgIn.value === '' && repsIn.value === '';
+        var lab = (!aan && leeg) ? voorstelLabel(ph) : '✓';
+        doneBtn.textContent = lab;
+        doneBtn.classList.toggle('has-sug', lab.length > 1);
+        row.classList.toggle('row-done', aan);
+      }
+      paintBtn();
 
       function write(field, value) {
         var s2 = getSession(date, dayKey, true);
@@ -976,23 +1286,26 @@
         logged = it2;
         markSessionDirty(date, dayKey);
       }
-      kgIn.addEventListener('input', function () { write('kg', kgIn.value.trim()); });
-      repsIn.addEventListener('input', function () { write('reps', repsIn.value.trim()); });
+      kgIn.addEventListener('input', function () { write('kg', kgIn.value.trim()); paintBtn(); });
+      repsIn.addEventListener('input', function () { write('reps', repsIn.value.trim()); paintBtn(); });
       doneBtn.addEventListener('click', function () {
         var turningOn = !doneBtn.classList.contains('on');
-        // snelle log: leeg veld → neem over wat de app voorstelt (advies, anders vorige keer)
-        var fillKg = suggestieKg(ph);
+        // snelle log: leeg veld → neem over wat de knop aankondigde
+        var fillKg = suggestieKg(ph), fillReps = suggestieReps(ph);
         if (turningOn && kgIn.value === '' && fillKg) { kgIn.value = fillKg; write('kg', kgIn.value); }
-        if (turningOn && repsIn.value === '' && ph && ph.reps !== '') { repsIn.value = fmtNum(num(ph.reps)); write('reps', repsIn.value); }
+        if (turningOn && repsIn.value === '' && fillReps) { repsIn.value = fillReps; write('reps', repsIn.value); }
         write('done', turningOn);
         doneBtn.classList.toggle('on', turningOn);
+        doneBtn.classList.add('pop');
+        setTimeout(function () { doneBtn.classList.remove('pop'); }, 160);
+        paintBtn();
         refreshDoneState();
         if (turningOn) onSetCompleted(); // rust-timer start automatisch (indien aan)
       });
       return row;
     }
 
-    // groene rand zodra alle programma-sets afgevinkt zijn — voortgang in één oogopslag
+    // lime rand zodra alle programma-sets afgevinkt zijn — voortgang in één oogopslag
     function refreshDoneState() {
       var prog = logged && logged.sets ? logged.sets.slice(0, item.sets || 0) : [];
       card.classList.toggle('ex-done', prog.length > 0 && prog.every(function (st) { return st.done; }));
@@ -1067,15 +1380,19 @@
     var logged = sess && sess.items && sess.items[item.key];
     var on = !!(logged && logged.done);
 
-    var card = el('<div class="card"><div class="checkline">' +
+    var card = el('<div class="card ex check"><div class="checkline">' +
       '<button class="bigcheck' + (on ? ' on' : '') + '" aria-label="' + esc(item.name) + ' klaar">✓</button>' +
-      '<div style="flex:1"><div class="ex-name">' + esc(item.name) + '</div>' +
-      (item.cue ? '<div class="ex-cue">' + esc(item.cue) + (item.target ? ' · ' + esc(item.target) : '') + '</div>' : (item.target ? '<div class="ex-cue">' + esc(item.target) + '</div>' : '')) +
+      '<div class="ex-main">' +
+      '<div class="ex-head"><div class="ex-name">' + esc(item.name) + '</div>' +
+      (item.target ? '<span class="badge badge-target">' + esc(item.target) + '</span>' : '') + '</div>' +
       '<textarea class="ex-note" rows="1" placeholder="Notitie (bv. afstand, tijd, gewicht)…"></textarea></div>' +
       '</div></div>');
+    var tav = card.querySelector('textarea');
+    var tekst = cueBlok(item);
+    if (tekst) tav.parentNode.insertBefore(tekst, tav);
     var vr = videoRegel(item);
     // vóór het notitieveld, zodat de cue en de techniek bij elkaar staan
-    if (vr) { var tav = card.querySelector('textarea'); tav.parentNode.insertBefore(vr, tav); }
+    if (vr) tav.parentNode.insertBefore(vr, tav);
 
     var btn = card.querySelector('.bigcheck');
     var ta = card.querySelector('textarea');
@@ -1100,40 +1417,66 @@
   }
 
   /* ---------------- View: Week ---------------- */
+  // datums van de lopende ISO-week (maandag t/m zondag) bij een gegeven dag
+  function weekDatums(vanDatum) {
+    var d = new Date(vanDatum + 'T12:00:00');
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // terug naar maandag
+    var out = {};
+    P.weekOrder.forEach(function (dk, i) {
+      var x = new Date(d.getTime());
+      x.setDate(d.getDate() + i);
+      out[dk] = x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
+    });
+    return out;
+  }
+  /* FR-008 — ✓ gedaan · – voorbij zonder data · ○ nog te doen · rustdag zegt "rust". */
+  function dagStatus(dk, datum, vandaag) {
+    var d = P.days[dk];
+    if (sessionHasData(getSession(datum, dk, false))) return { g: '✓', kl: 'st-done', txt: 'gedaan' };
+    if (d.rest) return { g: '–', kl: 'st-rest', txt: 'rust' };
+    if (datum < vandaag) return { g: '–', kl: 'st-miss', txt: 'niet gelogd' };
+    return { g: '○', kl: 'st-todo', txt: datum === vandaag ? 'vandaag' : 'gepland' };
+  }
+
   function renderWeek() {
     var root = $('#view');
     clear(root);
-    root.appendChild(el('<div class="section-title">De week</div>'));
-    var card = el('<div class="card"><div class="tiny" style="margin-bottom:8px">' + esc(P.weekRule) + '</div>' +
-      '<table class="weektable"><thead><tr><th>dag</th><th>focus</th><th>compound</th><th>power</th><th>erector</th></tr></thead><tbody></tbody></table>' +
-      '<div class="tiny" style="margin-top:8px">Tik een dag om te bekijken of in te vullen.</div></div>');
-    var tbody = card.querySelector('tbody');
+    var vandaag = todayStr();
+    var datums = weekDatums(vandaag);
+    var wp = isoWeekParts(vandaag);
+
+    root.appendChild(el('<div class="section-title">Week ' + wp.week + ' · deze week</div>'));
+    var card = el('<div class="card"><div class="weeklist"></div>' +
+      '<div class="tiny" style="margin-top:10px">Tik een dag om te bekijken of in te vullen.</div></div>');
+    var list = card.querySelector('.weeklist');
     P.weekOrder.forEach(function (dk) {
       var d = P.days[dk];
-      var tr;
-      if (d.rest) {
-        var restTxt = (d.items && d.items.length)
-          ? 'rust · optioneel: ' + d.items.map(function (i) { return i.name; }).join(', ')
-          : 'rust';
-        tr = el('<tr class="rest" data-day="' + esc(dk) + '"><td class="wd">' + esc(d.label) + '</td><td colspan="4" style="color:var(--muted)">' + esc(restTxt) + '</td></tr>');
-        tr.addEventListener('click', function () {
-          UI.dayKey = dk;
-          UI.view = 'vandaag';
-          setActiveTab();
-          renderVandaag();
-        });
-      } else {
-        tr = el('<tr data-day="' + esc(dk) + '"><td class="wd">' + esc(d.label) + '</td><td>' + esc(d.title) + '</td><td>' + esc(d.compound) + '</td><td>' + esc(d.power) + '</td><td>' + esc(d.erector) + '</td></tr>');
-        tr.addEventListener('click', function () {
-          UI.dayKey = dk;
-          UI.view = 'vandaag';
-          setActiveTab();
-          renderVandaag();
-        });
-      }
-      tbody.appendChild(tr);
+      var datum = datums[dk];
+      var st = dagStatus(dk, datum, vandaag);
+      var meta = d.rest
+        ? ((d.items && d.items.length) ? 'optioneel: ' + d.items.map(function (i) { return i.name; }).join(', ') : 'rust')
+        : d.compound + ' · ' + d.power + ' · erector ' + d.erector;
+      var row = el('<button class="weekrow' + (datum === vandaag ? ' wnow' : '') + '">' +
+        '<span class="wstat ' + st.kl + '" aria-label="' + esc(st.txt) + '">' + esc(st.g) + '</span>' +
+        '<span class="wbody">' +
+        '<span class="wtop"><b>' + esc(d.label) + '</b><span class="wdate">' + esc(fmtDate(datum).slice(3)) + '</span>' +
+        '<span class="wtag ' + st.kl + '">' + esc(st.txt) + '</span></span>' +
+        '<span class="wtitle">' + esc(d.rest ? 'Vrij — rust of inhalen' : d.title) + '</span>' +
+        '<span class="wmeta">' + esc(meta) + '</span>' +
+        '</span></button>');
+      row.addEventListener('click', function () {
+        UI.date = datum;
+        UI.dayKey = dk;
+        UI.view = 'vandaag';
+        setActiveTab();
+        renderVandaag();
+        window.scrollTo(0, 0);
+      });
+      list.appendChild(row);
     });
     root.appendChild(card);
+
+    root.appendChild(el('<div class="card"><div class="tiny">' + esc(P.weekRule) + '</div></div>'));
 
     root.appendChild(el('<div class="section-title">' + esc(P.opener.title) + '</div>'));
     var op = el('<div class="card"><div class="tiny">' + esc(P.opener.sub) + '</div></div>');
@@ -1208,11 +1551,12 @@
         root.appendChild(el('<div class="card"><div class="sub">Nog niets gelogd voor deze oefening.</div></div>'));
         return;
       }
+      var histUnit = unitForKey(UI.histEx);
       hits.slice(0, 12).forEach(function (s) {
         var it = s.items[UI.histEx];
         root.appendChild(el('<div class="card">' +
           '<div class="hist-head"><span class="h2">' + esc(fmtDate(s.date)) + '</span></div>' +
-          '<div class="hist-sets">' + esc(setsSummary(it) || '—') + (it.note ? '<br>„' + esc(it.note) + '”' : '') + '</div></div>'));
+          '<div class="hist-sets">' + esc(setsSummary(it, histUnit) || '—') + (it.note ? '<br>„' + esc(it.note) + '”' : '') + '</div></div>'));
       });
     }
   }
@@ -1275,16 +1619,17 @@
       var laatste = series[series.length - 1];
       // bodyweight-oefening (alles op 0 kg) → volg de reps i.p.v. het gewicht
       var bw = series.every(function (t) { return t.kg === 0; });
+      var u = unitForKey(a.key); // CMJ staat hier in cm, niet in kg
       var card = el('<div class="card"><div class="ex-head"><div class="h2">' + esc(a.label) + '</div>' +
         '<span class="badge badge-target">' + (bw
-          ? fmtNum(laatste.reps) + ' reps'
-          : fmtNum(laatste.kg) + ' kg × ' + fmtNum(laatste.reps)) + '</span>' +
+          ? esc(fmtNum(laatste.reps) + ' reps')
+          : esc(fmtNum(laatste.kg) + ' ' + u + ' × ' + fmtNum(laatste.reps))) + '</span>' +
         '</div></div>');
       card.appendChild(lineChart(series.map(function (t) {
         return bw
           ? { label: 'wk ' + t.week, value: t.reps, sub: fmtNum(t.reps) + ' reps bodyweight (' + fmtDate(t.date) + ')' }
-          : { label: 'wk ' + t.week, value: t.kg, sub: fmtNum(t.kg) + ' kg × ' + fmtNum(t.reps) + ' (' + fmtDate(t.date) + ')' };
-      }), bw ? 'reps' : 'kg'));
+          : { label: 'wk ' + t.week, value: t.kg, sub: fmtNum(t.kg) + ' ' + u + ' × ' + fmtNum(t.reps) + ' (' + fmtDate(t.date) + ')' };
+      }), bw ? 'reps' : u));
       root.appendChild(card);
     });
     if (noData.length) {
