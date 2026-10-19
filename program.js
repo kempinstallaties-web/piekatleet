@@ -84,6 +84,8 @@ window.PROGRAM = {
         { key: 'trap_bar_deadlift', group: 'Til zwaar', name: 'Trap bar deadlift', doel: 'De hoofdlift van dit blok', cue: 'Til vanaf de grond met een vlakke rug en duw de vloer weg. RPE 7: laat drie reps in de tank.', sets: 4, target: '6', inc: 5, type: 'strength' },
         { key: 'rdl', group: 'Bouw je achterkant', name: 'RDL', doel: 'Hamstrings op lengte sterk maken', cue: 'Zak met gestrekte rug tot halverwege je scheen en voel je hamstrings rekken. Rustig omlaag, explosief omhoog.', sets: 3, target: '8', inc: 5, type: 'strength' },
         { key: 'back_ext', group: 'Bouw je achterkant', name: 'Back extension — uithoudingsvermogen', doel: 'Rugstrekkers dikker en belastbaarder', cue: 'Kom rustig omhoog tot je rug recht is en knijp je billen bovenin. Voeg gewicht toe zodra 15 makkelijk gaat.', let: 'Of 15-20 reps met 2 tellen bovenin. Voelt het als een pomp: goed. Voelt het als een zware set: te zwaar. Je traint hier de tijd, niet het gewicht.', sets: 3, target: '12-15', type: 'strength' },
+        { key: 'lat_pulldown', group: 'Bouw je lats', name: 'Lat pulldown', doel: 'Breedte - je zwakste schakel op de rug', cue: 'Trek met je ellebogen omlaag naar je heupen, niet met je handen. Laat bovenin volledig uitrekken voor je weer trekt.', sets: 4, target: '10-12', inc: 5, type: 'strength' },
+        { key: 'pullover', group: 'Bouw je lats', name: 'Straight-arm pullover', doel: 'Lat op volle lengte, zonder je biceps', cue: 'Houd je armen gestrekt en duw de stang in een boog naar je heupen. Voel de rek bovenin - licht gewicht, lange baan.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'calf_standing', group: 'Onderhoud', name: 'Staande kuit', doel: 'Enkelstijfheid — gratis centimeters', cue: 'Duw hoog door op de bal van je voet en laat langzaam zakken.', sets: 3, target: '10-12', type: 'strength' },
         { key: 'ma_core', group: 'Houd je romp stil', name: 'Core — anti-extensie', doel: 'Romp stil terwijl er aan je getrokken wordt', cue: 'Kies dead bug of ab wheel en houd je onderrug plat.', target: '2–3 sets', type: 'check' }
       ]
@@ -169,6 +171,7 @@ window.PROGRAM = {
       { key: 'cmj', label: 'Countermovement jump — hoogte' },
       { key: 'rdl', label: 'RDL' },
       { key: 'hip_thrust', label: 'Hip thrust' },
+      { key: 'lat_pulldown', label: 'Lat pulldown' },
       { key: 'sled', label: 'Slee (gewicht)' }
     ],
     athletic: [
@@ -211,7 +214,8 @@ window.PROGRAM = {
       { name: 'Hinge', sets: '~7 (ma)' },
       { name: 'Hamstring direct', sets: '~6 (do + za)' },
       { name: 'Quads', sets: '~7 (do)' },
-      { name: 'Rug', sets: '~14 (za)' },
+      { name: 'Rug - breedte (verticaal)', sets: '~11 (ma 7 - za 4)' },
+      { name: 'Rug - dikte (rijen)', sets: '~7 (za)' },
       { name: 'Borst', sets: '~10 (di)' },
       { name: 'Sprongcontacten', sets: '~56 p/w (ma 17 - do 36 - opener 3)' },
       { name: 'Rustdagen', sets: '3 (wo - vr - zo)' }
