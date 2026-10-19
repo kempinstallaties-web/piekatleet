@@ -70,7 +70,7 @@ window.PROGRAM = {
     ]
   },
 
-  weekRule: 'Vier tildagen: maandag hinge, dinsdag push, donderdag squat, zaterdag pull. Woensdag, vrijdag en zondag zijn rust. Je achterkant komt vier keer per week terug en het springwerk staat altijd vooraan.',
+  weekRule: 'Vier tildagen: maandag hinge en lats, dinsdag push, donderdag squat, zaterdag pull. Woensdag, vrijdag en zondag zijn rust. Volume herverdeeld op 19-10: minder sprongwerk en triceps, meer kuiten, lats, borst en achterste schouder. Core heeft nu echte sets.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
 
   days: {
@@ -79,15 +79,15 @@ window.PROGRAM = {
       erector: 'ZEER HOOG', power: 'Verticaal', compound: 'Trap bar deadlift',
       warn: 'Springen staat vooraan en is geen warming-up. Trap bar op RPE 7: techniek en snelheid gaan voor kilo s in golf 1.',
       items: [
-        { key: 'cmj', group: 'Spring eerst, fris', name: 'Countermovement jump', doel: 'De KPI van dit blok: sprong omhoog', cue: 'Spring precies 2 keer per set, volle rust. Meet met sprong-en-reik tegen de muur, niet met een boxhoogte.', let: 'Meer dan 2 sprongen per set traint een lágere sprong. Zakt de hoogte, dan stop je.', sets: 4, target: '2 · log de hoogte', unit: 'cm', mode: 'power', type: 'strength' },
-        { key: 'drop_jump', group: 'Spring eerst, fris', name: 'Drop jump 30–40 cm', doel: 'Reactieve kracht — korter grondcontact', cue: 'Stap van de bak van 30–40 cm, land en spring meteen door. Knie zeurt → overslaan.', let: 'Je landing moet klinken als één tik, niet als twee. Hoor je twee tikken, dan is de bak te hoog.', sets: 3, target: '3', mode: 'power', type: 'strength' },
+        { key: 'cmj', group: 'Spring eerst, fris', name: 'Countermovement jump', doel: 'De KPI van dit blok: sprong omhoog', cue: 'Spring precies 2 keer per set, volle rust. Meet met sprong-en-reik tegen de muur, niet met een boxhoogte.', let: 'Meer dan 2 sprongen per set traint een lágere sprong. Zakt de hoogte, dan stop je.', sets: 3, target: '2 · log de hoogte', unit: 'cm', mode: 'power', type: 'strength' },
+        { key: 'drop_jump', group: 'Spring eerst, fris', name: 'Drop jump 30–40 cm', doel: 'Reactieve kracht — korter grondcontact', cue: 'Stap van de bak van 30–40 cm, land en spring meteen door. Knie zeurt → overslaan.', let: 'Je landing moet klinken als één tik, niet als twee. Hoor je twee tikken, dan is de bak te hoog.', sets: 2, target: '3', mode: 'power', type: 'strength' },
         { key: 'trap_bar_deadlift', group: 'Til zwaar', name: 'Trap bar deadlift', doel: 'De hoofdlift van dit blok', cue: 'Til vanaf de grond met een vlakke rug en duw de vloer weg. RPE 7: laat drie reps in de tank.', sets: 4, target: '6', inc: 5, type: 'strength' },
         { key: 'rdl', group: 'Bouw je achterkant', name: 'RDL', doel: 'Hamstrings op lengte sterk maken', cue: 'Zak met gestrekte rug tot halverwege je scheen en voel je hamstrings rekken. Rustig omlaag, explosief omhoog.', sets: 3, target: '8', inc: 5, type: 'strength' },
         { key: 'back_ext', group: 'Bouw je achterkant', name: 'Back extension — uithoudingsvermogen', doel: 'Rugstrekkers dikker en belastbaarder', cue: 'Kom rustig omhoog tot je rug recht is en knijp je billen bovenin. Voeg gewicht toe zodra 15 makkelijk gaat.', let: 'Of 15-20 reps met 2 tellen bovenin. Voelt het als een pomp: goed. Voelt het als een zware set: te zwaar. Je traint hier de tijd, niet het gewicht.', sets: 3, target: '12-15', type: 'strength' },
         { key: 'lat_pulldown', group: 'Bouw je lats', name: 'Lat pulldown', doel: 'Breedte - je zwakste schakel op de rug', cue: 'Trek met je ellebogen omlaag naar je heupen, niet met je handen. Laat bovenin volledig uitrekken voor je weer trekt.', sets: 4, target: '10-12', inc: 5, type: 'strength' },
-        { key: 'pullover', group: 'Bouw je lats', name: 'Straight-arm pullover', doel: 'Lat op volle lengte, zonder je biceps', cue: 'Houd je armen gestrekt en duw de stang in een boog naar je heupen. Voel de rek bovenin - licht gewicht, lange baan.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
+        { key: 'pullover', group: 'Bouw je lats', name: 'Straight-arm pullover', doel: 'Lat op volle lengte, zonder je biceps', cue: 'Houd je armen gestrekt en duw de stang in een boog naar je heupen. Voel de rek bovenin - licht gewicht, lange baan.', sets: 4, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'calf_standing', group: 'Onderhoud', name: 'Staande kuit', doel: 'Enkelstijfheid — gratis centimeters', cue: 'Duw hoog door op de bal van je voet en laat langzaam zakken.', sets: 3, target: '10-12', type: 'strength' },
-        { key: 'ma_core', group: 'Houd je romp stil', name: 'Core — anti-extensie', doel: 'Romp stil terwijl er aan je getrokken wordt', cue: 'Kies dead bug of ab wheel en houd je onderrug plat.', target: '2–3 sets', type: 'check' }
+        { key: 'ma_core', group: 'Houd je romp stil', name: 'Core - anti-extensie', doel: 'Romp stil houden onder trek', cue: 'Rol met het ab wheel zo ver als je je onderrug vlak houdt. Stop zodra je rug doorzakt, niet als je armen op zijn.', sets: 3, target: '10-12', type: 'strength' }
       ]
     },
     di: {
@@ -95,13 +95,15 @@ window.PROGRAM = {
       erector: 'LAAG', power: 'Med ball', compound: 'Incline press',
       warn: 'Med ball is training, geen opwarmer: maximale intentie, volle rust, daarna pas ijzer.',
       items: [
-        { key: 'medball_rot', group: 'Gooi eerst, fris', name: 'Med ball rotational throw', doel: 'Je pass- en schotpower uit de romp', cue: 'Gooi zijwaarts tegen de muur, alles erin. Volle rust, elke worp maximaal.', sets: 3, target: '3 p/z', mode: 'power', type: 'strength' },
+        { key: 'medball_rot', group: 'Gooi eerst, fris', name: 'Med ball rotational throw', doel: 'Je pass- en schotpower uit de romp', cue: 'Gooi zijwaarts tegen de muur, alles erin. Volle rust, elke worp maximaal.', sets: 2, target: '3 p/z', mode: 'power', type: 'strength' },
         { key: 'incline_press', group: 'Til zwaar', name: 'Incline barbell / DB press', doel: 'Bovenborst — je zwakste schakel boven', cue: 'Raak iets lager aan dan normaal (tepelhoogte), dat voelt krachtiger. RPE 7–8.', sets: 4, target: '6-8', type: 'strength' },
         { key: 'overhead_press', group: 'Til zwaar', name: 'Overhead press', doel: 'Kracht boven je hoofd — rebound en blok', cue: 'Pers machine of barbell ná het borstwerk. Ribben omlaag, geen doorgezakte rug.', sets: 3, target: '6-8', type: 'strength' },
-        { key: 'incline_prime', group: 'Bouw volume', name: 'Incline press (Prime)', doel: 'Tweede prikkel voor de bovenborst', cue: 'Pers met vol bereik en rustig tempo; hier telt spanning, niet gewicht.', sets: 3, target: '10-12', type: 'strength' },
+        { key: 'incline_prime', group: 'Bouw volume', name: 'Incline press (Prime)', doel: 'Tweede prikkel voor de bovenborst', cue: 'Pers met vol bereik en rustig tempo; hier telt spanning, niet gewicht.', sets: 4, target: '10-12', type: 'strength' },
+        { key: 'chest_fly', group: 'Bouw je borst', name: 'Lage kabelfly', doel: 'Bovenborst, het deel dat achterloopt', cue: 'Breng de kabels van laag naar boven samen en knijp een tel vast. Lichte bocht in je elleboog, geen persbeweging.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'lateral_raise', group: 'Bouw volume', name: 'Lateral raise', doel: 'Schouderbreedte — laagste prioriteit', cue: 'Til zijwaarts tot schouderhoogte. Schrap dit als eerste bij een zware week.', sets: 3, target: '12-15', type: 'strength' },
-        { key: 'triceps', group: 'Bouw volume', name: 'Triceps', doel: 'Ondersteunt je persen', cue: 'Strek volledig door, kort werk.', sets: 3, target: '10-12', type: 'strength' },
-        { key: 'di_core', group: 'Houd je romp stil', name: 'Core — anti-rotatie', doel: 'Romp stil tegen draaikrachten', cue: 'Doe Pallof press en hanging leg raise; houd je heupen recht.', target: '2–3 sets', type: 'check' }
+        { key: 'rear_delt_fly', group: 'Bouw volume', name: 'Reverse fly', doel: 'Achterste schouder, tegenwicht voor al het persen', cue: 'Breng je armen opzij uit elkaar met je duimen omlaag. Licht gewicht, knijp bovenin kort vast.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
+        { key: 'triceps', group: 'Bouw volume', name: 'Triceps', doel: 'Ondersteunt je persen', cue: 'Strek volledig door, kort werk.', sets: 2, target: '10-12', type: 'strength' },
+        { key: 'di_core', group: 'Houd je romp stil', name: 'Core - anti-rotatie', doel: 'Romp stil houden onder draaikracht', cue: 'Duw de kabel recht vooruit en laat je romp niet meedraaien. Drie tellen vasthouden op het verste punt.', sets: 3, target: '10-12 p/z', type: 'strength' }
       ]
     },
     wo: {
@@ -120,14 +122,13 @@ window.PROGRAM = {
       erector: 'HOOG', power: 'Horizontaal', compound: 'Back squat',
       warn: 'Broad jump en pogo s eerst, fris. Zakt de sprongafstand, dan stop je met springen en ga je tillen.',
       items: [
-        { key: 'broad_jump_plyo', group: 'Spring eerst, fris', name: 'Broad jump', doel: 'Horizontale power — meteen je 4-weken test', cue: 'Spring 2 keer per set, verder niet. Land stabiel en meet de afstand.', sets: 3, target: '2', mode: 'power', type: 'strength' },
-        { key: 'pogos', group: 'Spring eerst, fris', name: "Pogo's", doel: 'Voetstijfheid — korter grondcontact', cue: 'Stuiter met stijve enkels en minimale grondcontacttijd.', sets: 2, target: '15', mode: 'power', type: 'strength' },
+        { key: 'broad_jump_plyo', group: 'Spring eerst, fris', name: 'Broad jump', doel: 'Horizontale power — meteen je 4-weken test', cue: 'Spring 2 keer per set, verder niet. Land stabiel en meet de afstand.', sets: 2, target: '2', mode: 'power', type: 'strength' },
         { key: 'back_squat', group: 'Til zwaar', name: 'Back squat', doel: 'Je krachtbasis voor elke afzet', cue: 'Zak diep en duw explosief omhoog. RPE 7–8: laat 2 reps in de tank. Knie zeurt? Blijf op wat pijnvrij is.', sets: 4, target: '6-8', inc: 5, type: 'strength' },
         { key: 'atg_split_squat', group: 'Til zwaar', name: 'Bulgarian split squat', doel: 'Eén been sterk — zo beweeg je op het veld', cue: 'Zak diep op één been met rechte romp; het achterste been is alleen steun.', sets: 3, target: '8 p/b', type: 'strength' },
         { key: 'hip_thrust', group: 'Bouw je achterkant', name: 'Hip thrust', doel: 'Bilspieren zwaar belasten zonder je rug', cue: 'Duw door je hielen tot je romp horizontaal staat en knijp bovenin twee tellen vast.', sets: 3, target: '8-10', inc: 10, type: 'strength' },
         { key: 'leg_curl', group: 'Bouw je achterkant', name: 'Leg curl', doel: 'Hamstring direct, los van je rug', cue: 'Trek je hielen naar je billen en laat ze drie tellen zakken. Dit is de enige oefening die je hamstring alleen pakt.', sets: 3, target: '10-12', inc: 5, type: 'strength' },
         { key: 'calf', group: 'Onderhoud', name: 'Kuit (machine)', doel: 'Kuitvolume voor afzet en landing', cue: 'Duw volledig door en laat rustig zakken.', sets: 3, target: '12-15', type: 'strength' },
-        { key: 'do_core', group: 'Houd je romp stil', name: 'Core — anti-laterale flexie', doel: 'Zijkant romp — stabiel onder eenzijdige last', cue: 'Doe side plank of suitcase carry en blijf recht, niet overhellen.', target: '2–3 sets', type: 'check' }
+        { key: 'do_core', group: 'Houd je romp stil', name: 'Core - anti-laterale flexie', doel: 'Romp stil houden onder zijdelingse last', cue: 'Houd je romp recht met gewicht in een hand. Niet overhellen, schouders gelijk.', sets: 3, target: '10-12 p/z', type: 'strength' }
       ]
     },
     vr: {
@@ -143,10 +144,11 @@ window.PROGRAM = {
       items: [
         { key: 'weighted_pullups', group: 'Trek zwaar', name: 'Weighted pullups', doel: 'Zware trekdag, ver van de deadlift', cue: 'Trek zwaar met extra gewicht — je grip staat hier het verst van de deadlift.', sets: 4, target: '6-8', type: 'strength' },
         { key: 'chest_supported_row', group: 'Trek zwaar', name: 'Chest-supported row', doel: 'Rugdikte zonder je onderrug te belasten', cue: 'Trek zwaar — je onderrug doet niets mee. Knijp bovenin kort vast.', sets: 4, target: '8-10', type: 'strength' },
-        { key: 'cable_row', group: 'Bouw volume', name: 'Cable / DB row', doel: 'Rugdikte zonder je onderrug te belasten', cue: 'Roei zittend of met steun — je onderrug hoeft niets te dragen.', sets: 3, target: '10-12', type: 'strength' },
-        { key: 'rear_delt_facepull', group: 'Bouw volume', name: 'Rear delt + face pull', doel: 'Houding en achterkant schouder', cue: 'Trek naar je gezicht met hoge ellebogen en knijp kort vast.', sets: 3, target: '12-15', type: 'strength' },
+        { key: 'lat_row', group: 'Bouw je lats', name: 'Single-arm lat row', doel: 'Lat apart, met volle rek onderin', cue: 'Laat je schouderblad onderin ver naar voren komen en trek je elleboog langs je heup. Romp blijft stil.', sets: 3, target: '10-12 p/z', inc: 2.5, type: 'strength' },
+        { key: 'rear_delt_facepull', group: 'Bouw volume', name: 'Rear delt + face pull', doel: 'Houding en achterkant schouder', cue: 'Trek naar je gezicht met hoge ellebogen en knijp kort vast.', sets: 4, target: '12-15', type: 'strength' },
         { key: 'nordic', group: 'Bouw je achterkant', name: 'Nordic curl (excentrisch)', doel: 'Halveert je risico op een hamstringblessure', cue: 'Zak langzaam voorover en rem zo lang mogelijk. Sla deze nooit over.', let: 'Bewust hier: 5 dagen na de deadlift, 2 dagen voor de squat.', sets: 3, target: '5', type: 'strength' },
         { key: 'biceps', group: 'Bouw volume', name: 'Biceps', doel: 'Elleboog en onderarm belastbaar', cue: 'Krul rustig en laat het gewicht gecontroleerd zakken. Twee oefeningen is genoeg, dit is geen armendag.', sets: 3, target: '10-12', inc: 2.5, type: 'strength' },
+        { key: 'calf_pull', group: 'Onderhoud', name: 'Kuit - zittend', doel: 'Derde kuitmoment, andere hoek', cue: 'Duw door de bal van je voet en laat de hiel diep zakken. Twee tellen bovenin vasthouden.', sets: 3, target: '12-15', inc: 5, type: 'strength' },
         { key: 'carries', group: 'Bouw je achterkant', name: 'Farmer carry', doel: 'Rug lang en rechtop houden onder last', cue: 'Loop 3 × 30–40 m, zwaar genoeg om te moeten knijpen. Sla alleen over als donderdag naijlt.', video: 'https://www.youtube.com/watch?v=P8iSOHX73FE', let: 'Schouders naar achteren, ribben omlaag. Zodra je gaat hangen is de set klaar', sets: 3, target: '30-40 m', type: 'check' }
       ]
     },
@@ -207,18 +209,20 @@ window.PROGRAM = {
   },
 
   volumeCheck: {
-    title: 'Volume-check', sub: 'Golf 1 van 3: volume opbouwen op RPE 7. De kilo s komen in golf 2 en 3.',
+    title: 'Volume-check', sub: 'Sets per week, herverdeeld op 19-10 na Kaj s eigen analyse van de verhoudingen.',
     rows: [
-      { name: 'Tildagen', sets: '4 (ma - di - do - za)' },
-      { name: 'Posterior chain', sets: '4 dagen (trap bar, RDL, hip thrust, leg curl, nordic, back ext, carry)' },
-      { name: 'Hinge', sets: '~7 (ma)' },
-      { name: 'Hamstring direct', sets: '~6 (do + za)' },
-      { name: 'Quads', sets: '~7 (do)' },
-      { name: 'Rug - breedte (verticaal)', sets: '~11 (ma 7 - za 4)' },
-      { name: 'Rug - dikte (rijen)', sets: '~7 (za)' },
-      { name: 'Borst', sets: '~10 (di)' },
-      { name: 'Sprongcontacten', sets: '~56 p/w (ma 17 - do 36 - opener 3)' },
-      { name: 'Rustdagen', sets: '3 (wo - vr - zo)' }
+      { name: 'Bilspieren', sets: '17 (3 gericht: hip thrust)' },
+      { name: 'Hamstrings', sets: '13 (RDL, leg curl, nordic, trap bar)' },
+      { name: 'Lats - breedte', sets: '15 (was 11; ma 8 - za 7)' },
+      { name: 'Borst', sets: '11 (was 7; bovenborst-gericht)' },
+      { name: 'Rugstrekkers', sets: '10' },
+      { name: 'Kuiten', sets: '9 (was 6; ma - do - za)' },
+      { name: 'Core', sets: '9 gedoseerd (was 3 vinkjes)' },
+      { name: 'Quads', sets: '7' },
+      { name: 'Achterste schouder', sets: '7 (was 3)' },
+      { name: 'Sprongwerk', sets: '7 (was 15)' },
+      { name: 'Midden-rug', sets: '4 (was 7; al je sterkste punt)' },
+      { name: 'Triceps direct', sets: '2 (was 3)' }
     ]
   }
 };
