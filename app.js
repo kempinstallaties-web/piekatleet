@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '40 · 19-10-2026';
+  var APP_VERSION = '41 · 19-10-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -988,6 +988,13 @@
       chips.appendChild(c);
     });
     root.appendChild(chips);
+    // Vanaf donderdag valt de actieve dag buiten de zichtbare strook — schuif 'm in beeld.
+    requestAnimationFrame(function () {
+      var act = chips.querySelector('.active');
+      if (!act || chips.scrollWidth <= chips.clientWidth) return;
+      var cr = chips.getBoundingClientRect(), ar = act.getBoundingClientRect();
+      chips.scrollLeft += (ar.left - cr.left) - (cr.width - ar.width) / 2;
+    });
 
     var nulmeting = nulmetingKaart();
     if (nulmeting) root.appendChild(nulmeting);
