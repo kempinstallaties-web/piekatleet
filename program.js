@@ -15,7 +15,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v8',
+    version: 'v12',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
     block: 'Krachtblok - golf 1 van 3 (volume) t/m 15 nov - blok loopt t/m 10 januari',
@@ -70,12 +70,12 @@ window.PROGRAM = {
     ]
   },
 
-  weekRule: 'Vijf tildagen: ma hinge, di push, wo lats, vr benen en bilspieren, za rugdikte. Do en zo zijn rust. Cardio staat vast: stairmaster-tempo op woensdag, zone 2 hardlopen op zaterdag, rustig zwemmen op zondag. De core is atletisch - hangen, roteren, gooien en dragen.',
+  weekRule: 'Vijf tildagen: ma hinge en rugdikte, di zwaar persen, wo lats, vr benen en bilspieren, za borst en achterste schouder. Do en zo zijn rust. Cardio: stairmaster-tempo woensdag, zone 2 zaterdag, zwemmen zondag. Het persvolume staat bewust over twee dagen - schouders en rotators krijgen nooit alles in een sessie.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
 
   days: {
     ma: {
-      key: 'ma', label: 'MA', title: 'Hinge + hamstrings', sub: 'de zwaarste dag van je week',
+      key: 'ma', label: 'MA', title: 'Hinge, hamstrings + rugdikte', sub: 'je zwaarste trekdag',
       erector: 'ZEER HOOG', power: 'Geen', compound: 'Trap bar deadlift',
       warn: 'Trap bar op RPE 7 in golf 1: drie reps in de tank. Dit is de dag waar je achterkant van verandert.',
       items: [
@@ -83,22 +83,21 @@ window.PROGRAM = {
         { key: 'rdl', group: 'Bouw je achterkant', name: 'RDL', doel: 'Hamstrings op lengte sterk maken', cue: 'Zak met gestrekte rug tot halverwege je scheen en voel je hamstrings rekken. Rustig omlaag, explosief omhoog.', sets: 3, target: '8', inc: 5, type: 'strength' },
         { key: 'leg_curl', group: 'Bouw je achterkant', name: 'Leg curl', doel: 'Hamstring direct, los van je rug', cue: 'Trek je hielen naar je billen en laat ze drie tellen zakken. Dit is de enige oefening die je hamstring alleen pakt.', sets: 3, target: '10-12', inc: 5, type: 'strength' },
         { key: 'back_ext', group: 'Bouw je bilspieren', name: 'Back extension — uithoudingsvermogen', doel: 'Billen en rugstrekkers samen', cue: 'Kom omhoog tot je romp recht is en knijp bovenin je billen, niet je onderrug. Rond je rug licht af - dit is bilwerk, geen rugstrekking.', let: 'Of 15-20 reps met 2 tellen bovenin. Voelt het als een pomp: goed. Voelt het als een zware set: te zwaar. Je traint hier de tijd, niet het gewicht.', sets: 3, target: '12-15', type: 'strength' },
+        { key: 'chest_supported_row', group: 'Trek zwaar', name: 'Chest-supported row', doel: 'Rugdikte zonder je onderrug te belasten', cue: 'Trek je ellebogen naar achteren en knijp je schouderbladen samen. De bank draagt je romp, dus je onderrug doet hier niets.', sets: 4, target: '8-10', type: 'strength' },
         { key: 'calf_standing', group: 'Onderhoud', name: 'Staande kuit', doel: 'Enkelstijfheid — gratis centimeters', cue: 'Duw hoog door op de bal van je voet en laat langzaam zakken.', sets: 3, target: '10-12', type: 'strength' },
         { key: 'ma_core', group: 'Atletische core', name: 'Hanging leg raise', doel: 'Romp die kracht maakt, niet alleen tegenhoudt', cue: 'Hang stil en breng je knieen naar je borst zonder te zwaaien. Kantel je bekken mee - dat is het werk, niet de hoogte.', sets: 3, target: '8-12', type: 'strength' }
       ]
     },
     di: {
-      key: 'di', label: 'DI', title: 'Push - borst voorop', sub: 'gooien voor persen',
+      key: 'di', label: 'DI', title: 'Push - zwaar persen', sub: 'gooien voor persen, daarna kort',
       erector: 'LAAG', power: 'Med ball', compound: 'Incline press',
-      warn: 'Je bovenborst loopt achter, dus incline en fly gaan voor op de rest. Triceps is sluitpost.',
+      warn: 'Alleen zwaar persen hier. De Prime en de reverse fly staan zaterdag, zodat je schouders en rotators niet alles op een dag krijgen.',
       items: [
         { key: 'medball_rot', group: 'Gooi eerst, fris', name: 'Med ball rotational throw', doel: 'Je pass- en schotpower uit de romp', cue: 'Gooi zijwaarts tegen de muur, alles erin. Volle rust, elke worp maximaal.', sets: 2, target: '3 p/z', mode: 'power', type: 'strength' },
         { key: 'incline_press', group: 'Til zwaar', name: 'Incline barbell / DB press', doel: 'Bovenborst — je zwakste schakel boven', cue: 'Raak iets lager aan dan normaal (tepelhoogte), dat voelt krachtiger. RPE 7–8.', sets: 4, target: '6-8', type: 'strength' },
         { key: 'overhead_press', group: 'Til zwaar', name: 'Overhead press', doel: 'Kracht boven je hoofd — rebound en blok', cue: 'Pers machine of barbell ná het borstwerk. Ribben omlaag, geen doorgezakte rug.', sets: 3, target: '6-8', type: 'strength' },
-        { key: 'incline_prime', group: 'Bouw je borst', name: 'Incline press (Prime)', doel: 'Tweede prikkel voor de bovenborst', cue: 'Pers met vol bereik en rustig tempo; hier telt spanning, niet gewicht.', sets: 4, target: '10-12', type: 'strength' },
         { key: 'chest_fly', group: 'Bouw je borst', name: 'Lage kabelfly', doel: 'Bovenborst, het deel dat achterloopt', cue: 'Breng de kabels van laag naar boven samen en knijp een tel vast. Lichte bocht in je elleboog, geen persbeweging.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'lateral_raise', group: 'Bouw volume', name: 'Lateral raise', doel: 'Schouderbreedte — laagste prioriteit', cue: 'Til zijwaarts tot schouderhoogte. Schrap dit als eerste bij een zware week.', sets: 3, target: '12-15', type: 'strength' },
-        { key: 'rear_delt_fly', group: 'Bouw volume', name: 'Reverse fly', doel: 'Achterste schouder, tegenwicht voor al het persen', cue: 'Breng je armen opzij uit elkaar met je duimen omlaag. Licht gewicht, knijp bovenin kort vast.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'triceps', group: 'Bouw volume', name: 'Triceps', doel: 'Ondersteunt je persen', cue: 'Strek volledig door, kort werk.', sets: 2, target: '10-12', type: 'strength' }
       ]
     },
@@ -138,17 +137,18 @@ window.PROGRAM = {
       ]
     },
     za: {
-      key: 'za', label: 'ZA', title: 'Rugdikte + onderhoud', sub: 'rijen, achterkant schouder en grip',
-      erector: 'MIDDEL', power: 'Licht', compound: 'Chest-supported row',
-      warn: 'Trek zwaar maar hou je onderrug heel - de chest-supported row juist omdat je rug daar niets draagt.',
+      key: 'za', label: 'ZA', title: 'Borst, achterkant schouder + onderhoud', sub: 'het volume dat dinsdag niet paste',
+      erector: 'MIDDEL', power: 'Licht', compound: 'Incline press (Prime)',
+      warn: 'Dit is de dag voor het volume dat dinsdag je schouders zou slopen. Alles hier op gevoel en controle, niets zwaars.',
       items: [
-        { key: 'chest_supported_row', group: 'Trek zwaar', name: 'Chest-supported row', doel: 'Rugdikte zonder je onderrug te belasten', cue: 'Trek zwaar — je onderrug doet niets mee. Knijp bovenin kort vast.', sets: 4, target: '8-10', type: 'strength' },
-        { key: 'rear_delt_facepull', group: 'Bouw volume', name: 'Rear delt + face pull', doel: 'Houding en achterkant schouder', cue: 'Trek naar je gezicht met hoge ellebogen en knijp kort vast.', sets: 4, target: '12-15', type: 'strength' },
+        { key: 'incline_prime', group: 'Bouw je borst', name: 'Incline press (Prime)', doel: 'Tweede prikkel voor de bovenborst', cue: 'Pers met vol bereik en rustig tempo; hier telt spanning, niet gewicht.', sets: 4, target: '10-12', type: 'strength' },
+        { key: 'rear_delt_fly', group: 'Bouw je achterste schouder', name: 'Reverse fly', doel: 'Achterste schouder, tegenwicht voor al het persen', cue: 'Breng je armen opzij uit elkaar met je duimen omlaag. Licht gewicht, knijp bovenin kort vast.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
+        { key: 'rear_delt_facepull', group: 'Bouw je achterste schouder', name: 'Rear delt + face pull', doel: 'Houding en achterkant schouder', cue: 'Trek naar je gezicht met hoge ellebogen en knijp kort vast.', sets: 4, target: '12-15', type: 'strength' },
         { key: 'nordic', group: 'Bouw je achterkant', name: 'Nordic curl (excentrisch)', doel: 'Halveert je risico op een hamstringblessure', cue: 'Zak langzaam voorover en rem zo lang mogelijk. Sla deze nooit over.', let: 'Bewust hier: 5 dagen na de deadlift, 2 dagen voor de squat.', sets: 3, target: '5', type: 'strength' },
         { key: 'carries', group: 'Bouw je achterkant', name: 'Farmer carry', doel: 'Rug lang en rechtop houden onder last', cue: 'Loop 3 × 30–40 m, zwaar genoeg om te moeten knijpen. Sla alleen over als donderdag naijlt.', video: 'https://www.youtube.com/watch?v=P8iSOHX73FE', let: 'Schouders naar achteren, ribben omlaag. Zodra je gaat hangen is de set klaar', sets: 3, target: '30-40 m', type: 'check' },
         { key: 'calf_pull', group: 'Onderhoud', name: 'Kuit - zittend', doel: 'Derde kuitmoment, andere hoek', cue: 'Duw door de bal van je voet en laat de hiel diep zakken. Twee tellen bovenin vasthouden.', sets: 3, target: '12-15', inc: 5, type: 'strength' },
-        { key: 'zone2_run', group: 'Conditie', name: 'Hardlopen - zone 2', doel: 'Aerobe basis zonder je benen te slopen', cue: 'Loop 25-35 min op hartslag onder 160. Kun je er niet bij praten, dan ga je te hard.', target: '25-35 min', type: 'check' },
-        { key: 'di_core', group: 'Atletische core', name: 'Med ball side throw', doel: 'Explosieve rotatie, de snelste coreoefening die er is', cue: 'Gooi de bal zo hard je kunt zijwaarts tegen de muur en vang hem weer op. Maximale intentie, geen uithoudingswerk.', sets: 3, target: '6 p/z', type: 'strength' }
+        { key: 'di_core', group: 'Atletische core', name: 'Med ball side throw', doel: 'Explosieve rotatie, de snelste coreoefening die er is', cue: 'Gooi de bal zo hard je kunt zijwaarts tegen de muur en vang hem weer op. Maximale intentie, geen uithoudingswerk.', sets: 3, target: '6 p/z', type: 'strength' },
+        { key: 'zone2_run', group: 'Conditie', name: 'Hardlopen - zone 2', doel: 'Aerobe basis zonder je benen te slopen', cue: 'Loop 25-35 min op hartslag onder 160. Kun je er niet bij praten, dan ga je te hard.', target: '25-35 min', type: 'check' }
       ]
     },
     zo: {
@@ -212,21 +212,22 @@ window.PROGRAM = {
   },
 
   volumeCheck: {
-    title: 'Volume-check', sub: 'Vijf tildagen plus drie vaste cardiomomenten. Sets per week, hoofd- en bijrol samen.',
+    title: 'Volume-check', sub: 'Vijf tildagen plus drie vaste cardiomomenten. Borst en achterste schouder staan sinds 19-10 over twee dagen.',
     rows: [
       { name: 'Bilspieren', sets: '20 (6 gericht)' },
       { name: 'Lats - breedte', sets: '15 (wo)' },
       { name: 'Hamstrings', sets: '13 (ma + za)' },
-      { name: 'Borst', sets: '11 (di)' },
+      { name: 'Borst', sets: '11 (7 di + 4 za)' },
       { name: 'Rugstrekkers', sets: '10' },
       { name: 'Atletische core', sets: '9 (hangen - roteren - gooien) + 3 carries' },
       { name: 'Kuiten', sets: '9 (ma - vr - za)' },
       { name: 'Quads', sets: '7 (vr)' },
-      { name: 'Achterste schouder', sets: '7 (di + za)' },
+      { name: 'Achterste schouder', sets: '7 (za, weg van de persdag)' },
       { name: 'Sprongwerk', sets: '7 (vr)' },
-      { name: 'Midden-rug', sets: '4 (za)' },
+      { name: 'Midden-rug', sets: '4 (ma, bij de hinges)' },
       { name: 'Triceps direct', sets: '2 (di)' },
-      { name: 'Cardio', sets: 'wo tempo - za zone 2 - zo zwemmen' }
+      { name: 'Cardio', sets: 'wo tempo - za zone 2 - zo zwemmen' },
+      { name: 'Schouderwerk op de persdag', sets: '10 sets (was 16)' }
     ]
   }
 };
