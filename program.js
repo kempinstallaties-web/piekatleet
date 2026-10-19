@@ -25,8 +25,8 @@ window.PROGRAM = {
   },
 
   rules: [
-    'Power vóór kracht. Springen en sprinten doe je fris, nooit als toetje na het tillen.',
-    'Herstel is het plafond. Drie rustdagen staan er niet voor niets: maandag en donderdag moet je zwaar kunnen tillen.',
+    'Power vóór kracht. Springen en gooien doe je fris, nooit als toetje na het tillen.',
+    'Herstel is het plafond. Donderdag en zondag zijn rust zodat je maandag de trap bar en vrijdag de squat echt zwaar kunt doen.',
     'Golf 1 is volume op RPE 7. Je laat drie reps in de tank; de kilo s komen in golf 2 en 3.',
     'Gewicht 104,2 op 19-10 na de vakantie. Doel is +0,2 per week naar 105,5 in januari - gaat het sneller, dan is het geen spier.'
   ],
@@ -38,19 +38,19 @@ window.PROGRAM = {
       {
         key: 'reset', title: 'Mobility', sub: '~3 min',
         items: [
-          { name: 'Cat-cow', doel: 'Rug losmaken vóór je hem belast', cue: 'Rol je rug wervel voor wervel op en af, rustig ademen.', why: 'rug losmaken', days: ['ma', 'di', 'do', 'za'] },
+          { name: 'Cat-cow', doel: 'Rug losmaken vóór je hem belast', cue: 'Rol je rug wervel voor wervel op en af, rustig ademen.', why: 'rug losmaken', days: ['ma', 'di', 'vr', 'za'] },
           { name: 'Open books', doel: 'Thoracale rotatie — persen, trekken en gooien', cue: 'Draai je bovenste arm open en volg met je ogen. Heupen blijven stil.', why: 'thoracale rotatie', days: ['di', 'za'] },
-          { name: '90/90 switches', doel: 'Heup in- en uitdraaien voor squat-diepte', cue: 'Wissel je heupen links-rechts, borst rechtop.', why: 'heupmobiliteit', days: ['ma', 'do'] },
+          { name: '90/90 switches', doel: 'Heup in- en uitdraaien voor squat-diepte', cue: 'Wissel je heupen links-rechts, borst rechtop.', why: 'heupmobiliteit', days: ['ma', 'vr'] },
           { name: 'Cossack flow', doel: 'Laag zitten en liezen — je verdedigingshouding', cue: 'Zak diep naar één kant en schuif rustig door naar de andere.', why: 'liezen en diepte', days: ['wo', 'vr'] },
           { name: "World's greatest stretch", doel: 'Heupbuiger en thoracaal in één', cue: 'Stap diep uit en draai je bovenste arm naar het plafond.', why: 'heup + thoracaal', days: ['di', 'wo', 'vr'] },
           { name: 'Ankle rocks', doel: 'Enkelmobiliteit — diepere squat, zachtere landing', cue: 'Duw je knie voorbij je tenen, hiel blijft op de grond.', why: 'enkelmobiliteit', days: ['ma', 'wo', 'vr'] },
-          { name: 'Hinge-drill (stok)', doel: 'Eerste rep goed bracen — je limiterende factor', cue: 'Houd de stok op drie punten en scharnier vanuit je heupen.', why: 'bracen', days: ['do', 'za'] }
+          { name: 'Hinge-drill (stok)', doel: 'Eerste rep goed bracen — je limiterende factor', cue: 'Houd de stok op drie punten en scharnier vanuit je heupen.', why: 'bracen', days: ['ma', 'za'] }
         ]
       },
       {
         key: 'power', title: 'Neural primer', sub: '~4 min · wakker maken, niet moe maken',
         items: [
-          { name: 'Pogo hops 2 × 15', doel: 'Voetstijfheid vóór het echte springwerk', cue: 'Stuiter op je voorvoet met bijna gestrekte knieën, kort op de grond.', why: 'voetstijfheid', days: ['ma', 'do'] },
+          { name: 'Pogo hops 2 × 15', doel: 'Voetstijfheid vóór het echte springwerk', cue: 'Stuiter op je voorvoet met bijna gestrekte knieën, kort op de grond.', why: 'voetstijfheid', days: ['ma', 'vr'] },
           { name: 'Band pull-apart 2 × 15', doel: 'Schouders wakker vóór het persen', cue: 'Trek de band uit elkaar tot borsthoogte en laat rustig terug.', why: 'schouders wakker', days: ['di', 'za'] },
           { name: 'Med ball chest pass licht 2 × 5', doel: 'Bovenlichaam op scherp zetten', cue: 'Duw de bal licht en snel weg — snelheid, geen maximale kracht.', why: 'bovenlichaam scherp', days: ['di'] },
           { name: 'A-skips 2 × 20 m', doel: 'Sprintmechaniek instellen', cue: 'Huppel met hoge knie en zet je voet actief naar beneden.', why: 'sprintmechaniek', video: 'https://www.youtube.com/watch?v=2LAg2FFAXbo', days: ['wo', 'vr'] },
@@ -62,7 +62,7 @@ window.PROGRAM = {
       {
         key: 'balans', title: 'Voet & enkel', sub: '~3 min · je enkels zijn je grootste blessurerisico',
         items: [
-          { name: 'Tibialis raise 2 × 20', doel: 'Scheenbeen — remkracht, beschermt de knie', cue: 'Til je tenen op tegen de muur en laat langzaam zakken.', why: 'remkracht', days: ['ma', 'di', 'wo', 'do', 'vr', 'za'] },
+          { name: 'Tibialis raise 2 × 20', doel: 'Scheenbeen — remkracht, beschermt de knie', cue: 'Til je tenen op tegen de muur en laat langzaam zakken.', why: 'remkracht', days: ['ma', 'di', 'wo', 'vr', 'za'] },
           { name: 'Calf raise excentrisch 2 × 10', doel: 'Achillespees belastbaar voor sprint en sprong', cue: 'Duw omhoog en laat in drie tellen zakken.', why: 'achillespees', days: ['di', 'wo', 'vr', 'za'] },
           { name: 'Single-leg balance 2 × 30 sec', doel: 'Stabiele enkel, geen circusact', cue: 'Sta 30 sec stil op één been met je blik vooruit.', why: 'enkelstabiliteit', days: ['di', 'wo', 'vr'] }
         ]
