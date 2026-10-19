@@ -18,17 +18,17 @@ window.PROGRAM = {
     version: 'v8',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
-    block: 'Krachtblok 12 weken - golf 1 van 3 (volume) - t/m 27 december',
+    block: 'Krachtblok - golf 1 van 3 (volume) t/m 15 nov - blok loopt t/m 10 januari',
     nutritionShort: '3300 kcal - 200-210 g eiwit - +0,2 kg per week',
     weakPoints: 'Posterior chain - hamstrings, bilspieren, rugstrekkers',
-    goals: 'Compounds opbouwen en de achterkant ijzersterk maken, met het atletische werk volledig behouden. Trap bar 150 x 3, squat 110 x 4, incline 105 x 4, 104,5 kg bij dezelfde taille.'
+    goals: 'Compounds opbouwen en de achterkant ijzersterk maken, met het atletische werk volledig behouden. Trap bar 150 x 3, squat 110 x 4, incline 105 x 4, 105,5 kg bij dezelfde taille.'
   },
 
   rules: [
     'Power vóór kracht. Springen en sprinten doe je fris, nooit als toetje na het tillen.',
     'Herstel is het plafond. Drie rustdagen staan er niet voor niets: maandag en donderdag moet je zwaar kunnen tillen.',
     'Golf 1 is volume op RPE 7. Je laat drie reps in de tank; de kilo s komen in golf 2 en 3.',
-    'Val je af, dan bouw je niet. 102,3 kg nu, 104,5 eind december, bij dezelfde taille.'
+    'Gewicht 104,2 op 19-10 na de vakantie. Doel is +0,2 per week naar 105,5 in januari - gaat het sneller, dan is het geen spier.'
   ],
 
   opener: {
