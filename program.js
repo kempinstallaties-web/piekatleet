@@ -15,7 +15,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v12',
+    version: 'v13',
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
     block: 'Krachtblok - golf 1 van 3 (volume) t/m 15 nov - blok loopt t/m 10 januari',
@@ -33,44 +33,46 @@ window.PROGRAM = {
 
   opener: {
     title: 'Atleet-fase',
-    sub: 'Kort en dagspecifiek — 10 minuten. Je échte springwerk staat niet hier maar bovenaan de training zelf.',
+    sub: 'Twaalf minuten, dagspecifiek. Sinds 21-10 geladen eindstandwerk in plaats van passief rekken: je houdt alleen bereik dat je onder gewicht kunt gebruiken. Kort en matig houden - lang en zwaar rekken vlak voor je sets kost je kracht.',
     blocks: [
       {
-        key: 'reset', title: 'Mobility', sub: '~3 min',
+        key: 'warm', title: 'Warm worden', sub: 'eerst 2 min, nooit koud op eindstand',
         items: [
-          { name: 'Cat-cow', doel: 'Rug losmaken vóór je hem belast', cue: 'Rol je rug wervel voor wervel op en af, rustig ademen.', why: 'rug losmaken', days: ['ma', 'di', 'vr', 'za'] },
-          { name: 'Open books', doel: 'Thoracale rotatie — persen, trekken en gooien', cue: 'Draai je bovenste arm open en volg met je ogen. Heupen blijven stil.', why: 'thoracale rotatie', days: ['di', 'za'] },
-          { name: '90/90 switches', doel: 'Heup in- en uitdraaien voor squat-diepte', cue: 'Wissel je heupen links-rechts, borst rechtop.', why: 'heupmobiliteit', days: ['ma', 'vr'] },
-          { name: 'Cossack flow', doel: 'Laag zitten en liezen — je verdedigingshouding', cue: 'Zak diep naar één kant en schuif rustig door naar de andere.', why: 'liezen en diepte', days: ['wo', 'vr'] },
-          { name: "World's greatest stretch", doel: 'Heupbuiger en thoracaal in één', cue: 'Stap diep uit en draai je bovenste arm naar het plafond.', why: 'heup + thoracaal', days: ['di', 'wo', 'vr'] },
-          { name: 'Ankle rocks', doel: 'Enkelmobiliteit — diepere squat, zachtere landing', cue: 'Duw je knie voorbij je tenen, hiel blijft op de grond.', why: 'enkelmobiliteit', days: ['ma', 'wo', 'vr'] },
-          { name: 'Hinge-drill (stok)', doel: 'Eerste rep goed bracen — je limiterende factor', cue: 'Houd de stok op drie punten en scharnier vanuit je heupen.', why: 'bracen', days: ['ma', 'za'] }
+          { name: '2 min fiets of roeier', doel: 'Warm weefsel vóór je het op lengte belast', cue: 'Rustig trappen of roeien tot je ademhaling net oploopt. Koud weefsel op eindstand is precies de blessure die je wilt voorkomen.', why: 'warm worden', days: ['ma', 'di', 'wo', 'vr', 'za'] }
         ]
       },
       {
-        key: 'power', title: 'Neural primer', sub: '~4 min · wakker maken, niet moe maken',
+        key: 'geladen', title: 'Geladen eindstand', sub: '~5 min - hier zit je mobiliteitswinst',
         items: [
-          { name: 'Pogo hops 2 × 15', doel: 'Voetstijfheid vóór het echte springwerk', cue: 'Stuiter op je voorvoet met bijna gestrekte knieën, kort op de grond.', why: 'voetstijfheid', days: ['ma', 'vr'] },
-          { name: 'Band pull-apart 2 × 15', doel: 'Schouders wakker vóór het persen', cue: 'Trek de band uit elkaar tot borsthoogte en laat rustig terug.', why: 'schouders wakker', days: ['di', 'za'] },
-          { name: 'Med ball chest pass licht 2 × 5', doel: 'Bovenlichaam op scherp zetten', cue: 'Duw de bal licht en snel weg — snelheid, geen maximale kracht.', why: 'bovenlichaam scherp', days: ['di'] },
-          { name: 'A-skips 2 × 20 m', doel: 'Sprintmechaniek instellen', cue: 'Huppel met hoge knie en zet je voet actief naar beneden.', why: 'sprintmechaniek', video: 'https://www.youtube.com/watch?v=2LAg2FFAXbo', days: ['wo', 'vr'] },
-          { name: 'Buildups 3 × 30 m (60→90%)', doel: 'Opbouwen naar volle snelheid', cue: 'Bouw je snelheid op van 60 naar 90% — knal nooit koud weg.', why: 'opbouwen', days: ['vr'] },
-          { name: 'Split-step + reactie', doel: 'Eerste stap scherp vóór je gaat spelen', cue: 'Land op je split-step en zet direct af in één richting.', why: 'eerste stap', days: ['wo'] },
-          { name: 'Dead hang 2 × max', doel: 'Grip en decompressie vóór het trekken', cue: 'Hang zo lang je kunt met actieve schouders.', why: 'grip en decompressie', days: ['za'] }
+          { name: 'Goblet squat-hold, hakken hoog, 2 x 30 sec', doel: 'Patellapees op volle lengte onder gewicht', cue: 'Hakken op een schijf, halterkop tegen je borst, zak zo diep als je kunt en hou stil. Knieen mogen ver over je tenen.', why: 'knie en squatdiepte', days: ['ma', 'vr'] },
+          { name: 'Cossack squat met schijf, 2 x 5 p/z', doel: 'Liezen en heup op lengte, onder belasting', cue: 'Schijf voor je borst, zak diep naar een kant met je andere been gestrekt. Twee tellen onderin, dan rustig omhoog.', why: 'liezen en heup', days: ['vr', 'wo'] },
+          { name: 'Geladen 90/90, 2 x 5 p/z', doel: 'Heup in- en uitdraaien met weerstand', cue: 'Halterkop voor je borst, wissel je heupen van 90/90 naar de andere kant zonder je handen te gebruiken. Borst rechtop.', why: 'heuprotatie', days: ['ma', 'vr'] },
+          { name: 'Kettlebell armbar, 2 x 30 sec p/z', doel: 'Schouder en borstwervels op eindstand onder gewicht', cue: 'Op je rug, gewicht recht boven je schouder, rol langzaam naar je zij en hou het gewicht loodrecht. Dit is je beste item voor persen.', why: 'schouder en thoracaal', days: ['di', 'za'] },
+          { name: 'Diepe lunge met rotatie, halterkop, 2 x 4 p/z', doel: 'Heupbuiger en romprotatie in een', cue: 'Stap diep uit, gewicht in je handen, draai je romp open naar je voorste been en hou twee tellen vast.', why: 'heupbuiger en rotatie', days: ['di', 'wo'] },
+          { name: 'RDL met 3 tellen pauze onderin, 2 x 5 licht', doel: 'Hamstrings op volle lengte plus je hinge-patroon', cue: 'Lege of lichte stang, zak tot je rek voelt en hou drie tellen stil. Rug vlak. Dit is je opwarming en je eerste rep in een.', why: 'hamstrings en bracen', days: ['ma', 'za'] },
+          { name: 'Dead hang met actieve schouders, 2 x 30 sec', doel: 'Lats en schouder op lengte onder je eigen gewicht', cue: 'Hang vol uit, trek dan je schouderbladen een centimeter omlaag zonder je armen te buigen. Decompressie plus gripwerk.', why: 'lats en decompressie', days: ['wo', 'za'] }
         ]
       },
       {
-        key: 'balans', title: 'Voet & enkel', sub: '~3 min · je enkels zijn je grootste blessurerisico',
+        key: 'power', title: 'Wakker maken', sub: '~2 min - wakker maken, niet moe maken',
         items: [
-          { name: 'Tibialis raise 2 × 20', doel: 'Scheenbeen — remkracht, beschermt de knie', cue: 'Til je tenen op tegen de muur en laat langzaam zakken.', why: 'remkracht', days: ['ma', 'di', 'wo', 'vr', 'za'] },
-          { name: 'Calf raise excentrisch 2 × 10', doel: 'Achillespees belastbaar voor sprint en sprong', cue: 'Duw omhoog en laat in drie tellen zakken.', why: 'achillespees', days: ['di', 'wo', 'vr', 'za'] },
-          { name: 'Single-leg balance 2 × 30 sec', doel: 'Stabiele enkel, geen circusact', cue: 'Sta 30 sec stil op één been met je blik vooruit.', why: 'enkelstabiliteit', days: ['di', 'wo', 'vr'] }
+          { name: 'Pogo hops 2 x 15', doel: 'Voetstijfheid vóór het echte springwerk', cue: 'Stuiter op je voorvoet met bijna gestrekte knieen, zo kort mogelijk op de grond.', why: 'voetstijfheid', days: ['ma', 'vr'] },
+          { name: 'Band pull-apart 2 x 15', doel: 'Schouders wakker vóór het persen', cue: 'Trek de band uit elkaar tot borsthoogte en laat rustig terug.', why: 'schouders wakker', days: ['di', 'za'] },
+          { name: 'Scapula pull-ups 2 x 8', doel: 'Je lats laten vuren vóór je gaat trekken', cue: 'Hang en trek je schouderbladen omlaag zonder je ellebogen te buigen. Precies de spier die bij jou achterloopt.', why: 'lats activeren', days: ['wo'] }
+        ]
+      },
+      {
+        key: 'balans', title: 'Voet en enkel', sub: '~2 min - je enkels en knieen dragen 104 kg',
+        items: [
+          { name: 'Tibialis raise 2 x 20', doel: 'Scheenbeen: remkracht, beschermt je knie', cue: 'Til je tenen op tegen de muur en laat ze langzaam zakken.', why: 'remkracht', days: ['ma', 'di', 'wo', 'vr', 'za'] },
+          { name: 'Excentrische kuit op een opstapje, 2 x 10', doel: 'Achillespees belastbaar op volle lengte', cue: 'Duw omhoog op twee benen, zak op een been in drie tellen tot je hiel zo diep mogelijk hangt.', why: 'achillespees', days: ['di', 'wo', 'vr', 'za'] },
+          { name: 'Knie-naar-muur met gewicht, 2 x 8 p/z', doel: 'Enkelmobiliteit onder belasting', cue: 'Halterkop vast, duw je knie over je tenen naar de muur, hiel blijft plat. Twee tellen op het diepste punt.', why: 'enkelmobiliteit', days: ['ma', 'wo', 'vr'] }
         ]
       }
     ]
   },
 
-  weekRule: 'Vijf tildagen: ma hinge en rugdikte, di zwaar persen, wo lats, vr benen en bilspieren, za borst en achterste schouder. Do en zo zijn rust. Cardio: stairmaster-tempo woensdag, zone 2 zaterdag, zwemmen zondag. Het persvolume staat bewust over twee dagen - schouders en rotators krijgen nooit alles in een sessie.',
+  weekRule: 'Vijf tildagen: ma hinge en rugdikte, di zwaar persen, wo lats, vr benen en bilspieren, za borst en achterste schouder. Cardio: tempo op donderdag (fiets of roeier), zone 2 zaterdag, zwemmen zondag. Tempowerk staat op een rustdag omdat de tildagen om 06:00 voor werk geen 25 minuten extra hebben.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
 
   days: {
@@ -104,21 +106,22 @@ window.PROGRAM = {
     wo: {
       key: 'wo', label: 'WO', title: 'Lats - breedte', sub: 'je zwakste schakel op de rug',
       erector: 'LAAG', power: 'Geen', compound: 'Weighted pullups',
-      warn: 'Alles hier draait om breedte: ellebogen omlaag, volle rek bovenin. Geen zware rijen - die staan zaterdag.',
+      warn: 'Alles draait om breedte: ellebogen omlaag, volle rek bovenin. Geen cardio meer hier - het tempoblok staat sinds 21-10 op donderdag.',
       items: [
         { key: 'weighted_pullups', group: 'Trek zwaar', name: 'Weighted pullups', doel: 'Zware trekdag, ver van de deadlift', cue: 'Trek zwaar met extra gewicht — je grip staat hier het verst van de deadlift.', sets: 4, target: '6-8', type: 'strength' },
         { key: 'lat_pulldown', group: 'Bouw je lats', name: 'Lat pulldown', doel: 'Breedte - je zwakste schakel op de rug', cue: 'Trek met je ellebogen omlaag naar je heupen, niet met je handen. Laat bovenin volledig uitrekken voor je weer trekt.', sets: 4, target: '10-12', inc: 5, type: 'strength' },
         { key: 'pullover', group: 'Bouw je lats', name: 'Straight-arm pullover', doel: 'Lat op volle lengte, zonder je biceps', cue: 'Houd je armen gestrekt en duw de stang in een boog naar je heupen. Voel de rek bovenin - licht gewicht, lange baan.', sets: 4, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'lat_row', group: 'Bouw je lats', name: 'Single-arm lat row', doel: 'Lat apart, met volle rek onderin', cue: 'Laat je schouderblad onderin ver naar voren komen en trek je elleboog langs je heup. Romp blijft stil.', sets: 3, target: '10-12 p/z', inc: 2.5, type: 'strength' },
         { key: 'biceps', group: 'Bouw volume', name: 'Biceps', doel: 'Elleboog en onderarm belastbaar', cue: 'Krul rustig en laat het gewicht gecontroleerd zakken. Twee oefeningen is genoeg, dit is geen armendag.', sets: 3, target: '10-12', inc: 2.5, type: 'strength' },
-        { key: 'tempo_block', group: 'Conditie', name: 'Stairmaster - tempo', doel: 'Je enige lege bakje: aeroob-hoog', cue: 'Klim 5 x 3 min op hartslag 165-178 met 2 min rustig ertussen. Praten moet net niet lukken.', let: 'Uit je inspanningstest: aerobe drempel 161–165, anaerobe drempel 179–182. Extra basketbal vult dit bakje niet — dat telt als zone 2.', target: '5 x 3 min', type: 'check' },
       ]
     },
     do: {
-      key: 'do', label: 'DO', title: 'Rust', sub: 'tussen de twee zware helften van je week',
+      key: 'do', label: 'DO', title: 'Rust - alleen tempowerk', sub: 'geen gewichten, 30 minuten conditie',
       erector: 'LAAG', power: 'Geen', compound: '-', rest: true,
-      warn: 'Morgen squat en springen. Vandaag niets doen is hier het werk.',
-      items: []
+      warn: 'Alleen het tempoblok, 30 min. Fiets of roeier, nooit de stairmaster - morgen squat en spring je.',
+      items: [
+        { key: 'tempo_block', group: 'Conditie', name: 'Tempo - fiets of roeier', doel: 'Je enige lege bakje: aeroob-hoog', cue: '5 x 3 min op hartslag 165-178, 2 min rustig ertussen. Praten moet net niet lukken. Geen stairmaster: die kost je benen te veel voor morgen.', target: '5 x 3 min', type: 'check' }
+      ]
     },
     vr: {
       key: 'vr', label: 'VR', title: 'Benen + bilspieren', sub: 'springen fris, dan pas tillen',
@@ -226,7 +229,7 @@ window.PROGRAM = {
       { name: 'Sprongwerk', sets: '7 (vr)' },
       { name: 'Midden-rug', sets: '4 (ma, bij de hinges)' },
       { name: 'Triceps direct', sets: '2 (di)' },
-      { name: 'Cardio', sets: 'wo tempo - za zone 2 - zo zwemmen' },
+      { name: 'Cardio', sets: 'do tempo - za zone 2 - zo zwemmen' },
       { name: 'Schouderwerk op de persdag', sets: '10 sets (was 16)' }
     ]
   }
