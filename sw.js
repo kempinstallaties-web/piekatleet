@@ -1,6 +1,6 @@
 /* PiekAtleet service worker — cachet de app-shell zodat de app offline opent.
    Data-sync gaat buiten de SW om (local-first in app.js). */
-var CACHE = 'piekatleet-v42'; // bump bij ELKE deploy — vervangt de hele shell atomisch
+var CACHE = 'piekatleet-v43'; // bump bij ELKE deploy — vervangt de hele shell atomisch
 var SHELL = [
   './',
   './index.html',
