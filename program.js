@@ -19,9 +19,9 @@ window.PROGRAM = {
     athlete: 'Kaj Kemp',
     motto: 'niet groter worden — beter bewegen',
     block: 'Krachtblok - golf 1 van 3 (volume) t/m 15 nov - blok loopt t/m 10 januari',
-    nutritionShort: '3300 kcal - 200-210 g eiwit - +0,2 kg per week',
+    nutritionShort: '3800 kcal - 200-210 g eiwit - +0,2 kg per week - taille meten bij elke weging',
     weakPoints: 'Posterior chain - hamstrings, bilspieren, rugstrekkers',
-    goals: 'Compounds opbouwen en de achterkant ijzersterk maken, met het atletische werk volledig behouden. Trap bar 150 x 3, squat 110 x 4, incline 105 x 4, 105,5 kg bij dezelfde taille.'
+    goals: 'Compounds opbouwen en de achterkant ijzersterk maken, met het atletische werk volledig behouden. Trap bar 150 x 3, squat 120 x 4, incline 105 x 4, 108-110 kg bij dezelfde taille.'
   },
 
   rules: [
