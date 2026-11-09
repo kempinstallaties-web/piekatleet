@@ -5,7 +5,7 @@
 // wijs en zijn op een gewone werkdag te doen.
 // Opslag in de app: metric 'seth_kaart' (datum van vandaag, 1/0) en 'seth_avond' (datum van gisteren).
 window.SETH = {
-  start: '2026-11-16', // maandag week 1; het blok duurt 12 weken (84 dagen)
+  start: '2026-11-09', // maandag week 1 (Kaj 09-11: "mag deze week al beginnen"); het blok duurt 12 weken (84 dagen)
 
   weekcheck: {
     vragen: ['Waar ging het goed?', 'Waar ging het mis?', 'Wat doe ik deze week beter?'],
