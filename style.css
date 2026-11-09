@@ -192,6 +192,44 @@ input, textarea, select { font: inherit; color: var(--ink); font-variant-numeric
 .hero-prog { margin-top: 8px; color: var(--lime); font-weight: 600; }
 
 /* ---------- 7. Nulmeting-kaart ---------- */
+/* Seth-kaart: dagelijkse mindset-opdracht bovenaan Vandaag (lime = gedaan, cyaan = label) */
+.seth { border-color: rgba(163, 255, 78, 0.28); }
+.seth-thema { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); }
+.seth-zin { margin-top: 4px; color: var(--ink2); font-size: 13.5px; font-style: italic; }
+.seth-label { margin-top: 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.seth-opdracht { margin-top: 4px; font-size: 15.5px; font-weight: 600; line-height: 1.4; }
+.seth-vragen { margin: 4px 0 4px 18px; font-size: 14px; color: var(--ink); }
+.seth-vragen li { margin-bottom: 2px; }
+.seth .tiny { margin-top: 4px; }
+.seth-bron { display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 700; color: var(--cyan); text-decoration: none; }
+.seth-acties { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.seth-btn, .seth-avond {
+  display: inline-flex; align-items: center; gap: 8px; min-height: var(--tap);
+  padding: 0 14px; border-radius: 99px; border: 1px solid var(--line);
+  background: var(--surface2); font-size: 14px; font-weight: 700; color: var(--ink2);
+}
+.seth-btn { color: var(--ink); border-color: rgba(53, 224, 255, 0.4); }
+.seth-avond { font-size: 13px; }
+.seth-vink {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--muted);
+  font-size: 12px; color: transparent;
+}
+.seth-btn.on, .seth-avond.on { background: rgba(163, 255, 78, 0.12); border-color: var(--lime); color: var(--lime); }
+.seth-btn.on .seth-vink, .seth-avond.on .seth-vink, .seth-dicht .seth-dicht-main .seth-vink { color: var(--lime); border-color: var(--lime); }
+.seth-strook { display: flex; align-items: center; gap: 6px; margin-top: 12px; }
+.seth-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--line); }
+.seth-dot.on { background: var(--lime); border-color: var(--lime); box-shadow: var(--lime-glow); }
+.seth-dot.nu { border-color: var(--cyan); }
+.seth-dot.rust { opacity: 0.35; border-style: dashed; }
+.seth-tot { margin: 0 0 0 auto !important; }
+.seth-dicht { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+.seth-dicht-main { display: flex; align-items: center; gap: 10px; flex: 1 1 100%; min-width: 0; min-height: var(--tap); text-align: left; }
+.seth-dicht-txt { flex: 1; min-width: 0; font-size: 14px; font-weight: 700; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seth-dicht .seth-avond { min-height: 38px; }
+.seth-rust .seth-zin { margin-bottom: 0; }
+.seth .seth-test { margin-top: 10px; color: var(--coral); }
+
 .nulmeting { border-color: rgba(53, 224, 255, 0.3); }
 .nm-kop { font-size: 16px; font-weight: 800; color: var(--cyan); letter-spacing: -0.01em; }
 .nm-sub { margin-top: 3px; }

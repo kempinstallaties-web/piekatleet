@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '43 · 24-10-2026';
+  var APP_VERSION = '44 · 09-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -964,11 +964,175 @@
     return card;
   }
 
+  /* Seth-kaart (contract seth-kaart-CONTRACT.md) — één mindset-opdracht per dag, bovenaan
+     Vandaag. Volgt de telefoondatum, los van de datumkiezer van de training. Opslag via
+     dezelfde metrics als de nulmeting: 'seth_kaart' op vandaag en 'seth_avond' op gisteren,
+     waarde 1 of 0 (nooit verwijderen). Bewust GEEN tekstveld: deze app heeft geen login. */
+  var SETH = window.SETH || null;
+  var SETH_DAGEN = 84; // 12 weken
+  // alleen om te testen: ?sethdatum=JJJJ-MM-DD toont de kaart van die dag
+  var SETH_TEST = (function () {
+    var m = /[?&]sethdatum=(\d{4}-\d{2}-\d{2})/.exec(location.search);
+    return m ? m[1] : null;
+  })();
+  var sethGetekend = null; // datum waarvoor de kaart het laatst is getekend (middernacht-check)
+  var sethTest = {}; // testmodus: vinkjes alleen in het geheugen, nooit opslaan of syncen
+
+  function sethVandaag() { return SETH_TEST || todayStr(); }
+  function datumPlus(dateStr, n) {
+    var d = new Date(dateStr + 'T12:00:00');
+    d.setDate(d.getDate() + n);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function dagenTussen(van, tot) {
+    return Math.round((new Date(tot + 'T12:00:00').getTime() - new Date(van + 'T12:00:00').getTime()) / 864e5);
+  }
+  function sethGedaan(dateStr, key) {
+    var k = dateStr + '|' + key;
+    if (SETH_TEST && k in sethTest) return sethTest[k] === 1;
+    var m = S.metrics[k];
+    return !!(m && m.value === 1);
+  }
+  function sethZet(dateStr, key, aan) {
+    var k = dateStr + '|' + key;
+    if (SETH_TEST) { sethTest[k] = aan ? 1 : 0; return; }
+    S.metrics[k] = { date: dateStr, key: key, value: aan ? 1 : 0, note: '', updatedAt: nowIso() };
+    markMetricDirty(k);
+  }
+  function sethTotaal() {
+    var eind = datumPlus(SETH.start, SETH_DAGEN - 1);
+    var datums = {};
+    Object.keys(S.metrics).concat(Object.keys(sethTest)).forEach(function (k) {
+      var p = k.split('|');
+      if (p[1] === 'seth_kaart' && p[0] >= SETH.start && p[0] <= eind) datums[p[0]] = true;
+    });
+    return Object.keys(datums).filter(function (d) { return sethGedaan(d, 'seth_kaart'); }).length;
+  }
+
+  // in testmodus staat er een regel onder de kaart, zodat niemand denkt dat er iets is opgeslagen
+  function sethKaart() {
+    var card = sethKaartBasis();
+    if (card && SETH_TEST) {
+      card.appendChild(el('<div class="tiny seth-test">Testmodus ' + esc(fmtDate(SETH_TEST)) + ': vinkjes worden niet opgeslagen</div>'));
+    }
+    return card;
+  }
+
+  function sethKaartBasis() {
+    if (!SETH || !SETH.weeks || !SETH.weeks.length) return null;
+    var vandaag = sethVandaag();
+    sethGetekend = vandaag;
+    var blokdag = dagenTussen(SETH.start, vandaag);
+    var max = SETH.weeks.length * 6; // vijf dagkaarten + de weekcheck per week
+
+    if (blokdag < 0) {
+      var w1 = SETH.weeks[0];
+      return el('<div class="card seth">' +
+        '<div class="seth-thema">Seth-kaart start ' + esc(fmtDate(SETH.start)) + '</div>' +
+        '<div class="seth-opdracht">Week 1 · ' + esc(w1.thema) + '</div>' +
+        '<div class="seth-zin">' + esc(w1.zin) + '</div></div>');
+    }
+    if (blokdag >= SETH_DAGEN) {
+      return el('<div class="card seth">' +
+        '<div class="seth-thema">Seth-blok klaar</div>' +
+        '<div class="seth-opdracht">' + sethTotaal() + ' van ' + max + ' kaarten gedaan. Welke drie thema\'s wil je herhalen? Zeg het in de chat.</div></div>');
+    }
+
+    var wi = Math.floor(blokdag / 7);
+    var w = SETH.weeks[wi];
+    var dk = dayKeyForDate(vandaag);
+    var zondag = dk === 'zo';
+    var kop = 'Week ' + (wi + 1) + ' · ' + w.thema;
+    var opdracht = zondag ? w.vraag : w[dk];
+
+    var gisteren = datumPlus(vandaag, -1);
+    var toonAvond = blokdag >= 1;
+    var avondGedaan = toonAvond && sethGedaan(gisteren, 'seth_avond');
+    var avondKnop = '<button class="seth-avond' + (avondGedaan ? ' on' : '') + '" aria-pressed="' + avondGedaan + '">' +
+      '<span class="seth-vink">✓</span>Avondcheck gisteren</button>';
+    var card;
+
+    function opnieuw() { var nieuw = sethKaart(); if (nieuw && card) card.replaceWith(nieuw); }
+    function koppelAvond() {
+      var b = card.querySelector('.seth-avond');
+      if (b) b.addEventListener('click', function () { sethZet(gisteren, 'seth_avond', !avondGedaan); opnieuw(); });
+    }
+
+    // donderdag is rust: thema en zin, geen opdracht en geen dagvinkje; de avondcheck van
+    // woensdagavond is wel af te vinken. Ontbrekende tekst valt hierop terug (nooit een lege kaart).
+    if (dk === 'do' || !opdracht) {
+      card = el('<div class="card seth seth-rust">' +
+        '<div class="seth-thema">' + esc(kop) + '</div>' +
+        '<div class="seth-zin">' + esc(w.zin) + '</div>' +
+        (toonAvond ? '<div class="seth-acties">' + avondKnop + '</div>' : '') + '</div>');
+      koppelAvond();
+      return card;
+    }
+
+    var gedaan = sethGedaan(vandaag, 'seth_kaart');
+
+    // afgevinkt → ingeklapt tot één regel, zodat de training direct in beeld staat
+    if (gedaan && UI.sethOpen !== vandaag) {
+      card = el('<div class="card seth seth-dicht">' +
+        '<button class="seth-dicht-main" aria-expanded="false"><span class="seth-vink">✓</span>' +
+        '<span class="seth-dicht-txt">Seth · ' + esc(w.thema) + '</span>' +
+        '<span class="tiny">' + sethTotaal() + '/' + max + '</span></button>' +
+        (toonAvond && !avondGedaan ? avondKnop : '') + '</div>');
+      card.querySelector('.seth-dicht-main').addEventListener('click', function () { UI.sethOpen = vandaag; opnieuw(); });
+      koppelAvond();
+      return card;
+    }
+
+    var html = '<div class="card seth">' +
+      '<div class="seth-thema">' + esc(kop) + '</div>' +
+      '<div class="seth-zin">' + esc(w.zin) + '</div>';
+    if (zondag) {
+      html += '<div class="seth-label">Weekcheck</div>' +
+        '<ol class="seth-vragen">' + SETH.weekcheck.vragen.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') + '</ol>' +
+        '<div class="tiny">Rollen: ' + esc(SETH.weekcheck.rollen) + '</div>' +
+        '<div class="seth-opdracht">' + esc(opdracht) + '</div>' +
+        '<div class="tiny">' + esc(SETH.weekcheck.lijst) + '</div>';
+    } else {
+      html += '<div class="seth-label">Vandaag</div><div class="seth-opdracht">' + esc(opdracht) + '</div>';
+    }
+    if (dk === 'ma' && w.bron) {
+      html += '<a class="seth-bron" href="' + esc(w.bron.url) + '" target="_blank" rel="noopener">▶ Seth: ' +
+        esc(w.bron.titel) + ' · ' + esc(w.bron.tijd) + '</a>';
+    }
+
+    var weekStart = datumPlus(SETH.start, wi * 7);
+    var dots = '';
+    for (var i = 0; i < 7; i++) {
+      var d = datumPlus(weekStart, i);
+      var cls = dayKeyForDate(d) === 'do' ? ' rust' : (sethGedaan(d, 'seth_kaart') ? ' on' : (d === vandaag ? ' nu' : ''));
+      dots += '<span class="seth-dot' + cls + '" title="' + esc(fmtDate(d)) + '"></span>';
+    }
+
+    html += '<div class="seth-acties">' +
+      '<button class="seth-btn' + (gedaan ? ' on' : '') + '" aria-pressed="' + gedaan + '"><span class="seth-vink">✓</span>' +
+      (zondag ? 'Weekcheck gedaan' : 'Gedaan') + '</button>' +
+      (toonAvond ? avondKnop : '') + '</div>' +
+      '<div class="seth-strook" aria-label="Seth-kaarten deze week">' + dots +
+      '<span class="tiny seth-tot">' + sethTotaal() + '/' + max + '</span></div></div>';
+
+    card = el(html);
+    card.querySelector('.seth-btn').addEventListener('click', function () {
+      sethZet(vandaag, 'seth_kaart', !gedaan);
+      if (!gedaan) UI.sethOpen = null; // net afgevinkt → inklappen
+      opnieuw();
+    });
+    koppelAvond();
+    return card;
+  }
+
   function renderVandaag() {
     var root = $('#view');
     clear(root);
     var date = UI.date, dayKey = UI.dayKey;
     var day = P.days[dayKey];
+
+    var seth = sethKaart();
+    if (seth) root.appendChild(seth);
 
     var picker = el('<div class="dayselect"><input type="date" value="' + esc(date) + '" aria-label="Datum"></div>');
     picker.querySelector('input').addEventListener('change', function () {
@@ -1690,6 +1854,8 @@
       var m = S.metrics[k];
       var label = m.key;
       [].concat(P.anchors.athletic, P.anchors.body).forEach(function (a) { if (a.key === m.key) label = a.label; });
+      if (m.key === 'seth_kaart') label = 'Seth-kaart gedaan';
+      if (m.key === 'seth_avond') label = 'Avondcheck gedaan';
       lines.push([m.date, label, fmtNum(m.value), (m.note || '').replace(/[;\n\r]/g, ' ')].join(';'));
     });
     download('piekatleet-export-' + todayStr() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv');
@@ -1811,6 +1977,15 @@
     pullAll().then(function (ok) { if (ok) VIEWS[UI.view](); });
   });
   window.addEventListener('offline', refreshSyncUI);
+
+  // app over middernacht open laten en terugkomen → Seth-kaart (en training) naar de nieuwe dag
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState !== 'visible' || UI.view !== 'vandaag' || !sethGetekend) return;
+    var nu = sethVandaag();
+    if (nu === sethGetekend) return;
+    if (UI.date === sethGetekend) { UI.date = nu; UI.dayKey = dayKeyForDate(nu); }
+    renderVandaag();
+  });
 
   loadLocal();
   initSupabase();
