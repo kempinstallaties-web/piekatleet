@@ -375,7 +375,7 @@ input, textarea, select { font: inherit; color: var(--ink); font-variant-numeric
 
 .linkbtn {
   color: var(--cyan); font-size: 13px; font-weight: 600;
-  min-height: var(--tap); padding: 0 2px; display: inline-flex; align-items: center;
+  min-height: var(--tap); padding: 0 10px; display: inline-flex; align-items: center;
 }
 .ex-note {
   width: 100%; margin-top: 10px; background: var(--surface2);

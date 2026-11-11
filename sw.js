@@ -1,6 +1,6 @@
 /* PiekAtleet service worker — cachet de app-shell zodat de app offline opent.
    Data-sync gaat buiten de SW om (local-first in app.js). */
-var CACHE = 'piekatleet-v45'; // bump bij ELKE deploy — vervangt de hele shell atomisch
+var CACHE = 'piekatleet-v46'; // bump bij ELKE deploy — vervangt de hele shell atomisch
 var SHELL = [
   './',
   './index.html',
@@ -82,8 +82,11 @@ self.addEventListener('fetch', function (e) {
       if (resp && resp.ok) {
         var clone = resp.clone();
         caches.open(CACHE).then(function (c) { c.put(req, clone); });
+        return done(resp);
       }
-      done(resp);
+      // Netwerk antwoordde, maar fout (404/503 tijdens deploy, captive portal).
+      // Liever de opgeslagen kopie dan een kapotte app in de sportschool.
+      caches.match(req).then(function (cached) { done(cached || resp); });
     }).catch(function () {
       clearTimeout(timer);
       caches.match(req).then(function (cached) {
