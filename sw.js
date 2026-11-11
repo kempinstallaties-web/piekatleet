@@ -8,6 +8,7 @@ var SHELL = [
   './app.js',
   './program.js',
   './seth.js',
+  './dag.js',
   './config.js',
   './manifest.webmanifest',
   './icons/icon-192.png',
