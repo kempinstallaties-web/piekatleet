@@ -202,15 +202,13 @@ window.PROGRAM = {
   },
 
   nutrition: {
-    title: 'Performance bulk — geen massabulk',
-    context: 'Je bent 105 kg. Elke extra kilo moet je meesleuren over het veld, dus die moet zichzelf terugverdienen in kracht of snelheid.',
-    goal: '3500 – 3700 kcal · 240 g eiwit · gewicht vrijwel stabiel houden',
-    systemNote: 'Ga je van 105 naar 106 met een hogere sprong en snellere sprint: prima. Ga je naar 109 en word je langzamer: te veel.',
+    title: 'Voeding',
+    goal: '3800 kcal · 200-210 g eiwit · +0,2 kg per week',
     system: [
-      { title: 'Vloeibare calorieën', text: 'Shake van 1000+ kcal (melk, oats, pindakaas, whey, banaan) — 2 minuten, overal te drinken' },
-      { title: 'Dichtheid verhogen', text: 'Olijfolie over maaltijden · volle melk · extra rijst/pasta · handje noten' },
-      { title: 'Drie vaste ankers', text: 'Ontbijt · shake onderweg · avondeten' },
-      { title: 'Meet allebei', text: 'Weeg wekelijks én test elke 4 weken je sprong en sprint. Dat samen vertelt of de bulk werkt' }
+      { title: 'Elke dag', text: '400-500 g groente · 3-4 porties fruit · 500-800 g zuivel · 2 eieren · 50 g noten · 3 liter water' },
+      { title: 'Eiwit', text: '150-200 g kip of mager vlees · vis 2x per week, 1x vet · rood vlees hooguit 2x per week · vleeswaren liever niet' },
+      { title: 'Werkdag', text: 'Ontbijt: kwark, havermout, fruit, noten · Shake onderweg · Lunch: brood, eieren, vis of kip, rauwkost · Avond: 200 g kip of vis, rijst, 300 g groente' },
+      { title: 'Bijsturen', text: 'Meer dan 0,3 kg per week erbij en je taille groeit: pindakaas en havermout uit de shake (-400 kcal)' }
     ]
   },
 
