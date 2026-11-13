@@ -230,6 +230,31 @@ input, textarea, select { font: inherit; color: var(--ink); font-variant-numeric
 .seth-rust .seth-zin { margin-bottom: 0; }
 .seth .seth-test { margin-top: 10px; color: var(--coral); }
 
+/* Vaste dingen: dagelijkse afvinklijst onder de Seth-kaart (dag.js). De hele rij is de knop. */
+.dag { padding: 14px 12px 12px; border-color: rgba(53, 224, 255, 0.22); }
+.dag-kop { display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px 2px; }
+.dag-stand { font-size: 13px; font-weight: 800; color: var(--ink2); }
+.dag-rij {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 54px;
+  padding: 8px 12px; margin-top: 6px; text-align: left;
+  border-radius: var(--radius-sm); border: 1px solid var(--hair); background: var(--surface2);
+  transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.dag-rij:active { transform: scale(0.985); }
+.dag-rij .seth-vink { flex: none; width: 24px; height: 24px; border-radius: 8px; font-size: 14px; font-weight: 800; }
+.dag-txt { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 600; line-height: 1.35; }
+.dag-txt small {
+  display: block; font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted);
+}
+.dag-rij.on { background: rgba(163, 255, 78, 0.08); border-color: rgba(163, 255, 78, 0.4); }
+.dag-rij.on .seth-vink { color: var(--on-accent); background: var(--lime); border-color: var(--lime); }
+.dag-rij.on .dag-txt { color: var(--ink2); }
+.seth-dot.half { background: rgba(163, 255, 78, 0.35); border-color: rgba(163, 255, 78, 0.55); }
+.dag-strook { min-height: var(--tap); margin-top: 6px; padding: 0 4px; }
+.dag-voet { margin-left: auto; }
+.dag-coach { padding: 0 4px; }
+
 .nulmeting { border-color: rgba(53, 224, 255, 0.3); }
 .nm-kop { font-size: 16px; font-weight: 800; color: var(--cyan); letter-spacing: -0.01em; }
 .nm-sub { margin-top: 3px; }
@@ -375,7 +400,7 @@ input, textarea, select { font: inherit; color: var(--ink); font-variant-numeric
 
 .linkbtn {
   color: var(--cyan); font-size: 13px; font-weight: 600;
-  min-height: var(--tap); padding: 0 2px; display: inline-flex; align-items: center;
+  min-height: var(--tap); padding: 0 10px; display: inline-flex; align-items: center;
 }
 .ex-note {
   width: 100%; margin-top: 10px; background: var(--surface2);

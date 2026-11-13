@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '45 · 09-11-2026';
+  var APP_VERSION = '46 · 11-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -943,7 +943,11 @@
       rowsEl.appendChild(r);
     }
     mist.forEach(function (a) { veld(a.label, a.key, a.unit, a.hint); });
-    if (weegOud) veld('Weeg je', 'weight', 'kg', w ? 'laatste: ' + fmtDate(w.date) : 'nog nooit gelogd');
+    if (weegOud) {
+      veld('Weeg je', 'weight', 'kg', w ? 'laatste: ' + fmtDate(w.date) : 'nog nooit gelogd');
+      // het programma: taille meten bij elke weging (doel = zwaarder bij dezelfde taille)
+      veld('Taille', 'waist', 'cm', 'op navelhoogte, na uitademen');
+    }
 
     var btn = el('<button class="btn nm-save">Opslaan</button>');
     btn.addEventListener('click', function () {
@@ -1125,6 +1129,133 @@
     return card;
   }
 
+  /* Vaste dingen (dag.js) — een paar kleine dagelijkse groei-acties, één tik per ding.
+     Zelfde opslag als de Seth-kaart: metric 'dag_<id>' op de datum, waarde 1 of 0.
+     Gisteren is na te vinken, want een avond-ding vink je vaak pas de volgende ochtend af. */
+  var DAG = window.DAG || null;
+
+  function dagTaken(dateStr) {
+    if (!DAG || !DAG.taken) return [];
+    var dk = dayKeyForDate(dateStr);
+    return DAG.taken.filter(function (t) {
+      if (t.dagen && (' ' + t.dagen + ' ').indexOf(' ' + dk + ' ') < 0) return false;
+      return !!(t.tekst || (t.perDag && t.perDag[dk]));
+    });
+  }
+  function dagTekst(t, dateStr) { return t.tekst || t.perDag[dayKeyForDate(dateStr)]; }
+  function dagStand(dateStr) {
+    var taken = dagTaken(dateStr), n = 0;
+    taken.forEach(function (t) { if (sethGedaan(dateStr, 'dag_' + t.id)) n++; });
+    return { gedaan: n, totaal: taken.length };
+  }
+
+  // Bijsturing in één regel. Kijkt naar de zeven dagen vóór vandaag (vanaf DAG.start);
+  // de lopende dag telt niet mee, zodat een dag die nog bezig is nooit als misser telt.
+  function dagCoach(vandaag) {
+    var perTaak = {}, gedaan = 0, kon = 0, dagen = 0;
+    for (var i = 1; i <= 7; i++) {
+      var d = datumPlus(vandaag, -i);
+      if (d < DAG.start) break;
+      dagen++;
+      dagTaken(d).forEach(function (t) {
+        var p = perTaak[t.id] || (perTaak[t.id] = { t: t, gedaan: 0, kon: 0 });
+        p.kon++; kon++;
+        if (sethGedaan(d, 'dag_' + t.id)) { p.gedaan++; gedaan++; }
+      });
+    }
+    if (!dagen || !kon) return 'Klein en elke dag, ook op een slechte dag.';
+    var gisteren = dagStand(datumPlus(vandaag, -1));
+    if (gisteren.totaal && gisteren.gedaan === 0) return 'Gisteren niets afgevinkt. Vandaag gewoon weer.';
+    // het ding dat het vaakst blijft liggen (minder dan de helft, minstens drie kansen gehad)
+    var zwak = null;
+    Object.keys(perTaak).forEach(function (id) {
+      var p = perTaak[id];
+      if (p.kon < 3 || p.gedaan * 2 >= p.kon) return;
+      if (!zwak || p.gedaan / p.kon < zwak.gedaan / zwak.kon) zwak = p;
+    });
+    if (zwak) {
+      var staatVandaag = dagTaken(vandaag).some(function (t) { return t.id === zwak.t.id; });
+      return zwak.t.kort + ' blijft liggen: ' + zwak.gedaan + ' van ' + zwak.kon + ' dagen.' + (staatVandaag ? ' Begin daar vandaag mee.' : '');
+    }
+    var periode = dagen === 1 ? 'Gisteren ' : 'Afgelopen ' + dagen + ' dagen ';
+    var sterk = gedaan * 5 >= kon * 4;
+    return periode + gedaan + ' van ' + kon + '.' + (sterk ? ' Vasthouden.' : '');
+  }
+
+  function dagKaart() {
+    if (!DAG || !DAG.taken || !DAG.taken.length) return null;
+    var vandaag = sethVandaag();
+    if (vandaag < DAG.start) return null;
+    var gisteren = datumPlus(vandaag, -1);
+    var kanGisteren = gisteren >= DAG.start && dagTaken(gisteren).length > 0;
+    if (UI.dagDatum !== gisteren || !kanGisteren) UI.dagDatum = null; // alleen gisteren is na te vinken
+    var datum = UI.dagDatum || vandaag;
+    var isGisteren = datum !== vandaag;
+    var taken = dagTaken(datum);
+    if (!taken.length) return null;
+    var stand = dagStand(datum);
+    var card;
+    function opnieuw() { var nieuw = dagKaart(); if (nieuw && card) card.replaceWith(nieuw); }
+
+    // alles af → ingeklapt tot één regel, net als de Seth-kaart
+    if (!isGisteren && stand.gedaan === stand.totaal && UI.dagOpen !== vandaag) {
+      card = el('<div class="card seth seth-dicht">' +
+        '<button class="seth-dicht-main" aria-expanded="false"><span class="seth-vink">✓</span>' +
+        '<span class="seth-dicht-txt">Vaste dingen</span>' +
+        '<span class="tiny">' + stand.gedaan + '/' + stand.totaal + '</span></button></div>');
+      card.querySelector('.seth-dicht-main').addEventListener('click', function () { UI.dagOpen = vandaag; opnieuw(); });
+      return card;
+    }
+
+    var html = '<div class="card dag">' +
+      '<div class="dag-kop"><span class="seth-thema">Vaste dingen' + (isGisteren ? ' · gisteren' : '') + '</span>' +
+      '<span class="dag-stand">' + stand.gedaan + '/' + stand.totaal + '</span></div>';
+    taken.forEach(function (t) {
+      var aan = sethGedaan(datum, 'dag_' + t.id);
+      html += '<button class="dag-rij' + (aan ? ' on' : '') + '" data-id="' + esc(t.id) + '" aria-pressed="' + aan + '">' +
+        '<span class="seth-vink">✓</span>' +
+        '<span class="dag-txt"><small>' + esc(t.rol) + '</small>' + esc(dagTekst(t, datum)) + '</span></button>';
+    });
+
+    // weekstrook ma–zo: vol = alles af, half = een deel
+    var maandag = datumPlus(vandaag, -((new Date(vandaag + 'T12:00:00').getDay() + 6) % 7));
+    var dots = '';
+    for (var i = 0; i < 7; i++) {
+      var d = datumPlus(maandag, i);
+      var cls = '';
+      if (d >= DAG.start && d <= vandaag) {
+        var s = dagStand(d);
+        if (s.totaal && s.gedaan === s.totaal) cls = ' on';
+        else if (s.gedaan > 0) cls = ' half';
+      }
+      if (d === vandaag) cls += ' nu';
+      dots += '<span class="seth-dot' + cls + '" title="' + esc(fmtDate(d)) + '"></span>';
+    }
+    var gStand = kanGisteren ? dagStand(gisteren) : null;
+    var wissel = isGisteren
+      ? '<button class="linkbtn dag-wissel">naar vandaag</button>'
+      : (gStand && gStand.gedaan < gStand.totaal
+        ? '<button class="linkbtn dag-wissel">gisteren ' + gStand.gedaan + '/' + gStand.totaal + '</button>' : '');
+    html += '<div class="seth-strook dag-strook" aria-label="Vaste dingen deze week">' + dots +
+      '<span class="dag-voet">' + wissel + '</span></div>' +
+      '<div class="tiny dag-coach">' + esc(dagCoach(vandaag)) + '</div></div>';
+
+    card = el(html);
+    Array.prototype.forEach.call(card.querySelectorAll('.dag-rij'), function (b) {
+      b.addEventListener('click', function () {
+        var key = 'dag_' + b.getAttribute('data-id');
+        var aan = !sethGedaan(datum, key);
+        sethZet(datum, key, aan);
+        if (aan && navigator.vibrate) { try { navigator.vibrate(10); } catch (e) { /* geen trilmotor */ } }
+        if (!isGisteren && dagStand(datum).gedaan === taken.length) UI.dagOpen = null; // alles af → inklappen
+        opnieuw();
+      });
+    });
+    var wisselBtn = card.querySelector('.dag-wissel');
+    if (wisselBtn) wisselBtn.addEventListener('click', function () { UI.dagDatum = isGisteren ? null : gisteren; opnieuw(); });
+    return card;
+  }
+
   function renderVandaag() {
     var root = $('#view');
     clear(root);
@@ -1133,6 +1264,8 @@
 
     var seth = sethKaart();
     if (seth) root.appendChild(seth);
+    var dag = dagKaart();
+    if (dag) root.appendChild(dag);
 
     var picker = el('<div class="dayselect"><input type="date" value="' + esc(date) + '" aria-label="Datum"></div>');
     picker.querySelector('input').addEventListener('change', function () {
@@ -1774,6 +1907,11 @@
     }
     root.appendChild(wCard);
 
+    var tCard = el('<div class="card"><div class="h2">Taille</div><div class="tiny">Meet bij elke weging: op navelhoogte, na uitademen. Het doel is zwaarder worden bij dezelfde taille.</div></div>');
+    tCard.appendChild(metricAddRow('waist', 'cm', today));
+    tCard.appendChild(lineChart(metricSeries('waist').map(function (m) { return { label: fmtDate(m.date), value: m.value }; }), 'cm'));
+    root.appendChild(tCard);
+
     root.appendChild(el('<div class="section-title">Kracht — ondersteunend</div>'));
     root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Afgeleid uit je sets. Kracht is het middel: stijgt je squat terwijl je sprong zakt, dan win je dit blok niet.</div>'));
     var noData = [];
@@ -1856,6 +1994,9 @@
       [].concat(P.anchors.athletic, P.anchors.body).forEach(function (a) { if (a.key === m.key) label = a.label; });
       if (m.key === 'seth_kaart') label = 'Seth-kaart gedaan';
       if (m.key === 'seth_avond') label = 'Avondcheck gedaan';
+      if (DAG && m.key.indexOf('dag_') === 0) {
+        DAG.taken.forEach(function (t) { if ('dag_' + t.id === m.key) label = 'Vaste dingen: ' + t.kort; });
+      }
       lines.push([m.date, label, fmtNum(m.value), (m.note || '').replace(/[;\n\r]/g, ' ')].join(';'));
     });
     download('piekatleet-export-' + todayStr() + '.csv', '﻿' + lines.join('\r\n'), 'text/csv');

@@ -189,7 +189,8 @@ window.PROGRAM = {
       { key: 'rug_hold', label: 'Rug-hold (uithoudingsvermogen)', unit: 'sec', hint: 'seconden horizontaal vasthouden' }
     ],
     body: [
-      { key: 'weight', label: 'Lichaamsgewicht', unit: 'kg' }
+      { key: 'weight', label: 'Lichaamsgewicht', unit: 'kg' },
+      { key: 'waist', label: 'Taille', unit: 'cm' }
     ],
     reminders: [
       'Je KPI: sprong omhoog en tijden omlaag — niet je squat-kilo per week',
