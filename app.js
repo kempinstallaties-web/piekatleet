@@ -1129,7 +1129,7 @@
     return card;
   }
 
-  /* Vaste dingen (dag.js) — een paar kleine dagelijkse acties per rol, één tik per ding.
+  /* Vaste dingen (dag.js) — een paar kleine dagelijkse groei-acties, één tik per ding.
      Zelfde opslag als de Seth-kaart: metric 'dag_<id>' op de datum, waarde 1 of 0.
      Gisteren is na te vinken, want een avond-ding vink je vaak pas de volgende ochtend af. */
   var DAG = window.DAG || null;
@@ -1163,7 +1163,7 @@
         if (sethGedaan(d, 'dag_' + t.id)) { p.gedaan++; gedaan++; }
       });
     }
-    if (!dagen || !kon) return 'Klein en elke dag. Vink af wat gedaan is.';
+    if (!dagen || !kon) return 'Klein en elke dag, ook op een slechte dag.';
     var gisteren = dagStand(datumPlus(vandaag, -1));
     if (gisteren.totaal && gisteren.gedaan === 0) return 'Gisteren niets afgevinkt. Vandaag gewoon weer.';
     // het ding dat het vaakst blijft liggen (minder dan de helft, minstens drie kansen gehad)
