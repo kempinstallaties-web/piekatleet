@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '47 · 13-11-2026';
+  var APP_VERSION = '47 · 14-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -393,7 +393,7 @@
   /* FR-002 — power, worpen en sprongen krijgen NOOIT een kg-advies.
      Daar is de intentie de progressie: hoger, harder, korter op de grond.
      Double progression op een med ball gaf "9 × 3 → nu 11,5 kg"; dat is onzin. */
-  var POWER_BAL = { medball_rot: 1, medball_chest: 1 };
+  var POWER_BAL = { medball_rot: 1, medball_chest: 1, di_core: 1 };
   var POWER_REACTIEF = { pogos: 1, lateral_bound: 1 };
   var POWER_WOORD = { broad_jump_plyo: 'verder' }; // broad jump meet je in afstand, niet in hoogte
 
@@ -815,7 +815,7 @@
   /* ---------------- View: Vandaag (workout-editor) ---------------- */
   /* ---------------- Herstel (Garmin) ----------------
      Bewust één strook, geen dashboard: Kaj wil dit niet bijhouden, alleen weten
-     of het springwerk vandaag door kan. De sync draait 's ochtends 08:00, dus
+     of het zware en het rauwe werk vandaag door kan. De sync draait 's ochtends 08:00, dus
      val terug op de laatste dag mét data en zeg er dan bij van wanneer die is. */
   /* FR-003 — de sync maakt 's ochtends soms al een rij aan vóórdat het horloge heeft
      gesynct. Die lege rij van vandaag mag de strook niet op "—" zetten: zoek de laatste
@@ -833,26 +833,26 @@
     return null;
   }
 
-  // readiness stuurt alleen het explosieve werk aan; kracht blijft bijna altijd staan
+  // readiness stuurt vooral het conditie- en sleewerk aan; kracht blijft bijna altijd staan
   function herstelAdvies(r) {
     var rd = r.readiness_score;
     if (rd == null) return null;
-    if (rd >= 80) return { kleur: 'good', tekst: 'Groen. Springwerk en sprints op vol vermogen.' };
+    if (rd >= 80) return { kleur: 'good', tekst: 'Groen. Alles op vol vermogen.' };
     if (rd >= 60) return { kleur: 'good', tekst: 'Normaal. Schema aanhouden zoals het staat.' };
-    if (rd >= 40) return { kleur: 'accent', tekst: 'Halveer de sprong-contacts. Kracht mag blijven staan.' };
-    return { kleur: 'hot', tekst: 'Geen sprongen, geen sprints. Mobiliteit en techniek, of rust.' };
+    if (rd >= 40) return { kleur: 'accent', tekst: 'Kracht mag blijven staan. Halveer de slee en het conditiewerk.' };
+    return { kleur: 'hot', tekst: 'Geen slee, geen intervallen. Rustig bewegen of rust.' };
   }
 
   /* Conditie-advies uit Garmin's eigen belastingverdeling.
      Garmin splitst je maandlast in aeroob-laag (zone 2), aeroob-hoog (tempo/drempel)
-     en anaeroob (sprints). Basketbal en zone-2-werk vullen alleen het eerste bakje —
+     en anaeroob (sprints). Rustig werk en zone 2 vullen alleen het eerste bakje —
      het gat zit bij Kaj in het middelste. Vandaar dat dit apart van readiness staat:
      readiness zegt of je vandaag KUNT, dit zegt wat er MIST.
      165-178 komt uit Kaj's inspanningstest van 28-03: aerobe drempel 161-165,
      anaerobe drempel 179-182, max 198. Niet schatten op de hoogst waargenomen
      hartslag (~175) - hij gaat zelden echt tot zijn maximum.
-     Tempowerk mag alleen op dagen waar het de zaterdag-deadlift niet raakt: di en za. */
-  var TEMPO_DAGEN = { di: 1, za: 1 };
+     Het intervalblok staat op zondag (roeier of fiets, zodat de benen maandag fris zijn). */
+  var TEMPO_DAGEN = { zo: 1 };
 
   function conditieAdvies(r, dayKey) {
     var hoog = num(r.load_aerobic_high);
@@ -862,10 +862,10 @@
 
     var tekort = Math.round(doel[0] - hoog);
     if (TEMPO_DAGEN[dayKey]) {
-      return { kleur: 'accent', tekst: 'Doe het tempo-blok onderaan deze dag: dit is het enige bakje dat leeg staat (' +
-        tekort + ' tekort) — extra basketbal vult het niet, dat telt als zone 2.' };
+      return { kleur: 'accent', tekst: 'Doe vandaag de intervallen: dit is het enige bakje dat leeg staat (' +
+        tekort + ' tekort). Rustig werk vult het niet, dat telt als zone 2.' };
     }
-    return { kleur: 'muted', tekst: 'Tempowerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag — dat hoort op dinsdag of zaterdag.' };
+    return { kleur: 'muted', tekst: 'Intervalwerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag: dat hoort op zondag.' };
   }
 
   function herstelKaart(date) {
@@ -924,7 +924,7 @@
 
     var titel = mist.length ? 'Nulmeting ontbreekt' : 'Weeg je';
     var sub = mist.length
-      ? (mist.length + ' van de 5 ankers ' + (mist.length === 1 ? 'is' : 'zijn') + ' nog nooit gemeten. Vul in wat je hebt — de rest kan later.')
+      ? (mist.length + ' van de ' + P.anchors.athletic.length + ' ankers ' + (mist.length === 1 ? 'is' : 'zijn') + ' nog nooit gemeten. Vul in wat je hebt — de rest kan later.')
       : (w ? 'Je laatste weging is ' + dagenGeleden(w.date) + ' dagen oud.' : 'Nog nooit gewogen in de app.');
 
     // standaard één regel: de invulkaart is zeven velden hoog en hoort niet elke dag bovenaan
@@ -1925,8 +1925,8 @@
     clear(root);
     var today = todayStr();
 
-    root.appendChild(el('<div class="section-title">Prestatie-ankers · hier win je dit blok</div>'));
-    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Hier win of verlies je dit blok. Elke 4 weken meten — sprong omhoog, tijden omlaag.</div>'));
+    root.appendChild(el('<div class="section-title">Functie-ankers · elke 4 weken</div>'));
+    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Dragen, hangen, duwen en volhouden. Meet ze binnen je gewone training.</div>'));
     P.anchors.athletic.forEach(function (a) {
       var card = el('<div class="card"><div class="h2">' + esc(a.label) + '</div><div class="tiny">' + esc(a.hint) + '</div></div>');
       card.appendChild(metricAddRow(a.key, a.unit, today));
@@ -1956,7 +1956,7 @@
     root.appendChild(tCard);
 
     root.appendChild(el('<div class="section-title">Kracht — ondersteunend</div>'));
-    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Afgeleid uit je sets. Kracht is het middel: stijgt je squat terwijl je sprong zakt, dan win je dit blok niet.</div>'));
+    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Afgeleid uit je sets: het zwaarste van elke week.</div>'));
     var noData = [];
     P.anchors.strength.forEach(function (a) {
       var series = weeklyTopSets(a.key);
@@ -2016,7 +2016,7 @@
       var day = P.days[s.dayKey] || { title: s.dayKey };
       Object.keys(s.items || {}).forEach(function (k) {
         var found = findProgramItem(k);
-        var name = found ? found.item.name : k;
+        var name = found ? found.item.name : ((P.retired && P.retired[k]) || k);
         var it = s.items[k];
         if (it.sets && it.sets.length) {
           it.sets.forEach(function (st, i) {
