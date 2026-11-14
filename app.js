@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '46 · 11-11-2026';
+  var APP_VERSION = '47 · 14-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -393,7 +393,7 @@
   /* FR-002 — power, worpen en sprongen krijgen NOOIT een kg-advies.
      Daar is de intentie de progressie: hoger, harder, korter op de grond.
      Double progression op een med ball gaf "9 × 3 → nu 11,5 kg"; dat is onzin. */
-  var POWER_BAL = { medball_rot: 1, medball_chest: 1 };
+  var POWER_BAL = { medball_rot: 1, medball_chest: 1, di_core: 1 };
   var POWER_REACTIEF = { pogos: 1, lateral_bound: 1 };
   var POWER_WOORD = { broad_jump_plyo: 'verder' }; // broad jump meet je in afstand, niet in hoogte
 
@@ -815,7 +815,7 @@
   /* ---------------- View: Vandaag (workout-editor) ---------------- */
   /* ---------------- Herstel (Garmin) ----------------
      Bewust één strook, geen dashboard: Kaj wil dit niet bijhouden, alleen weten
-     of het springwerk vandaag door kan. De sync draait 's ochtends 08:00, dus
+     of het zware en het rauwe werk vandaag door kan. De sync draait 's ochtends 08:00, dus
      val terug op de laatste dag mét data en zeg er dan bij van wanneer die is. */
   /* FR-003 — de sync maakt 's ochtends soms al een rij aan vóórdat het horloge heeft
      gesynct. Die lege rij van vandaag mag de strook niet op "—" zetten: zoek de laatste
@@ -833,26 +833,26 @@
     return null;
   }
 
-  // readiness stuurt alleen het explosieve werk aan; kracht blijft bijna altijd staan
+  // readiness stuurt vooral het conditie- en sleewerk aan; kracht blijft bijna altijd staan
   function herstelAdvies(r) {
     var rd = r.readiness_score;
     if (rd == null) return null;
-    if (rd >= 80) return { kleur: 'good', tekst: 'Groen. Springwerk en sprints op vol vermogen.' };
+    if (rd >= 80) return { kleur: 'good', tekst: 'Groen. Alles op vol vermogen.' };
     if (rd >= 60) return { kleur: 'good', tekst: 'Normaal. Schema aanhouden zoals het staat.' };
-    if (rd >= 40) return { kleur: 'accent', tekst: 'Halveer de sprong-contacts. Kracht mag blijven staan.' };
-    return { kleur: 'hot', tekst: 'Geen sprongen, geen sprints. Mobiliteit en techniek, of rust.' };
+    if (rd >= 40) return { kleur: 'accent', tekst: 'Kracht mag blijven staan. Halveer de slee en het conditiewerk.' };
+    return { kleur: 'hot', tekst: 'Geen slee, geen intervallen. Rustig bewegen of rust.' };
   }
 
   /* Conditie-advies uit Garmin's eigen belastingverdeling.
      Garmin splitst je maandlast in aeroob-laag (zone 2), aeroob-hoog (tempo/drempel)
-     en anaeroob (sprints). Basketbal en zone-2-werk vullen alleen het eerste bakje —
+     en anaeroob (sprints). Rustig werk en zone 2 vullen alleen het eerste bakje —
      het gat zit bij Kaj in het middelste. Vandaar dat dit apart van readiness staat:
      readiness zegt of je vandaag KUNT, dit zegt wat er MIST.
      165-178 komt uit Kaj's inspanningstest van 28-03: aerobe drempel 161-165,
      anaerobe drempel 179-182, max 198. Niet schatten op de hoogst waargenomen
      hartslag (~175) - hij gaat zelden echt tot zijn maximum.
-     Tempowerk mag alleen op dagen waar het de zaterdag-deadlift niet raakt: di en za. */
-  var TEMPO_DAGEN = { di: 1, za: 1 };
+     Het intervalblok staat op zondag (roeier of fiets, zodat de benen maandag fris zijn). */
+  var TEMPO_DAGEN = { zo: 1 };
 
   function conditieAdvies(r, dayKey) {
     var hoog = num(r.load_aerobic_high);
@@ -862,10 +862,10 @@
 
     var tekort = Math.round(doel[0] - hoog);
     if (TEMPO_DAGEN[dayKey]) {
-      return { kleur: 'accent', tekst: 'Doe het tempo-blok onderaan deze dag: dit is het enige bakje dat leeg staat (' +
-        tekort + ' tekort) — extra basketbal vult het niet, dat telt als zone 2.' };
+      return { kleur: 'accent', tekst: 'Doe vandaag de intervallen: dit is het enige bakje dat leeg staat (' +
+        tekort + ' tekort). Rustig werk vult het niet, dat telt als zone 2.' };
     }
-    return { kleur: 'muted', tekst: 'Tempowerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag — dat hoort op dinsdag of zaterdag.' };
+    return { kleur: 'muted', tekst: 'Intervalwerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag: dat hoort op zondag.' };
   }
 
   function herstelKaart(date) {
@@ -924,8 +924,21 @@
 
     var titel = mist.length ? 'Nulmeting ontbreekt' : 'Weeg je';
     var sub = mist.length
-      ? (mist.length + ' van de 5 ankers ' + (mist.length === 1 ? 'is' : 'zijn') + ' nog nooit gemeten. Vul in wat je hebt — de rest kan later.')
+      ? (mist.length + ' van de ' + P.anchors.athletic.length + ' ankers ' + (mist.length === 1 ? 'is' : 'zijn') + ' nog nooit gemeten. Vul in wat je hebt — de rest kan later.')
       : (w ? 'Je laatste weging is ' + dagenGeleden(w.date) + ' dagen oud.' : 'Nog nooit gewogen in de app.');
+
+    // standaard één regel: de invulkaart is zeven velden hoog en hoort niet elke dag bovenaan
+    if (!UI.nmOpen) {
+      var kort = mist.length ? (mist.length + (mist.length === 1 ? ' anker' : ' ankers') + ' nog niet gemeten') : sub;
+      var dicht = el('<button class="card nm-dicht" aria-expanded="false"><span class="nm-kop">' + esc(mist.length ? 'Nulmeting' : titel) + '</span>' +
+        '<span class="tiny">' + esc(kort) + '</span><span class="nm-pijl">›</span></button>');
+      dicht.addEventListener('click', function () {
+        UI.nmOpen = true;
+        var open = nulmetingKaart();
+        if (open) dicht.replaceWith(open);
+      });
+      return dicht;
+    }
 
     var card = el('<div class="card nulmeting">' +
       '<div class="nm-kop">' + esc(titel) + '</div>' +
@@ -1163,7 +1176,7 @@
         if (sethGedaan(d, 'dag_' + t.id)) { p.gedaan++; gedaan++; }
       });
     }
-    if (!dagen || !kon) return 'Klein en elke dag, ook op een slechte dag.';
+    if (!dagen || !kon) return '';
     var gisteren = dagStand(datumPlus(vandaag, -1));
     if (gisteren.totaal && gisteren.gedaan === 0) return 'Gisteren niets afgevinkt. Vandaag gewoon weer.';
     // het ding dat het vaakst blijft liggen (minder dan de helft, minstens drie kansen gehad)
@@ -1214,7 +1227,7 @@
       var aan = sethGedaan(datum, 'dag_' + t.id);
       html += '<button class="dag-rij' + (aan ? ' on' : '') + '" data-id="' + esc(t.id) + '" aria-pressed="' + aan + '">' +
         '<span class="seth-vink">✓</span>' +
-        '<span class="dag-txt"><small>' + esc(t.rol) + '</small>' + esc(dagTekst(t, datum)) + '</span></button>';
+        '<span class="dag-txt">' + esc(dagTekst(t, datum)) + '</span></button>';
     });
 
     // weekstrook ma–zo: vol = alles af, half = een deel
@@ -1236,9 +1249,10 @@
       ? '<button class="linkbtn dag-wissel">naar vandaag</button>'
       : (gStand && gStand.gedaan < gStand.totaal
         ? '<button class="linkbtn dag-wissel">gisteren ' + gStand.gedaan + '/' + gStand.totaal + '</button>' : '');
+    var coach = dagCoach(vandaag);
     html += '<div class="seth-strook dag-strook" aria-label="Vaste dingen deze week">' + dots +
       '<span class="dag-voet">' + wissel + '</span></div>' +
-      '<div class="tiny dag-coach">' + esc(dagCoach(vandaag)) + '</div></div>';
+      (coach ? '<div class="tiny dag-coach">' + esc(coach) + '</div>' : '') + '</div>';
 
     card = el(html);
     Array.prototype.forEach.call(card.querySelectorAll('.dag-rij'), function (b) {
@@ -1735,16 +1749,42 @@
     return { g: '○', kl: 'st-todo', txt: datum === vandaag ? 'vandaag' : 'gepland' };
   }
 
+  /* Bijsturing — wekelijkse terugkoppeling op training, herstel en voeding. Komt binnen als
+     metric 'bijsturing': de tekst staat in note, één punt per regel, de eerste regel is de
+     focus van de week. Alleen-lezen in de app; de tekst gaat altijd door esc(). */
+  function bijsturingKaart() {
+    var s = Object.keys(S.metrics).map(function (k) { return S.metrics[k]; })
+      .filter(function (m) { return m.key === 'bijsturing' && m.note; })
+      .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    if (!s.length) return null;
+    var m = s[s.length - 1];
+    var regels = String(m.note).slice(0, 600).split('\n')
+      .map(function (r) { return r.trim(); }).filter(Boolean).slice(0, 4);
+    if (!regels.length) return null;
+    var html = '<div class="card bij"><div class="dag-kop"><span class="seth-thema">Bijsturing</span>' +
+      '<span class="tiny">' + esc(fmtDate(m.date)) + '</span></div>' +
+      '<div class="bij-focus">' + esc(regels[0]) + '</div>';
+    regels.slice(1).forEach(function (r) { html += '<div class="tiny bij-regel">' + esc(r) + '</div>'; });
+    return el(html + '</div>');
+  }
+
+  // inklapbare sectie: uitleg die je zelden nodig hebt staat dicht
+  function meer(titel) {
+    return el('<details class="meer"><summary>' + esc(titel) + '</summary></details>');
+  }
+
   function renderWeek() {
     var root = $('#view');
     clear(root);
     var vandaag = todayStr();
+
+    var bij = bijsturingKaart();
+    if (bij) root.appendChild(bij);
     var datums = weekDatums(vandaag);
     var wp = isoWeekParts(vandaag);
 
     root.appendChild(el('<div class="section-title">Week ' + wp.week + ' · deze week</div>'));
-    var card = el('<div class="card"><div class="weeklist"></div>' +
-      '<div class="tiny" style="margin-top:10px">Tik een dag om te bekijken of in te vullen.</div></div>');
+    var card = el('<div class="card"><div class="weeklist"></div></div>');
     var list = card.querySelector('.weeklist');
     P.weekOrder.forEach(function (dk) {
       var d = P.days[dk];
@@ -1773,16 +1813,19 @@
     });
     root.appendChild(card);
 
-    root.appendChild(el('<div class="card"><div class="tiny">' + esc(P.weekRule) + '</div></div>'));
+    var regel = meer('Weekregel');
+    regel.appendChild(el('<div class="card"><div class="tiny">' + esc(P.weekRule) + '</div></div>'));
+    root.appendChild(regel);
 
-    root.appendChild(el('<div class="section-title">' + esc(P.opener.title) + '</div>'));
+    var fase = meer(P.opener.title);
     var op = el('<div class="card"><div class="tiny">' + esc(P.opener.sub) + '</div></div>');
     P.opener.blocks.forEach(function (b) {
       op.appendChild(el('<div style="margin-top:10px"><div class="opener-head"><span class="h2">' + esc(b.title) + '</span><span class="tiny">' + esc(b.sub) + '</span></div>' +
         '<div class="sub">' + esc(b.items.map(function (i) { return i.name; }).join(' · ')) + '</div>' +
         (b.warn ? '<div class="callout"><span class="ic">⚠</span><span>' + esc(b.warn) + '</span></div>' : '') + '</div>'));
     });
-    root.appendChild(op);
+    fase.appendChild(op);
+    root.appendChild(fase);
   }
 
   /* ---------------- View: Historie ---------------- */
@@ -1882,8 +1925,8 @@
     clear(root);
     var today = todayStr();
 
-    root.appendChild(el('<div class="section-title">Prestatie-ankers · hier win je dit blok</div>'));
-    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Hier win of verlies je dit blok. Elke 4 weken meten — sprong omhoog, tijden omlaag.</div>'));
+    root.appendChild(el('<div class="section-title">Functie-ankers · elke 4 weken</div>'));
+    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Dragen, hangen, duwen en volhouden. Meet ze binnen je gewone training.</div>'));
     P.anchors.athletic.forEach(function (a) {
       var card = el('<div class="card"><div class="h2">' + esc(a.label) + '</div><div class="tiny">' + esc(a.hint) + '</div></div>');
       card.appendChild(metricAddRow(a.key, a.unit, today));
@@ -1893,7 +1936,7 @@
     });
 
     root.appendChild(el('<div class="section-title">Lichaam · wekelijks</div>'));
-    var wCard = el('<div class="card"><div class="h2">Lichaamsgewicht</div><div class="tiny">Stabiel houden — elke kilo moet zich terugverdienen in sprong of snelheid</div></div>');
+    var wCard = el('<div class="card"><div class="h2">Lichaamsgewicht</div><div class="tiny">Doel: +0,2 kg per week bij dezelfde taille</div></div>');
     wCard.appendChild(metricAddRow('weight', 'kg', today));
     var wSeries = metricSeries('weight');
     wCard.appendChild(lineChart(wSeries.map(function (m) { return { label: fmtDate(m.date), value: m.value }; }), 'kg'));
@@ -1913,7 +1956,7 @@
     root.appendChild(tCard);
 
     root.appendChild(el('<div class="section-title">Kracht — ondersteunend</div>'));
-    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Afgeleid uit je sets. Kracht is het middel: stijgt je squat terwijl je sprong zakt, dan win je dit blok niet.</div>'));
+    root.appendChild(el('<div class="tiny" style="margin:-4px 4px 10px">Afgeleid uit je sets: het zwaarste van elke week.</div>'));
     var noData = [];
     P.anchors.strength.forEach(function (a) {
       var series = weeklyTopSets(a.key);
@@ -1973,7 +2016,7 @@
       var day = P.days[s.dayKey] || { title: s.dayKey };
       Object.keys(s.items || {}).forEach(function (k) {
         var found = findProgramItem(k);
-        var name = found ? found.item.name : k;
+        var name = found ? found.item.name : ((P.retired && P.retired[k]) || k);
         var it = s.items[k];
         if (it.sets && it.sets.length) {
           it.sets.forEach(function (st, i) {
@@ -2058,30 +2101,28 @@
     setCard.appendChild(verRow);
     root.appendChild(setCard);
 
-    root.appendChild(el('<div class="section-title">De vier regels</div>'));
+    var regels = meer('De vier regels');
     var rules = el('<div class="card"></div>');
     P.rules.forEach(function (r, i) {
       rules.appendChild(el('<div class="sub" style="margin:8px 0"><span class="rulenum">0' + (i + 1) + '</span>' + esc(r) + '</div>'));
     });
-    root.appendChild(rules);
+    regels.appendChild(rules);
 
     root.appendChild(el('<div class="section-title">' + esc(P.nutrition.title) + '</div>'));
-    var nut = el('<div class="card"><div class="sub">' + esc(P.nutrition.context) + '</div>' +
-      '<div class="h2" style="margin:10px 0 4px;color:var(--accent)">' + esc(P.nutrition.goal) + '</div>' +
-      '<div class="tiny" style="margin-bottom:8px">' + esc(P.nutrition.systemNote) + '</div></div>');
+    var nut = el('<div class="card"><div class="h2" style="margin-bottom:4px;color:var(--accent)">' + esc(P.nutrition.goal) + '</div></div>');
     P.nutrition.system.forEach(function (it) {
       nut.appendChild(el('<div style="margin:9px 0"><b style="font-size:14px">' + esc(it.title) + '</b><div class="tiny">' + esc(it.text) + '</div></div>'));
     });
     root.appendChild(nut);
+    root.appendChild(regels);
 
-    root.appendChild(el('<div class="section-title">' + esc(P.volumeCheck.title) + '</div>'));
+    var volume = meer(P.volumeCheck.title);
     var vol = el('<div class="card"><div class="tiny" style="margin-bottom:6px">' + esc(P.volumeCheck.sub) + '</div></div>');
     P.volumeCheck.rows.forEach(function (r) {
       vol.appendChild(el('<div class="kv"><b>' + esc(r.name) + '</b><span>' + esc(r.sets) + '</span></div>'));
     });
-    root.appendChild(vol);
-
-    root.appendChild(el('<div class="tiny" style="margin:6px 4px 14px">Weekregel: ' + esc(P.weekRule) + '</div>'));
+    volume.appendChild(vol);
+    root.appendChild(volume);
   }
 
   /* ---------------- Navigatie + init ---------------- */

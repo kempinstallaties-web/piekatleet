@@ -10,7 +10,7 @@
 window.DAG = {
   start: '2026-11-13', // eerste dag die meetelt in de weekscore
 
-  // rol: het label boven de regel
+  // rol: het gebied waar het ding bij hoort (niet getoond; voor de wekelijkse bijsturing)
   // dagen: op welke dagen het ding in de lijst staat (leeg = elke dag)
   // tekst: vaste tekst, of perDag: per weekdag een eigen tekst
   // kort: naam in de bijstuurregel ("... blijft liggen")
