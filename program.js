@@ -18,7 +18,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v19',
+    version: 'v20',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
     block: 'Krachtblok - golf 2 van 3 (intensiteit) sinds 16 nov - blok loopt t/m 10 januari',
@@ -125,13 +125,14 @@ window.PROGRAM = {
       items: []
     },
     vr: {
-      key: 'vr', label: 'VR', title: 'Benen + bilspieren', sub: 'puur tillen',
+      key: 'vr', label: 'VR', title: 'Benen + bilspieren', sub: 'eerst leg extension en leg curl, dan squat',
       erector: 'HOOG', power: 'Geen', compound: 'Back squat',
-      warn: 'Hip thrust fors omhoog: 41 kg is te licht voor iemand die 105 trap bart. Squat naar 85.',
+      warn: 'Eerst leg extension en seated leg curl tot het gaatje, dan pas de squat: alles warm en soepel. De Bulgarian is eruit. Squat in golf 2 zwaarder en korter: 4 tot 6 reps.',
       items: [
         { key: 'do_core', group: 'Atletische core', name: 'Cable chop', doel: 'Rotatiekracht van heup naar schouder', cue: 'Draai vanuit je heup en laat je armen volgen. Duw je achterste voet in de grond - de kracht komt van onderen.', sets: 3, target: '10-12 p/z', type: 'strength' },
-        { key: 'back_squat', group: 'Til zwaar', name: 'Back squat', doel: 'Je krachtbasis', cue: 'Zak diep en duw explosief omhoog. Golf 2: zwaar, een rep in de tank. Haal je 4 x 6, dan gaat er gewicht bij.', sets: 4, target: '4-6', inc: 5, type: 'strength' },
-        { key: 'atg_split_squat', group: 'Til zwaar', name: 'Bulgarian split squat', doel: 'Eén been sterk, zoals je in het echt tilt en loopt', cue: 'Zak diep op één been met rechte romp; het achterste been is alleen steun.', sets: 3, target: '8 p/b', type: 'strength' },
+        { key: 'leg_ext', group: 'Eerst: knieen warm', name: 'Leg extension', doel: 'Knieen warm en bovenbenen vol voor je squat', cue: 'Strek volledig, knijp bovenin een tel vast en laat drie tellen zakken. Eerste set opbouwen, daarna tot je geen nette rep meer haalt.', sets: 3, target: '12-15', inc: 5, type: 'strength' },
+        { key: 'seated_leg_curl', group: 'Eerst: knieen warm', name: 'Seated leg curl', doel: 'Hamstrings warm, je knie voelt stabieler onder de stang', cue: 'Trek volledig door en laat drie tellen terugkomen. Heupen blijven in de stoel. Tot je geen nette rep meer haalt.', sets: 3, target: '10-12', inc: 5, type: 'strength' },
+        { key: 'back_squat', group: 'Til zwaar', name: 'Back squat', doel: 'Je krachtbasis', cue: 'Zak diep en duw explosief omhoog. Golf 2: zwaar, een rep in de tank. Haal je 4 x 6, dan gaat er gewicht bij. Je squat altijd na de leg extension en leg curl, dan blijven je gewichten vergelijkbaar.', sets: 4, target: '4-6', inc: 5, type: 'strength' },
         { key: 'hip_thrust', group: 'Bouw je bilspieren', name: 'Hip thrust', doel: 'Bilspieren zwaar belasten zonder je rug', cue: 'Duw door je hielen tot je romp horizontaal staat en knijp bovenin twee tellen vast.', sets: 4, target: '8-10', inc: 10, type: 'strength' },
         { key: 'abduction', group: 'Bouw je bilspieren', name: 'Hip abduction', doel: 'Bil van de zijkant, los van je benen', cue: 'Duw je knieen naar buiten en knijp twee tellen vast. Leun licht voorover, dan pakt de bil meer.', sets: 2, target: '15-20', inc: 5, type: 'strength' },
         { key: 'calf', group: 'Onderhoud', name: 'Kuit (machine)', doel: 'Kuitvolume, steun voor knie en enkel', cue: 'Duw volledig door en laat rustig zakken.', sets: 3, target: '12-15', type: 'strength' }
@@ -177,7 +178,8 @@ window.PROGRAM = {
     drop_jump: 'Drop jump 30–40 cm',
     broad_jump_plyo: 'Broad jump',
     medball_rot: 'Med ball rotational throw',
-    overhead_press: 'Overhead press'
+    overhead_press: 'Overhead press',
+    atg_split_squat: 'Bulgarian split squat'
   },
 
   anchors: {
