@@ -18,7 +18,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v15',
+    version: 'v16',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
     block: 'Krachtblok - golf 1 van 3 (volume) t/m 15 nov - blok loopt t/m 10 januari',
@@ -75,7 +75,7 @@ window.PROGRAM = {
     ]
   },
 
-  weekRule: 'Simpele regel: 06:00 is tillen. Ma hinge en rugdikte, di persen, wo lats, vr benen en bilspieren. Zaterdag eerst borst, achterste schouder en kuiten, daarna het rauwe werk: slee, dragen, gooien en hangen. Donderdag volledig rust. Zondag conditie: een keer per week echt buiten adem, daarna rustig. Core staat vooraan in de sessie: wat achteraan staat valt weg.',
+  weekRule: '06:00 is tillen. Ma hinge en rugdikte, di persen, wo lats, vr benen en bilspieren, za borst, schouders en dragen. Donderdag volledig rust. Zondag is conditie en de slee met Daan; de rest van die dag is optioneel en alleen als je hersteld bent. Core staat vooraan in de sessie: wat achteraan staat valt weg.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
 
   days: {
@@ -137,34 +137,34 @@ window.PROGRAM = {
       ]
     },
     za: {
-      key: 'za', label: 'ZA', title: 'Borst, schouders + rauw werk', sub: 'eerst het bouwwerk, daarna slee en dragen',
+      key: 'za', label: 'ZA', title: 'Borst, schouders + dragen', sub: 'eerst het bouwwerk, daarna slee en dragen',
       erector: 'MIDDEL', power: 'Slee en gooien', compound: 'Incline press (Prime)',
-      warn: 'Eerst het bouwwerk op gevoel en controle, niets zwaars. Daarna het rauwe werk: duwen, trekken, dragen en gooien.',
+      warn: 'Sinds 15-11 korter: nordics, slee, push-ups, sit-ups en zone 2 zijn eraf. Vier dingen tegelijk op een zaterdag werkte niet, en de slee doe je toch op zondag met Daan.',
       items: [
         { key: 'incline_prime', group: 'Bouw je borst', name: 'Incline press (Prime)', doel: 'Tweede prikkel voor de bovenborst', cue: 'Pers met vol bereik en rustig tempo; hier telt spanning, niet gewicht.', sets: 4, target: '10-12', type: 'strength' },
         { key: 'rear_delt_fly', group: 'Bouw je achterste schouder', name: 'Reverse fly', doel: 'Achterste schouder, tegenwicht voor al het persen', cue: 'Breng je armen opzij uit elkaar met je duimen omlaag. Licht gewicht, knijp bovenin kort vast.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'rear_delt_facepull', group: 'Bouw je achterste schouder', name: 'Rear delt + face pull', doel: 'Houding en achterkant schouder', cue: 'Trek naar je gezicht met hoge ellebogen en knijp kort vast.', sets: 4, target: '12-15', type: 'strength' },
         { key: 'trap_raise', group: 'Bouw je achterste schouder', name: 'Trap raise (Y-raise)', doel: 'Onderste trapezius: schouderbladen omlaag en naar achteren', cue: 'Lig voorover op een schuine bank en til je armen in een Y met je duimen omhoog. Licht gewicht, bovenin een tel vasthouden.', sets: 3, target: '12-15', inc: 1, type: 'strength' },
-        { key: 'nordic', group: 'Bouw je achterkant', name: 'Nordic curl (excentrisch)', doel: 'Halveert je risico op een hamstringblessure', cue: 'Zak langzaam voorover en rem zo lang mogelijk. Sla deze nooit over.', let: 'Bewust hier: ver genoeg van de deadlift van maandag en de squat van vrijdag.', sets: 3, target: '5', type: 'strength' },
         { key: 'calf_pull', group: 'Onderhoud', name: 'Kuit - zittend', doel: 'Derde kuitmoment, andere hoek', cue: 'Duw door de bal van je voet en laat de hiel diep zakken. Twee tellen bovenin vasthouden.', sets: 3, target: '12-15', inc: 5, type: 'strength' },
         { key: 'di_core', group: 'Rauw werk', name: 'Med ball side throw', doel: 'Explosieve rotatie vanuit je heup', cue: 'Gooi de bal zo hard je kunt zijwaarts tegen de muur en vang hem weer op. Maximale intentie, geen uithoudingswerk.', sets: 3, target: '6 p/z', mode: 'power', type: 'strength' },
-        { key: 'sled', group: 'Rauw werk', name: 'Slee — duwen & achteruit trekken', doel: 'Benen, longen en knieen in een', cue: 'Duw 20 m heen en trek achteruit terug zonder te stoppen. Laag blijven, kleine passen. Log het gewicht op de slee.', let: 'Achteruit is het kniewerk: knie mag voorbij de teen. Geen excentrische fase, dus weinig spierpijn.', sets: 4, target: '20 m h/t', inc: 10, type: 'strength' },
         { key: 'carries', group: 'Rauw werk', name: 'Farmer carry', doel: 'Grip, romp en rug onder last', cue: 'Loop 40 m zonder neerzetten, zwaar genoeg om te moeten knijpen. Log het gewicht per hand.', video: 'https://www.youtube.com/watch?v=P8iSOHX73FE', let: 'Schouders naar achteren, ribben omlaag. Zodra je gaat hangen is de set klaar.', sets: 3, target: '40 m', inc: 5, type: 'strength' },
         { key: 'bearhug_carry', group: 'Rauw werk', name: 'Bear-hug carry', doel: 'Dragen zonder handvat, zoals in het echt', cue: 'Klem een zandzak, slamball of zware schijf tegen je borst en loop 30 m. Blijf rechtop en adem door. Log het gewicht.', sets: 3, target: '30 m', inc: 5, type: 'strength' },
         { key: 'hang', group: 'Rauw werk', name: 'Dead hang', doel: 'Grip en schouders belastbaar', cue: 'Hang zo lang mogelijk met actieve schouders. Vul de seconden in bij reps.', sets: 2, target: '45-60 sec', type: 'strength' },
-        { key: 'pushup_situp', group: 'Afmaker, als er tijd over is', name: 'Push-ups en sit-ups', doel: 'De ondergrens: ook op een slechte dag', cue: 'Doe 100 push-ups en 100 sit-ups, verdeeld over zo weinig mogelijk sets. Geen kracht over? Halveer, maar sla niet over.', target: '100 + 100', type: 'check' },
-        { key: 'zone2_run', group: 'Afmaker, als er tijd over is', name: 'Stairmaster - zone 2', doel: 'Aerobe basis: hart en herstel', cue: 'Stap 20-30 min op hartslag 135-155. Kun je er niet bij praten, dan ga je te hard.', target: '20-30 min', type: 'check' }
       ]
     },
     zo: {
-      key: 'zo', label: 'ZO', title: 'Conditie', sub: 'een keer echt buiten adem, daarna rustig',
+      key: 'zo', label: 'ZO', title: 'Conditie + slee', sub: 'een conditieblok vast, de rest alleen als je hersteld bent',
       erector: 'LAAG', power: 'Geen', compound: '-',
-      warn: 'Een keer per week echt buiten adem, daarna rustig bewegen. Geen zware benen: morgen staat de trap bar.',
+      warn: 'Kies een conditieblok: intervallen OF stairmaster, niet allebei. De slee is sinds 15-11 je vaste hamstring- en conditiewerk. Alles daaronder sla je over als je niet hersteld bent - dat is de bedoeling.',
       items: [
         { key: 'tempo_block', group: 'Conditie', name: 'Intervallen - roeier of fiets', doel: 'Het enige bakje dat leeg staat: aeroob-hoog', cue: '5 x 3 min op hartslag 165-178, 2 min rustig ertussen. Praten moet net niet lukken. Geen stairmaster: die kost je benen voor morgen.', target: '5 x 3 min', type: 'check' },
+        { key: 'zone2_run', group: 'Conditie - kies er een', name: 'Stairmaster - zone 2', doel: 'Aerobe basis: hart en herstel', cue: 'Rustig klimmen, 20-30 min, hartslag onder 160. Dit of de intervallen, niet allebei.', target: '20-30 min', type: 'check' },
+        { key: 'sled', group: 'Met Daan', name: 'Slee — duwen & achteruit trekken', doel: 'Hamstrings, bilspieren en conditie in een', cue: 'Heen en terug, om de beurt. Je hartslag zat hier op 15-11 gemiddeld op 163 met een piek van 176 - dit is je zwaarste conditiewerk van de week.', let: 'Achteruit is het kniewerk: knie mag voorbij de teen. Geen excentrische fase, dus weinig spierpijn.', sets: 4, target: '20 m h/t', inc: 10, type: 'strength' },
+        { key: 'pushup_situp', group: 'Alleen als je hersteld bent', name: 'Push-ups en sit-ups', doel: 'De ondergrens: ook op een slechte dag', cue: 'Doe 100 push-ups en 100 sit-ups, verdeeld over zo weinig mogelijk sets. Geen kracht over? Halveer, maar sla niet over.', target: '100 + 100', type: 'check' },
+        { key: 'nordic', group: 'Alleen als je hersteld bent', name: 'Nordic curl (excentrisch)', doel: 'Halveert je risico op een hamstringblessure', cue: 'Zak zo langzaam mogelijk voorover. Sinds 15-11 hier in plaats van zaterdag: de slee pakt je hamstrings al.', let: 'Bewust hier: ver genoeg van de deadlift van maandag en de squat van vrijdag.', sets: 3, target: '5', type: 'strength' },
+        { key: 'wall_sit', group: 'Alleen als je hersteld bent', name: 'Wall sit', doel: 'Je knie-verzekering tegen zeurpijn', cue: 'Houd 45–60 sec stil met bovenbenen horizontaal. Vul de seconden in bij reps.', sets: 2, target: '45-60 sec', type: 'strength' },
+        { key: 'reverse_nordic', group: 'Alleen als je hersteld bent', name: 'Reverse Nordic', doel: 'Knieschijfpees belastbaar op lange lengte', cue: 'Leun langzaam achterover met gestrekte heupen en kom rustig terug.', sets: 3, target: '8', type: 'strength' },
         { key: 'zwemmen', group: 'Conditie', name: 'Zwemmen of wandelen - rustig', doel: 'Bloed rondpompen zonder enige impact', cue: 'Zwem of wandel 20-30 min rustig door. Dit is herstel, geen training: stop als het zwaar wordt.', target: '20-30 min', type: 'check' },
-        { key: 'wall_sit', group: 'Onderhoud, als er tijd over is', name: 'Wall sit', doel: 'Je knie-verzekering tegen zeurpijn', cue: 'Houd 45–60 sec stil met bovenbenen horizontaal. Vul de seconden in bij reps.', sets: 2, target: '45-60 sec', type: 'strength' },
-        { key: 'reverse_nordic', group: 'Onderhoud, als er tijd over is', name: 'Reverse Nordic', doel: 'Knieschijfpees belastbaar op lange lengte', cue: 'Leun langzaam achterover met gestrekte heupen en kom rustig terug.', sets: 3, target: '8', type: 'strength' },
         { key: 'mobility_zo', group: 'Beweeg los', name: 'Mobility', doel: 'Stijfheid eruit voor de tildag van morgen', cue: 'Beweeg rustig door wat stijf voelt.', target: '5–10 min', type: 'check' }
       ]
     }
