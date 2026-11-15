@@ -18,7 +18,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v18',
+    version: 'v19',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
     block: 'Krachtblok - golf 2 van 3 (intensiteit) sinds 16 nov - blok loopt t/m 10 januari',
@@ -94,14 +94,15 @@ window.PROGRAM = {
       ]
     },
     di: {
-      key: 'di', label: 'DI', title: 'Push - zwaar persen', sub: 'zwaar persen, daarna kort',
+      key: 'di', label: 'DI', title: 'Push - borst voorop', sub: 'incline zwaar, dan flat en dips',
       erector: 'LAAG', power: 'Geen', compound: 'Incline press',
-      warn: 'Alleen zwaar persen hier. De Prime en de reverse fly staan zaterdag, zodat je schouders en rotators niet alles op een dag krijgen.',
+      warn: 'Incline blijft de zware eerste, daarna flat en dips. Geen overhead press meer: je schouders krijgen hun werk uit de lateral raise en zaterdag. Dips niet dieper dan bovenarm horizontaal.',
       items: [
         { key: 'incline_press', group: 'Til zwaar', name: 'Incline barbell / DB press', doel: 'Bovenborst — je zwakste schakel boven', cue: 'Raak iets lager aan dan normaal (tepelhoogte), dat voelt krachtiger. Golf 2: zwaar, een rep in de tank.', sets: 4, target: '4-6', type: 'strength' },
-        { key: 'overhead_press', group: 'Til zwaar', name: 'Overhead press', doel: 'Kracht boven je hoofd', cue: 'Pers machine of barbell ná het borstwerk. Ribben omlaag, geen doorgezakte rug.', sets: 3, target: '6-8', type: 'strength' },
+        { key: 'flat_press', group: 'Til zwaar', name: 'Flat bench press', doel: 'Massa op je hele borst', cue: 'Schouderbladen in de bank en naar elkaar, voeten vast. Laat zakken tot tepelhoogte en pers recht omhoog. Stang of dumbbells: kies er een en blijf daarbij, anders zegt je log niets.', sets: 3, target: '6-8', type: 'strength' },
+        { key: 'dips', group: 'Bouw je borst', name: 'Dips', doel: 'Onderkant borst en triceps', cue: 'Leun licht voorover, ellebogen iets naar buiten. Zak tot je bovenarm horizontaal is, niet dieper: met jouw armlengte spaart dat je schouder. Haal je 3 x 12, hang er dan gewicht aan.', sets: 3, target: '8-12', type: 'strength' },
         { key: 'chest_fly', group: 'Bouw je borst', name: 'Lage kabelfly', doel: 'Bovenborst, het deel dat achterloopt', cue: 'Breng de kabels van laag naar boven samen en knijp een tel vast. Lichte bocht in je elleboog, geen persbeweging.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
-        { key: 'lateral_raise', group: 'Bouw volume', name: 'Lateral raise', doel: 'Schouderbreedte — laagste prioriteit', cue: 'Til zijwaarts tot schouderhoogte. Schrap dit als eerste bij een zware week.', sets: 3, target: '12-15', type: 'strength' },
+        { key: 'lateral_raise', group: 'Bouw volume', name: 'Lateral raise', doel: 'Schouderbreedte — je directe schouderwerk op deze dag', cue: 'Til zijwaarts tot schouderhoogte en laat gecontroleerd terug. Niet schrappen: zonder overhead press is dit je schouderwerk hier.', sets: 3, target: '12-15', type: 'strength' },
         { key: 'triceps', group: 'Bouw volume', name: 'Triceps', doel: 'Ondersteunt je persen', cue: 'Strek volledig door, kort werk.', sets: 2, target: '10-12', type: 'strength' }
       ]
     },
@@ -175,7 +176,8 @@ window.PROGRAM = {
     cmj: 'Countermovement jump',
     drop_jump: 'Drop jump 30–40 cm',
     broad_jump_plyo: 'Broad jump',
-    medball_rot: 'Med ball rotational throw'
+    medball_rot: 'Med ball rotational throw',
+    overhead_press: 'Overhead press'
   },
 
   anchors: {
@@ -183,7 +185,7 @@ window.PROGRAM = {
       { key: 'back_squat', label: 'Back squat' },
       { key: 'trap_bar_deadlift', label: 'Trap bar deadlift' },
       { key: 'incline_press', label: 'Incline press' },
-      { key: 'overhead_press', label: 'Overhead press' },
+      { key: 'flat_press', label: 'Flat bench press' },
       { key: 'weighted_pullups', label: 'Weighted pullups' },
       { key: 'chest_supported_row', label: 'Chest-supported row' },
       { key: 'rdl', label: 'RDL' },
