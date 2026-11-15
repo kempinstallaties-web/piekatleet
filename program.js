@@ -18,19 +18,19 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v17',
+    version: 'v18',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
-    block: 'Krachtblok - golf 1 van 3 (volume) t/m 15 nov - blok loopt t/m 10 januari',
-    nutritionShort: '3800 kcal - 200-210 g eiwit - +0,2 kg per week - taille meten bij elke weging',
+    block: 'Krachtblok - golf 2 van 3 (intensiteit) sinds 16 nov - blok loopt t/m 10 januari',
+    nutritionShort: '3800 kcal - 200-210 g eiwit - taille meten bij elke weging',
     weakPoints: 'Posterior chain - hamstrings, bilspieren, rugstrekkers',
     goals: 'Compounds opbouwen, de achterkant ijzersterk maken en een lijf dat overal inzetbaar is: duwen, trekken, dragen en volhouden. Trap bar 150 x 3, squat 120 x 4, incline 105 x 4, 108-110 kg bij dezelfde taille.'
   },
 
   rules: [
     'Zwaar tillen blijft de basis. Het rauwe werk van zaterdag komt erbovenop, niet in de plaats.',
-    'Herstel is het plafond. Donderdag is rust en zondag is conditie zonder zware benen, zodat je maandag de trap bar echt zwaar kunt doen.',
-    'Golf 1 is volume op RPE 7. Je laat drie reps in de tank; de kilo s komen in golf 2 en 3.',
+    'Garmin en je eigen gevoel zijn de rem. Scherpe pijn op een vaste plek bij een pees (knie, achilles, elleboog) meld je direct - dat ziet Garmin niet.',
+    'Golf 2 is intensiteit: 4-6 reps op de hoofdliften, een rep in de tank. Haal je alle sets op 6, dan gaat er gewicht bij - geen plafond.',
     'Gewicht: +0,2 kg per week bij dezelfde taille. Gaat het sneller, dan is het geen spier.'
   ],
 
@@ -82,14 +82,14 @@ window.PROGRAM = {
     ma: {
       key: 'ma', label: 'MA', title: 'Hinge, hamstrings + rugdikte', sub: 'je zwaarste trekdag',
       erector: 'ZEER HOOG', power: 'Geen', compound: 'Trap bar deadlift',
-      warn: 'Trap bar op RPE 7 in golf 1: drie reps in de tank. Dit is de dag waar je achterkant van verandert.',
+      warn: 'Golf 2: trap bar zwaar op 4-6 reps. Dit is de dag waar je achterkant van verandert.',
       items: [
         { key: 'ma_core', group: 'Atletische core', name: 'Hanging leg raise', doel: 'Romp die kracht maakt, niet alleen tegenhoudt', cue: 'Hang stil en breng je knieen naar je borst zonder te zwaaien. Kantel je bekken mee - dat is het werk, niet de hoogte.', sets: 3, target: '8-12', type: 'strength' },
-        { key: 'trap_bar_deadlift', group: 'Til zwaar', name: 'Trap bar deadlift', doel: 'De hoofdlift van dit blok', cue: 'Til vanaf de grond met een vlakke rug en duw de vloer weg. RPE 7: laat drie reps in de tank.', sets: 4, target: '6', inc: 5, type: 'strength' },
+        { key: 'trap_bar_deadlift', group: 'Til zwaar', name: 'Trap bar deadlift', doel: 'De hoofdlift van dit blok', cue: 'Til vanaf de grond met een vlakke rug en duw de vloer weg. Golf 2: zwaar, een rep in de tank. Haal je 4 x 6, dan gaat er gewicht bij.', sets: 4, target: '4-6', inc: 5, type: 'strength' },
         { key: 'rdl', group: 'Bouw je achterkant', name: 'RDL', doel: 'Hamstrings op lengte sterk maken', cue: 'Zak met gestrekte rug tot halverwege je scheen en voel je hamstrings rekken. Rustig omlaag, explosief omhoog.', sets: 3, target: '8', inc: 5, type: 'strength' },
         { key: 'leg_curl', group: 'Bouw je achterkant', name: 'Leg curl', doel: 'Hamstring direct, los van je rug', cue: 'Trek je hielen naar je billen en laat ze drie tellen zakken. Dit is de enige oefening die je hamstring alleen pakt.', sets: 3, target: '10-12', inc: 5, type: 'strength' },
         { key: 'back_ext', group: 'Bouw je bilspieren', name: 'Back extension — uithoudingsvermogen', doel: 'Billen en rugstrekkers samen', cue: 'Kom omhoog tot je romp recht is en knijp bovenin je billen, niet je onderrug. Rond je rug licht af - dit is bilwerk, geen rugstrekking.', let: 'Of 15-20 reps met 2 tellen bovenin. Voelt het als een pomp: goed. Voelt het als een zware set: te zwaar. Je traint hier de tijd, niet het gewicht.', sets: 3, target: '12-15', type: 'strength' },
-        { key: 'chest_supported_row', group: 'Trek zwaar', name: 'Chest-supported row', doel: 'Rugdikte zonder je onderrug te belasten', cue: 'Trek je ellebogen naar achteren en knijp je schouderbladen samen. De bank draagt je romp, dus je onderrug doet hier niets.', sets: 4, target: '8-10', type: 'strength' },
+        { key: 'chest_supported_row', group: 'Trek zwaar', name: 'Chest-supported row', doel: 'Rugdikte zonder je onderrug te belasten', cue: 'Trek je ellebogen naar achteren en knijp je schouderbladen samen. Golf 2: zwaarder, strakke reps, geen zwaai.', sets: 4, target: '6-8', type: 'strength' },
         { key: 'calf_standing', group: 'Onderhoud', name: 'Staande kuit', doel: 'Kuit en enkel sterk onder 105 kg', cue: 'Duw hoog door op de bal van je voet en laat langzaam zakken.', sets: 3, target: '10-12', type: 'strength' }
       ]
     },
@@ -98,7 +98,7 @@ window.PROGRAM = {
       erector: 'LAAG', power: 'Geen', compound: 'Incline press',
       warn: 'Alleen zwaar persen hier. De Prime en de reverse fly staan zaterdag, zodat je schouders en rotators niet alles op een dag krijgen.',
       items: [
-        { key: 'incline_press', group: 'Til zwaar', name: 'Incline barbell / DB press', doel: 'Bovenborst — je zwakste schakel boven', cue: 'Raak iets lager aan dan normaal (tepelhoogte), dat voelt krachtiger. RPE 7–8.', sets: 4, target: '6-8', type: 'strength' },
+        { key: 'incline_press', group: 'Til zwaar', name: 'Incline barbell / DB press', doel: 'Bovenborst — je zwakste schakel boven', cue: 'Raak iets lager aan dan normaal (tepelhoogte), dat voelt krachtiger. Golf 2: zwaar, een rep in de tank.', sets: 4, target: '4-6', type: 'strength' },
         { key: 'overhead_press', group: 'Til zwaar', name: 'Overhead press', doel: 'Kracht boven je hoofd', cue: 'Pers machine of barbell ná het borstwerk. Ribben omlaag, geen doorgezakte rug.', sets: 3, target: '6-8', type: 'strength' },
         { key: 'chest_fly', group: 'Bouw je borst', name: 'Lage kabelfly', doel: 'Bovenborst, het deel dat achterloopt', cue: 'Breng de kabels van laag naar boven samen en knijp een tel vast. Lichte bocht in je elleboog, geen persbeweging.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'lateral_raise', group: 'Bouw volume', name: 'Lateral raise', doel: 'Schouderbreedte — laagste prioriteit', cue: 'Til zijwaarts tot schouderhoogte. Schrap dit als eerste bij een zware week.', sets: 3, target: '12-15', type: 'strength' },
@@ -110,7 +110,7 @@ window.PROGRAM = {
       erector: 'LAAG', power: 'Geen', compound: 'Weighted pullups',
       warn: 'Alles draait om breedte: ellebogen omlaag, volle rek bovenin.',
       items: [
-        { key: 'weighted_pullups', group: 'Trek zwaar', name: 'Weighted pullups', doel: 'Zware trekdag, ver van de deadlift', cue: 'Trek zwaar met extra gewicht — je grip staat hier het verst van de deadlift.', sets: 4, target: '6-8', type: 'strength' },
+        { key: 'weighted_pullups', group: 'Trek zwaar', name: 'Weighted pullups', doel: 'Zware trekdag, ver van de deadlift', cue: 'Trek zwaar met extra gewicht, volle hang onderin. Haal je 4 x 6, dan gaat er 2,5 tot 5 kg bij.', sets: 4, target: '4-6', type: 'strength' },
         { key: 'lat_pulldown', group: 'Bouw je lats', name: 'Lat pulldown', doel: 'Breedte - je zwakste schakel op de rug', cue: 'Trek met je ellebogen omlaag naar je heupen, niet met je handen. Laat bovenin volledig uitrekken voor je weer trekt.', sets: 4, target: '10-12', inc: 5, type: 'strength' },
         { key: 'pullover', group: 'Bouw je lats', name: 'Straight-arm pullover', doel: 'Lat op volle lengte, zonder je biceps', cue: 'Houd je armen gestrekt en duw de stang in een boog naar je heupen. Voel de rek bovenin - licht gewicht, lange baan.', sets: 4, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'lat_row', group: 'Bouw je lats', name: 'Single-arm lat row', doel: 'Lat apart, met volle rek onderin', cue: 'Laat je schouderblad onderin ver naar voren komen en trek je elleboog langs je heup. Romp blijft stil.', sets: 3, target: '10-12 p/z', inc: 2.5, type: 'strength' },
@@ -129,7 +129,7 @@ window.PROGRAM = {
       warn: 'Hip thrust fors omhoog: 41 kg is te licht voor iemand die 105 trap bart. Squat naar 85.',
       items: [
         { key: 'do_core', group: 'Atletische core', name: 'Cable chop', doel: 'Rotatiekracht van heup naar schouder', cue: 'Draai vanuit je heup en laat je armen volgen. Duw je achterste voet in de grond - de kracht komt van onderen.', sets: 3, target: '10-12 p/z', type: 'strength' },
-        { key: 'back_squat', group: 'Til zwaar', name: 'Back squat', doel: 'Je krachtbasis', cue: 'Zak diep en duw explosief omhoog. RPE 7–8: laat 2 reps in de tank. Knie zeurt? Blijf op wat pijnvrij is.', sets: 4, target: '6-8', inc: 5, type: 'strength' },
+        { key: 'back_squat', group: 'Til zwaar', name: 'Back squat', doel: 'Je krachtbasis', cue: 'Zak diep en duw explosief omhoog. Golf 2: zwaar, een rep in de tank. Haal je 4 x 6, dan gaat er gewicht bij.', sets: 4, target: '4-6', inc: 5, type: 'strength' },
         { key: 'atg_split_squat', group: 'Til zwaar', name: 'Bulgarian split squat', doel: 'Eén been sterk, zoals je in het echt tilt en loopt', cue: 'Zak diep op één been met rechte romp; het achterste been is alleen steun.', sets: 3, target: '8 p/b', type: 'strength' },
         { key: 'hip_thrust', group: 'Bouw je bilspieren', name: 'Hip thrust', doel: 'Bilspieren zwaar belasten zonder je rug', cue: 'Duw door je hielen tot je romp horizontaal staat en knijp bovenin twee tellen vast.', sets: 4, target: '8-10', inc: 10, type: 'strength' },
         { key: 'abduction', group: 'Bouw je bilspieren', name: 'Hip abduction', doel: 'Bil van de zijkant, los van je benen', cue: 'Duw je knieen naar buiten en knijp twee tellen vast. Leun licht voorover, dan pakt de bil meer.', sets: 2, target: '15-20', inc: 5, type: 'strength' },
