@@ -18,7 +18,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v20',
+    version: 'v21',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
     block: 'Krachtblok - golf 2 van 3 (intensiteit) sinds 16 nov - blok loopt t/m 10 januari',
@@ -75,7 +75,7 @@ window.PROGRAM = {
     ]
   },
 
-  weekRule: '06:00 is tillen. Ma hinge en rugdikte, di persen, wo lats, vr benen en bilspieren, za borst, schouders en het rauwe werk met de slee. Donderdag volledig rust. Zondag een conditieblok naar keuze; de rest van die dag is optioneel en alleen als je hersteld bent. Core staat vooraan in de sessie: wat achteraan staat valt weg.',
+  weekRule: '06:00 is tillen. Ma hinge en rugdikte, di persen met een tempoblok erachter, wo lats, vr benen en bilspieren, za borst, schouders en het rauwe werk met de slee. Donderdag volledig rust. Zondag intervallen; de rest van die dag is optioneel en alleen als je hersteld bent. Conditie: twee keer per week aeroob-hoog (di tempo, zo intervallen), elk als eigen Garmin-activiteit. Core staat vooraan in de sessie: wat achteraan staat valt weg.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
 
   days: {
@@ -94,16 +94,17 @@ window.PROGRAM = {
       ]
     },
     di: {
-      key: 'di', label: 'DI', title: 'Push - borst voorop', sub: 'incline zwaar, dan flat en dips',
+      key: 'di', label: 'DI', title: 'Push - borst voorop', sub: 'incline zwaar, flat en dips, dan tempo',
       erector: 'LAAG', power: 'Geen', compound: 'Incline press',
-      warn: 'Incline blijft de zware eerste, daarna flat en dips. Geen overhead press meer: je schouders krijgen hun werk uit de lateral raise en zaterdag. Dips niet dieper dan bovenarm horizontaal.',
+      warn: 'Incline blijft de zware eerste, daarna flat en dips. Geen overhead press meer: je schouders krijgen hun werk uit de lateral raise en zaterdag. Dips niet dieper dan bovenarm horizontaal. Daarna 20 min tempo op de fiets of roeier, direct of in de avond.',
       items: [
         { key: 'incline_press', group: 'Til zwaar', name: 'Incline barbell / DB press', doel: 'Bovenborst — je zwakste schakel boven', cue: 'Raak iets lager aan dan normaal (tepelhoogte), dat voelt krachtiger. Golf 2: zwaar, een rep in de tank.', sets: 4, target: '4-6', type: 'strength' },
         { key: 'flat_press', group: 'Til zwaar', name: 'Flat bench press', doel: 'Massa op je hele borst', cue: 'Schouderbladen in de bank en naar elkaar, voeten vast. Laat zakken tot tepelhoogte en pers recht omhoog. Stang of dumbbells: kies er een en blijf daarbij, anders zegt je log niets.', sets: 3, target: '6-8', type: 'strength' },
         { key: 'dips', group: 'Bouw je borst', name: 'Dips', doel: 'Onderkant borst en triceps', cue: 'Leun licht voorover, ellebogen iets naar buiten. Zak tot je bovenarm horizontaal is, niet dieper: met jouw armlengte spaart dat je schouder. Haal je 3 x 12, hang er dan gewicht aan.', sets: 3, target: '8-12', type: 'strength' },
         { key: 'chest_fly', group: 'Bouw je borst', name: 'Lage kabelfly', doel: 'Bovenborst, het deel dat achterloopt', cue: 'Breng de kabels van laag naar boven samen en knijp een tel vast. Lichte bocht in je elleboog, geen persbeweging.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'lateral_raise', group: 'Bouw volume', name: 'Lateral raise', doel: 'Schouderbreedte — je directe schouderwerk op deze dag', cue: 'Til zijwaarts tot schouderhoogte en laat gecontroleerd terug. Niet schrappen: zonder overhead press is dit je schouderwerk hier.', sets: 3, target: '12-15', type: 'strength' },
-        { key: 'triceps', group: 'Bouw volume', name: 'Triceps', doel: 'Ondersteunt je persen', cue: 'Strek volledig door, kort werk.', sets: 2, target: '10-12', type: 'strength' }
+        { key: 'triceps', group: 'Bouw volume', name: 'Triceps', doel: 'Ondersteunt je persen', cue: 'Strek volledig door, kort werk.', sets: 2, target: '10-12', type: 'strength' },
+        { key: 'tempo_di', group: 'Conditie: aeroob-hoog', name: 'Tempo - fiets of roeier', doel: 'Het lege balkje in Garmin: aeroob-hoog', cue: '20 min aan een stuk op hartslag 165-175, of 4 x 5 min met 1 min rustig ertussen. Praten lukt alleen in korte zinnen. Start er een eigen activiteit voor in je Garmin (Indoor fietsen of Roeien binnen), dan telt Garmin het als conditie en niet als krachttraining. Direct na het persen of in de avond, wat past.', let: 'Komt het de volgende ochtend in het anaerobe balkje terecht, dan gaan we naar hartslag 160-170.', target: '20 min', type: 'check' }
       ]
     },
     wo: {
@@ -158,10 +159,9 @@ window.PROGRAM = {
     zo: {
       key: 'zo', label: 'ZO', title: 'Conditie en herstel', sub: 'een conditieblok vast, de rest alleen als je hersteld bent',
       erector: 'LAAG', power: 'Geen', compound: '-',
-      warn: 'Kies een conditieblok: intervallen OF stairmaster, niet allebei. Alles daaronder sla je over als je niet hersteld bent - dat is de bedoeling, geen gemiste sessie.',
+      warn: 'De intervallen staan vast: je tweede aeroob-hoog-sessie van de week. Zone 2 is eraf, want je krachtsessies vullen aeroob-laag al boven de bovengrens. Alles onder de intervallen sla je over als je niet hersteld bent - dat is de bedoeling, geen gemiste sessie.',
       items: [
-        { key: 'tempo_block', group: 'Conditie - kies er een', name: 'Intervallen - roeier of fiets', doel: 'Het enige bakje dat leeg staat: aeroob-hoog', cue: '5 x 3 min op hartslag 165-178, 2 min rustig ertussen. Praten moet net niet lukken. Geen stairmaster: die kost je benen voor morgen.', target: '5 x 3 min', type: 'check' },
-        { key: 'zone2_run', group: 'Conditie - kies er een', name: 'Stairmaster - zone 2', doel: 'Aerobe basis: hart en herstel', cue: 'Rustig klimmen, 20-30 min, hartslag onder 160. Dit of de intervallen, niet allebei.', target: '20-30 min', type: 'check' },
+        { key: 'tempo_block', group: 'Conditie: aeroob-hoog', name: 'Intervallen - roeier of fiets', doel: 'Je tweede aeroob-hoog-sessie van de week', cue: '4 x 6 min op hartslag 165-175, 2 min rustig ertussen. Praten lukt alleen in korte zinnen. Eigen activiteit in je Garmin (Indoor fietsen of Roeien binnen). Geen stairmaster: die kost je benen voor de hinge-dag.', target: '4 x 6 min', type: 'check' },
         { key: 'pushup_situp', group: 'Alleen als je hersteld bent', name: 'Push-ups en sit-ups', doel: 'De ondergrens: ook op een slechte dag', cue: 'Doe 100 push-ups en 100 sit-ups, verdeeld over zo weinig mogelijk sets. Geen kracht over? Halveer, maar sla niet over.', target: '100 + 100', type: 'check' },
         { key: 'nordic', group: 'Alleen als je hersteld bent', name: 'Nordic curl (excentrisch)', doel: 'Halveert je risico op een hamstringblessure', cue: 'Zak zo langzaam mogelijk voorover. Sinds 15-11 hier in plaats van zaterdag: de slee pakt je hamstrings al.', let: 'Bewust hier: ver genoeg van de deadlift van maandag en de squat van vrijdag.', sets: 3, target: '5', type: 'strength' },
         { key: 'wall_sit', group: 'Alleen als je hersteld bent', name: 'Wall sit', doel: 'Je knie-verzekering tegen zeurpijn', cue: 'Houd 45–60 sec stil met bovenbenen horizontaal. Vul de seconden in bij reps.', sets: 2, target: '45-60 sec', type: 'strength' },
@@ -179,7 +179,8 @@ window.PROGRAM = {
     broad_jump_plyo: 'Broad jump',
     medball_rot: 'Med ball rotational throw',
     overhead_press: 'Overhead press',
-    atg_split_squat: 'Bulgarian split squat'
+    atg_split_squat: 'Bulgarian split squat',
+    zone2_run: 'Stairmaster - zone 2'
   },
 
   anchors: {
@@ -226,21 +227,22 @@ window.PROGRAM = {
   },
 
   volumeCheck: {
-    title: 'Volume-check', sub: 'Tillen op de ochtenden, zaterdag bouwwerk en rauw werk, conditie op zondag. Sets per week, hoofd- en bijrol samen.',
+    title: 'Volume-check', sub: 'Tillen op de ochtenden, zaterdag bouwwerk en rauw werk, conditie op dinsdag en zondag. Sets per week, hoofd- en bijrol samen.',
     rows: [
       { name: 'Bilspieren', sets: '20 (6 gericht)' },
       { name: 'Lats - breedte', sets: '15 (wo)' },
-      { name: 'Hamstrings', sets: '13 (ma + za)' },
-      { name: 'Borst', sets: '11 (7 di + 4 za)' },
+      { name: 'Hamstrings', sets: '9 (ma + vr), plus nordics op zo' },
+      { name: 'Borst', sets: '17 (13 di + 4 za)' },
       { name: 'Rugstrekkers', sets: '10' },
       { name: 'Kuiten', sets: '9 (ma - vr - za)' },
       { name: 'Atletische core', sets: '9 - staat nu vooraan in de sessie' },
       { name: 'Slee en dragen', sets: '10 (za)' },
-      { name: 'Quads', sets: '7 (vr)' },
+      { name: 'Quads', sets: '7 (vr: leg extension en squat)' },
       { name: 'Achterste schouder', sets: '10 (za, met trap raise)' },
       { name: 'Midden-rug', sets: '4 (ma)' },
-      { name: 'Triceps direct', sets: '2 (di)' },
-      { name: 'Conditie', sets: 'za slee en stairmaster - zo intervallen' },
+      { name: 'Triceps direct', sets: '2 (di), plus 3 sets dips' },
+      { name: 'Zijkant schouder', sets: '3 (di)' },
+      { name: 'Conditie', sets: 'di tempo 20 min - zo intervallen 4 x 6 min - za slee' },
       { name: 'Zwaarste tildag', sets: '23 sets (ma)' }
     ]
   }

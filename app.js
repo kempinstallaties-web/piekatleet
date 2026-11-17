@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '53 · 15-11-2026';
+  var APP_VERSION = '54 · 17-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -851,8 +851,9 @@
      165-178 komt uit Kaj's inspanningstest van 28-03: aerobe drempel 161-165,
      anaerobe drempel 179-182, max 198. Niet schatten op de hoogst waargenomen
      hartslag (~175) - hij gaat zelden echt tot zijn maximum.
-     Het intervalblok staat op zondag (roeier of fiets, zodat de benen maandag fris zijn). */
-  var TEMPO_DAGEN = { zo: 1 };
+     Sinds 17-11 twee aeroob-hoog-sessies: dinsdag tempo na het persen, zondag intervallen
+     (roeier of fiets, zodat de benen voor de hinge- en de beendag fris blijven). */
+  var TEMPO_DAGEN = { di: 1, zo: 1 };
 
   function conditieAdvies(r, dayKey) {
     var hoog = num(r.load_aerobic_high);
@@ -862,10 +863,10 @@
 
     var tekort = Math.round(doel[0] - hoog);
     if (TEMPO_DAGEN[dayKey]) {
-      return { kleur: 'accent', tekst: 'Doe vandaag de intervallen: dit is het enige bakje dat leeg staat (' +
+      return { kleur: 'accent', tekst: 'Doe vandaag je tempoblok: dit is het enige bakje dat leeg staat (' +
         tekort + ' tekort). Rustig werk vult het niet, dat telt als zone 2.' };
     }
-    return { kleur: 'muted', tekst: 'Intervalwerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag: dat hoort op zondag.' };
+    return { kleur: 'muted', tekst: 'Tempowerk ontbreekt nog (' + tekort + ' onder de ondergrens), maar niet vandaag: dat hoort op dinsdag en zondag.' };
   }
 
   function herstelKaart(date) {
