@@ -18,7 +18,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v22',
+    version: 'v23',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
     block: 'Krachtblok - golf 2 van 3 (intensiteit) sinds 16 nov - blok loopt t/m 10 januari',
@@ -141,13 +141,15 @@ window.PROGRAM = {
       ]
     },
     za: {
-      key: 'za', label: 'ZA', title: 'Borst, schouders + dragen', sub: 'eerst het bouwwerk, daarna slee en dragen',
+      key: 'za', label: 'ZA', title: 'Borst, schouders + dragen', sub: 'eerst borst, lats en schouders, daarna slee en dragen',
       erector: 'MIDDEL', power: 'Slee en gooien', compound: 'Incline press (Prime)',
       warn: 'Sinds 15-11 korter: nordics, push-ups, sit-ups en zone 2 zijn eraf en staan nu op zondag. De slee blijft hier - dat is je zwaarste conditiewerk van de week.',
       items: [
-        { key: 'incline_prime', group: 'Bouw je borst', name: 'Incline press (Prime)', doel: 'Tweede prikkel voor de bovenborst', cue: 'Pers met vol bereik en rustig tempo; hier telt spanning, niet gewicht.', sets: 4, target: '10-12', type: 'strength' },
+        { key: 'incline_prime', group: 'Bouw je borst', name: 'Incline press (Prime)', doel: 'Tweede prikkel voor de bovenborst', cue: 'Pers met vol bereik en rustig tempo; hier telt spanning, niet gewicht.', sets: 3, target: '10-12', type: 'strength' },
+        { key: 'za_lat_pulldown', group: 'Bouw je lats', name: 'Lat pulldown - enkele arm (kabel)', doel: 'Tweede latprikkel van de week, op volle rek', cue: 'Kniel of zit schuin onder de kabel, arm bovenin helemaal gestrekt zodat je lat rekt. Trek je elleboog naar je heup, niet naar achteren.', let: 'Lichter dan woensdag: rek en samenknijpen, geen zware set. Twee tellen stretch bovenin.', sets: 3, target: '12-15 p/z', inc: 2.5, type: 'strength' },
+        { key: 'za_lateral', group: 'Bouw je schouders', name: 'Lateral raise - kabel of machine', doel: 'Zijkant schouder: breedte op je frame', cue: 'Til je arm zijwaarts tot schouderhoogte met je elleboog voorop. Langzaam zakken, niet zwaaien.', let: 'Dinsdag doe je ze met dumbbells, hier met kabel of machine: andere weerstand, zelfde spier.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
         { key: 'rear_delt_fly', group: 'Bouw je achterste schouder', name: 'Reverse fly', doel: 'Achterste schouder, tegenwicht voor al het persen', cue: 'Breng je armen opzij uit elkaar met je duimen omlaag. Licht gewicht, knijp bovenin kort vast.', sets: 3, target: '12-15', inc: 2.5, type: 'strength' },
-        { key: 'rear_delt_facepull', group: 'Bouw je achterste schouder', name: 'Rear delt + face pull', doel: 'Houding en achterkant schouder', cue: 'Trek naar je gezicht met hoge ellebogen en knijp kort vast.', sets: 4, target: '12-15', type: 'strength' },
+        { key: 'rear_delt_facepull', group: 'Bouw je achterste schouder', name: 'Rear delt + face pull', doel: 'Houding en achterkant schouder', cue: 'Trek naar je gezicht met hoge ellebogen en knijp kort vast.', sets: 3, target: '12-15', type: 'strength' },
         { key: 'trap_raise', group: 'Bouw je achterste schouder', name: 'Trap raise (Y-raise)', doel: 'Onderste trapezius: schouderbladen omlaag en naar achteren', cue: 'Lig voorover op een schuine bank en til je armen in een Y met je duimen omhoog. Licht gewicht, bovenin een tel vasthouden.', sets: 3, target: '12-15', inc: 1, type: 'strength' },
         { key: 'calf_pull', group: 'Onderhoud', name: 'Kuit - zittend', doel: 'Derde kuitmoment, andere hoek', cue: 'Duw door de bal van je voet en laat de hiel diep zakken. Twee tellen bovenin vasthouden.', sets: 3, target: '12-15', inc: 5, type: 'strength' },
         { key: 'di_core', group: 'Rauw werk', name: 'Med ball side throw', doel: 'Explosieve rotatie vanuit je heup', cue: 'Gooi de bal zo hard je kunt zijwaarts tegen de muur en vang hem weer op. Maximale intentie, geen uithoudingswerk.', sets: 3, target: '6 p/z', mode: 'power', type: 'strength' },
@@ -232,18 +234,18 @@ window.PROGRAM = {
     title: 'Volume-check', sub: 'Tillen op de ochtenden, zaterdag bouwwerk en rauw werk, conditie op dinsdag en zondag. Sets per week, hoofd- en bijrol samen.',
     rows: [
       { name: 'Bilspieren', sets: '15 (5 gericht), plus 2 back extension als je rug fris is' },
-      { name: 'Lats - breedte', sets: '11 (wo), elke set zwaar' },
+      { name: 'Lats - breedte', sets: '14 (11 wo + 3 za), twee keer per week' },
       { name: 'Hamstrings', sets: '9 (ma + vr), plus nordics op zo' },
-      { name: 'Borst', sets: '14 (10 di + 4 za)' },
+      { name: 'Borst', sets: '13 (10 di + 3 za)' },
       { name: 'Rugstrekkers', sets: '7, plus 2 back extension als je rug fris is' },
       { name: 'Kuiten', sets: '9 (ma - vr - za)' },
       { name: 'Atletische core', sets: '12 - ma buik, wo anti-extensie, vr rotatie, za werpen; plus dragen op za' },
       { name: 'Slee en dragen', sets: '10 (za)' },
       { name: 'Quads', sets: '6 (vr: leg extension en squat)' },
-      { name: 'Achterste schouder', sets: '10 (za, met trap raise)' },
+      { name: 'Achterste schouder', sets: '9 (za, met trap raise)' },
       { name: 'Midden-rug', sets: '3 (ma)' },
       { name: 'Triceps direct', sets: '2 (di), plus 2 sets dips' },
-      { name: 'Zijkant schouder', sets: '3 (di)' },
+      { name: 'Zijkant schouder', sets: '6 (di + za)' },
       { name: 'Conditie', sets: 'di tempo 20 min - zo intervallen 4 x 6 min - za slee' },
       { name: 'Zwaarste tildag', sets: '20 sets (vr), ma 19 plus 2 optioneel' }
     ]
