@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '58 · 21-11-2026';
+  var APP_VERSION = '59 · 24-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -453,6 +453,10 @@
     var zelfdeGewicht = kgs.every(function (k) { return k === topKg; });
     var mik = range.min === range.max ? String(range.max) : range.min + '–' + range.max;
     if (compleet && zelfdeGewicht && minReps >= range.max) {
+      // rug eerst: tot en met item.vast blijven de kilo's staan, ook als het doel gehaald is
+      if (item.vast && todayStr() <= item.vast) {
+        return { kg: topKg, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets, maar de kilo\'s blijven vast t/m ' + item.vast.split('-').reverse().join('-') + ': houd ' + fmtNum(topKg) + ' kg' };
+      }
       var nieuw = topKg + inc;
       return { kg: nieuw, op: true, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets → nu ' + fmtNum(nieuw) + ' kg, mik op ' + mik };
     }
@@ -1388,6 +1392,8 @@
       opener.querySelector('.chev').textContent = open ? '▾' : '▸';
     });
     P.opener.blocks.forEach(function (block) {
+      // een blok zonder items voor vandaag niet tonen
+      if (!block.items.some(function (oi) { return !oi.days || oi.days.indexOf(dayKey) >= 0; })) return;
       var blockEl = el('<div class="opener-block"><div class="opener-head"><span class="h2">' + esc(block.title) + '</span><span class="tiny">' + esc(block.sub) + '</span></div><div class="chiprow"></div></div>');
       if (block.key === 'power' && (dayKey === 'ma' || dayKey === 'do')) {
         blockEl.insertBefore(el('<div class="callout" style="margin:2px 0 8px"><span class="ic">⚠</span><span>Zware til-dag: houd power licht of sla over.</span></div>'), blockEl.querySelector('.chiprow'));
