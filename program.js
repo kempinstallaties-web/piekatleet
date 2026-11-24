@@ -18,7 +18,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v26',
+    version: 'v27',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
     block: 'Krachtblok - golf 2 van 3 (intensiteit) sinds 16 nov - rug eerst t/m 6 dec - blok loopt t/m 10 januari',

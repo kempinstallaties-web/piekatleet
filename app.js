@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '59 · 24-11-2026';
+  var APP_VERSION = '60 · 24-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -1377,7 +1377,7 @@
     var openerOpen = UI.openerOpen === skeyOpener;
     var opener = el('<div class="card">' +
       '<button class="opener-toggle" aria-expanded="' + openerOpen + '">' +
-      '<span><span class="h2">' + esc(P.opener.title) + '</span> <span class="tiny">· 12–15 min</span></span>' +
+      '<span><span class="h2">' + esc(P.opener.title) + '</span> <span class="tiny">· 15–18 min</span></span>' +
       '<span class="opener-count"><span class="badge"><span class="opener-n">' + openerChecked + '</span> ✓</span><span class="chev">' + (openerOpen ? '▾' : '▸') + '</span></span>' +
       '</button>' +
       '<div class="opener-body"' + (openerOpen ? '' : ' hidden') + '><div class="tiny" style="margin-top:4px">' + esc(P.opener.sub) + '</div></div>' +
