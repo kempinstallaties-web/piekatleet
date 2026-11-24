@@ -18,7 +18,7 @@
 window.PROGRAM = {
   meta: {
     name: 'PIEK-ATLEET',
-    version: 'v27',
+    version: 'v28',
     athlete: 'Kaj Kemp',
     motto: 'goed bewegen · gezond lichaam · rauw werk',
     block: 'Krachtblok - golf 2 van 3 (intensiteit) sinds 16 nov - rug eerst t/m 6 dec - blok loopt t/m 10 januari',
@@ -31,7 +31,7 @@ window.PROGRAM = {
     'Zwaar tillen blijft de basis. Het rauwe werk van zaterdag komt erbovenop, niet in de plaats.',
     'Garmin en je eigen gevoel zijn de rem. Scherpe pijn op een vaste plek bij een pees (knie, achilles, elleboog) meld je direct - dat ziet Garmin niet.',
     'Golf 2 is intensiteit: minder sets, elke set zwaar. Hoofdliften 4-6 reps met een rep in de tank, bijna alles 3 werksets (alleen de trap bar 4). Een set waar niets meer in zit sla je over: die kost herstel en bouwt niets. Haal je alle sets op de bovengrens, dan gaat er gewicht bij - geen plafond.',
-    'Rug eerst t/m 6 december: trap bar, RDL, squat en hip thrust houden hun kilo\'s, meer reps mag. Daarna pas gewicht erbij als je rug twee maandagen achter elkaar 0-2 van de 10 is.',
+    'Rug eerst t/m 6 december: trap bar, RDL, squat en hip thrust houden hun kilo\'s, meer reps mag. Daarna pas gewicht erbij als je rug twee maandagen achter elkaar 0-2 van de 10 is. Tik je rugscore daarvoor elke ochtend bovenaan aan.',
     'Eerste uur na opstaan zijn je tussenwervelschijven vol en stijf: niet bukken met een ronde rug, ook niet op het werk. Buig vanuit je heupen.',
     'Gewicht: +0,3 kg per week bij dezelfde taille, gemeten als weekgemiddelde. Weeg elke ochtend na het toilet, voor het eten.'
   ],
@@ -89,6 +89,31 @@ window.PROGRAM = {
 
   weekRule: '06:00 is tillen. Ma hinge en rugdikte, di persen met een tempoblok erachter, wo lats, vr benen en bilspieren, za borst, schouders en het rauwe werk met de slee. Donderdag volledig rust. Zondag intervallen; de rest van die dag is optioneel en alleen als je hersteld bent. Conditie: twee keer per week aeroob-hoog (di tempo, zo intervallen), elk als eigen Garmin-activiteit. Core staat vooraan in de sessie: wat achteraan staat valt weg.',
   weekOrder: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
+
+  // Rugscore: smalle kaart bovenaan Vandaag, elke ochtend een tik van 0 tot 10.
+  // grens: vanaf deze score toont de app de lichte variant van de dag (advies.<dag>.hoog), kort:
+  // de tekst staat achter de score op één regel. Onder de grens staat er geen advies.
+  // vrij: oefeningen met 'vast' krijgen na die datum pas gewicht erbij als de eerste score
+  // van deze week en van vorige week allebei op of onder dit getal zitten.
+  rug: {
+    key: 'rug_score', grens: 3, vrij: 2,
+    advies: {
+      ma: { hoog: 'licht: trap bar 125 (4 x 5), RDL 100' },
+      za: { hoog: 'sla farmer en suitcase carry over' }
+    }
+  },
+
+  // Vervallen op advies: de geplande training van deze dagen telt niet als gemist in de
+  // consistentieregel. Geldt alleen voor de training, niet voor wat je thuis doet.
+  rust: [
+    { van: '2026-11-23', tot: '2026-11-24', reden: 'rug: hinge en push van deze week vervallen' },
+    { van: '2026-11-27', tot: '2026-11-27', reden: 'rug: squat vervalt; vrijdag de lats-sessie van woensdag' }
+  ],
+
+  // Consistentieregel: onderdelen die je thuis doet, tellen mee vanaf 'sinds'.
+  consistentie: {
+    thuis: { label: 'rughold', sinds: '2026-11-24', keys: ['thuis_hold_di', 'thuis_hold_za', 'thuis_hold_zo'] }
+  },
 
   days: {
     ma: {

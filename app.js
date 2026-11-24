@@ -9,7 +9,7 @@
   var CFG = window.PA_CONFIG || {};
   // Bump samen met CACHE in sw.js bij elke deploy — zichtbaar in Info zodat je kunt checken
   // of een update binnen is. De versie in de header is de PROGRAMMA-versie (P.meta.version).
-  var APP_VERSION = '60 · 24-11-2026';
+  var APP_VERSION = '61 · 24-11-2026';
 
   /* ---------------- Utils ---------------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -86,6 +86,7 @@
   var saveTimer = null;
   function saveLocalNow() {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    if (SETH_TEST) return; // testmodus (?sethdatum=): niets naar de lokale opslag
     try {
       localStorage.setItem(LS_SESS, JSON.stringify(S.sessions));
       localStorage.setItem(LS_MET, JSON.stringify(S.metrics));
@@ -216,6 +217,7 @@
   }
 
   function pushDirty() {
+    if (SETH_TEST) return; // testmodus (?sethdatum=): niets naar de database
     if (!sb || !navigator.onLine) { refreshSyncUI(); return; }
     var sessKeys = S.dirty.sessions.slice();
     var metKeys = S.dirty.metrics.slice();
@@ -453,9 +455,22 @@
     var zelfdeGewicht = kgs.every(function (k) { return k === topKg; });
     var mik = range.min === range.max ? String(range.max) : range.min + '–' + range.max;
     if (compleet && zelfdeGewicht && minReps >= range.max) {
-      // rug eerst: tot en met item.vast blijven de kilo's staan, ook als het doel gehaald is
-      if (item.vast && todayStr() <= item.vast) {
-        return { kg: topKg, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets, maar de kilo\'s blijven vast t/m ' + item.vast.split('-').reverse().join('-') + ': houd ' + fmtNum(topKg) + ' kg' };
+      // rug eerst: tot en met item.vast blijven de kilo's staan, ook als het doel gehaald is;
+      // daarna pas omhoog als de rugscore het toelaat (P.rug.vrij, twee weken achter elkaar)
+      if (item.vast) {
+        var nuDag = sethVandaag();
+        if (nuDag <= item.vast) {
+          return { kg: topKg, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets, maar de kilo\'s blijven vast t/m ' + item.vast.split('-').reverse().join('-') + ': houd ' + fmtNum(topKg) + ' kg' };
+        }
+        var rv = rugVrij(nuDag);
+        if (!rv.vrij) {
+          if (rv.geenRegel) {
+            return { kg: topKg, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets, maar er staat geen rugregel in het programma: houd ' + fmtNum(topKg) + ' kg' };
+          }
+          var stand = rv.nu == null ? 'de rugscore van deze week ontbreekt'
+            : (rv.vorig == null ? 'de rugscore van vorige week ontbreekt' : 'nu ' + fmtNum(rv.vorig) + ' en ' + fmtNum(rv.nu));
+          return { kg: topKg, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets. Gewicht erbij pas na twee weken met rug 0-' + RUG.vrij + ' bij de eerste meting (' + stand + '): houd ' + fmtNum(topKg) + ' kg' };
+        }
       }
       var nieuw = topKg + inc;
       return { kg: nieuw, op: true, tekst: fmtNum(topKg) + ' × ' + range.max + ' stond op alle sets → nu ' + fmtNum(nieuw) + ' kg, mik op ' + mik };
@@ -647,7 +662,7 @@
   function startRest(sec) {
     sec = sec || restDefault;
     restDefault = sec;
-    try { localStorage.setItem(LS_REST, String(sec)); } catch (e) {}
+    if (!SETH_TEST) { try { localStorage.setItem(LS_REST, String(sec)); } catch (e) {} }
     RT.remaining = sec; RT.total = sec;
     var p = restPillEl(); p.hidden = false; p.classList.remove('rest-done');
     // audio ontgrendelen binnen de klik-gesture (set afvinken)
@@ -988,17 +1003,19 @@
 
   /* Seth-kaart (contract seth-kaart-CONTRACT.md) — één mindset-opdracht per dag, bovenaan
      Vandaag. Volgt de telefoondatum, los van de datumkiezer van de training. Opslag via
-     dezelfde metrics als de nulmeting: 'seth_kaart' op vandaag en 'seth_avond' op gisteren,
-     waarde 1 of 0 (nooit verwijderen). Bewust GEEN tekstveld: deze app heeft geen login. */
+     dezelfde metrics als de nulmeting: 'seth_kaart' op de datum van de kaart (1 = gedaan,
+     0 = niet gedaan, geen rij = geen antwoord) en 'seth_avond' op gisteren. Nooit verwijderen.
+     Bewust GEEN tekstveld: deze app heeft geen login. */
   var SETH = window.SETH || null;
   var SETH_DAGEN = 84; // 12 weken
-  // alleen om te testen: ?sethdatum=JJJJ-MM-DD toont de kaart van die dag
+  // alleen om te testen: ?sethdatum=JJJJ-MM-DD toont de kaarten van die dag en bewaart niets
   var SETH_TEST = (function () {
     var m = /[?&]sethdatum=(\d{4}-\d{2}-\d{2})/.exec(location.search);
     return m ? m[1] : null;
   })();
   var sethGetekend = null; // datum waarvoor de kaart het laatst is getekend (middernacht-check)
-  var sethTest = {}; // testmodus: vinkjes alleen in het geheugen, nooit opslaan of syncen
+  var sethTest = {};   // testmodus: waarden alleen in het geheugen, nooit opslaan of syncen
+  var sethTestOp = {}; // testmodus: de (test)dag waarop een waarde is gezet
 
   function sethVandaag() { return SETH_TEST || todayStr(); }
   function datumPlus(dateStr, n) {
@@ -1009,26 +1026,107 @@
   function dagenTussen(van, tot) {
     return Math.round((new Date(tot + 'T12:00:00').getTime() - new Date(van + 'T12:00:00').getTime()) / 864e5);
   }
-  function sethGedaan(dateStr, key) {
+
+  /* Alle vinkjes en scores lopen via deze functies, zodat de testmodus nooit iets bewaart.
+     Waarden zijn getallen; een rij wordt nooit verwijderd, alleen overschreven. */
+  function metricWaarde(dateStr, key) {
     var k = dateStr + '|' + key;
-    if (SETH_TEST && k in sethTest) return sethTest[k] === 1;
+    if (SETH_TEST && k in sethTest) return sethTest[k];
     var m = S.metrics[k];
-    return !!(m && m.value === 1);
+    return (m && m.value != null) ? num(m.value) : null;
   }
-  function sethZet(dateStr, key, aan) {
+  function metricZet(dateStr, key, value) {
     var k = dateStr + '|' + key;
-    if (SETH_TEST) { sethTest[k] = aan ? 1 : 0; return; }
-    S.metrics[k] = { date: dateStr, key: key, value: aan ? 1 : 0, note: '', updatedAt: nowIso() };
+    if (SETH_TEST) { sethTest[k] = value; sethTestOp[k] = SETH_TEST; return; }
+    S.metrics[k] = { date: dateStr, key: key, value: value, note: '', updatedAt: nowIso() };
     markMetricDirty(k);
   }
+  // lokale datum waarop de waarde het laatst is gezet (om 'vandaag beantwoord' te herkennen)
+  function metricGezetOp(dateStr, key) {
+    var k = dateStr + '|' + key;
+    if (SETH_TEST && k in sethTestOp) return sethTestOp[k];
+    var m = S.metrics[k];
+    if (!m || !m.updatedAt) return null;
+    var d = new Date(m.updatedAt);
+    if (isNaN(d.getTime())) return null;
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  // alle waarden van één metric, oud → nieuw (in de testmodus met de testwaarden eroverheen)
+  function metricReeks(key) {
+    var per = {};
+    Object.keys(S.metrics).forEach(function (k) {
+      var m = S.metrics[k];
+      if (m && m.key === key && m.value != null && num(m.value) != null) per[m.date] = num(m.value);
+    });
+    if (SETH_TEST) {
+      Object.keys(sethTest).forEach(function (k) {
+        var p = k.split('|');
+        if (p[1] === key) per[p[0]] = sethTest[k];
+      });
+    }
+    return Object.keys(per).sort().map(function (d) { return { date: d, value: per[d] }; });
+  }
+  function sethGedaan(dateStr, key) { return metricWaarde(dateStr, key) === 1; }
+  function sethZet(dateStr, key, aan) { metricZet(dateStr, key, aan ? 1 : 0); }
   function sethTotaal() {
     var eind = datumPlus(SETH.start, SETH_DAGEN - 1);
-    var datums = {};
-    Object.keys(S.metrics).concat(Object.keys(sethTest)).forEach(function (k) {
-      var p = k.split('|');
-      if (p[1] === 'seth_kaart' && p[0] >= SETH.start && p[0] <= eind) datums[p[0]] = true;
-    });
-    return Object.keys(datums).filter(function (d) { return sethGedaan(d, 'seth_kaart'); }).length;
+    return metricReeks('seth_kaart').filter(function (m) {
+      return m.date >= SETH.start && m.date <= eind && m.value === 1;
+    }).length;
+  }
+
+  /* Terugkijken en herhalen (amendement A1). Kaartdagen: ma di wo vr za (dagopdracht) en zo
+     (weekcheck). De vraag "gedaan?" over een kaart komt op de eerstvolgende dag dat de app
+     opengaat, niet op de dag zelf: dan is de opdracht pas gedaan. */
+  var SETH_KAARTDAG = { ma: 1, di: 1, wo: 1, vr: 1, za: 1, zo: 1 };
+  var DAGNAAM = { ma: 'Maandag', di: 'Dinsdag', wo: 'Woensdag', 'do': 'Donderdag', vr: 'Vrijdag', za: 'Zaterdag', zo: 'Zondag' };
+
+  function sethWeekNr(d) { return Math.floor(dagenTussen(SETH.start, d) / 7); }
+  function sethInBlok(d) {
+    var b = dagenTussen(SETH.start, d);
+    return b >= 0 && b < SETH_DAGEN && sethWeekNr(d) < SETH.weeks.length;
+  }
+  // laatste kaartdag vóór d (donderdag heeft geen opdracht), alleen binnen het blok
+  function sethVorige(d) {
+    for (var i = 1; i <= 2; i++) {
+      var v = datumPlus(d, -i);
+      if (SETH_KAARTDAG[dayKeyForDate(v)]) return sethInBlok(v) ? v : null;
+    }
+    return null;
+  }
+  // eigen opdracht van een dag: de dagopdracht, op zondag de themavraag van de weekcheck
+  function sethEigen(d) {
+    var w = SETH.weeks[sethWeekNr(d)], dk = dayKeyForDate(d);
+    if (!w) return null;
+    return dk === 'zo' ? (w.vraag || null) : (w[dk] || null);
+  }
+  /* Antwoord op de kaart van dag d: 1 = gedaan, 0 = niet gedaan, null = geen antwoord.
+     Een 0 die op de dag zelf is gezet is een teruggedraaid vinkje (misklik), geen "nee":
+     "nee" kan alleen op een latere dag gegeven worden. */
+  function sethAntwoord(d) {
+    var w = metricWaarde(d, 'seth_kaart');
+    if (w === 1) return 1;
+    if (w === 0) {
+      var op = metricGezetOp(d, 'seth_kaart');
+      return (op && op > d) ? 0 : null;
+    }
+    return null;
+  }
+  /* Eén keer is oké: na "nee" op een dagopdracht van dezelfde week krijgt de volgende kaartdag
+     die opdracht nog één keer. Een herhaling wordt zelf niet herhaald. Niet over de weekgrens,
+     niet op zondag (weekcheck) en nooit de weekcheck zelf. */
+  function sethHerhaling(d) {
+    var dk = dayKeyForDate(d);
+    if (!sethInBlok(d) || dk === 'zo' || dk === 'do') return false;
+    var v = sethVorige(d);
+    if (!v || dayKeyForDate(v) === 'zo' || sethWeekNr(v) !== sethWeekNr(d)) return false;
+    if (sethAntwoord(v) !== 0 || !sethEigen(v)) return false;
+    return !sethHerhaling(v);
+  }
+  // de opdracht die op dag d telt: de eigen opdracht, of de herhaling van de vorige
+  function sethActief(d) {
+    if (sethHerhaling(d)) return { tekst: sethEigen(sethVorige(d)), herhaling: true };
+    return { tekst: sethEigen(d), herhaling: false };
   }
 
   // in testmodus staat er een regel onder de kaart, zodat niemand denkt dat er iets is opgeslagen
@@ -1054,7 +1152,7 @@
         '<div class="seth-opdracht">Week 1 · ' + esc(w1.thema) + '</div>' +
         '<div class="seth-zin">' + esc(w1.zin) + '</div></div>');
     }
-    if (blokdag >= SETH_DAGEN) {
+    if (blokdag >= SETH_DAGEN || !SETH.weeks[Math.floor(blokdag / 7)]) {
       return el('<div class="card seth">' +
         '<div class="seth-thema">Seth-blok klaar</div>' +
         '<div class="seth-opdracht">' + sethTotaal() + ' van ' + max + ' kaarten gedaan. Welke drie thema\'s wil je herhalen? Zeg het in de chat.</div></div>');
@@ -1065,86 +1163,247 @@
     var dk = dayKeyForDate(vandaag);
     var zondag = dk === 'zo';
     var kop = 'Week ' + (wi + 1) + ' · ' + w.thema;
-    var opdracht = zondag ? w.vraag : w[dk];
+    var actief = dk === 'do' ? { tekst: null, herhaling: false } : sethActief(vandaag);
+    var opdracht = actief.tekst;
 
+    // terugkijken op de vorige kaartdag
     var gisteren = datumPlus(vandaag, -1);
+    var vorige = sethVorige(vandaag);
+    var antw = vorige ? sethAntwoord(vorige) : null;
+    var vraagOpen = !!vorige && antw == null;
+    var antwVandaag = !!vorige && antw != null && metricGezetOp(vorige, 'seth_kaart') === vandaag;
+    var vorigeDk = vorige ? dayKeyForDate(vorige) : null;
+    var wanneer = vorige === gisteren ? 'Gisteren' : DAGNAAM[vorigeDk];
+
     var toonAvond = blokdag >= 1;
     var avondGedaan = toonAvond && sethGedaan(gisteren, 'seth_avond');
-    var avondKnop = '<button class="seth-avond' + (avondGedaan ? ' on' : '') + '" aria-pressed="' + avondGedaan + '">' +
-      '<span class="seth-vink">✓</span>Avondcheck gisteren</button>';
-    var card;
+    var avondVandaag = toonAvond && metricGezetOp(gisteren, 'seth_avond') === vandaag;
+    var avondKnop = (toonAvond && (!avondGedaan || avondVandaag))
+      ? '<button class="seth-mini seth-avond' + (avondGedaan ? ' on' : '') + '" aria-pressed="' + avondGedaan +
+        '" aria-label="Avondcheck van gisteravond gedaan"><span class="seth-vink">✓</span>Avondcheck</button>'
+      : '';
 
-    function opnieuw() { var nieuw = sethKaart(); if (nieuw && card) card.replaceWith(nieuw); }
-    function koppelAvond() {
-      var b = card.querySelector('.seth-avond');
-      if (b) b.addEventListener('click', function () { sethZet(gisteren, 'seth_avond', !avondGedaan); opnieuw(); });
+    // een antwoord van vandaag blijft zichtbaar en is met één tik om te zetten (misklik)
+    var wijzigKnop = antwVandaag
+      ? '<button class="seth-mini seth-wijzig' + (antw === 1 ? ' on' : ' nee') + '" aria-label="Antwoord wijzigen">' +
+        '<span class="seth-vink">✓</span>' + esc(wanneer) + (antw === 1 ? ' gedaan' : ' niet gedaan') + '</button>'
+      : '';
+    var terug = '';
+    if (vraagOpen) {
+      var wat = vorigeDk === 'zo' ? 'Weekcheck ' + wanneer.toLowerCase() + ' gedaan?' : wanneer + ' gedaan?';
+      terug = '<div class="seth-terug">' +
+        '<div class="seth-label">' + esc(wat) + '</div>' +
+        '<div class="seth-vorige">' + esc(sethActief(vorige).tekst || '') + '</div>' +
+        '<div class="seth-rij"><button class="seth-mini seth-ja">Ja</button>' +
+        '<button class="seth-mini seth-nee">Nee</button>' + avondKnop + '</div></div>';
+    } else if (antwVandaag || avondKnop) {
+      terug = '<div class="seth-terug kaal"><div class="seth-rij">' + wijzigKnop + avondKnop + '</div></div>';
     }
 
-    // donderdag is rust: thema en zin, geen opdracht en geen dagvinkje; de avondcheck van
-    // woensdagavond is wel af te vinken. Ontbrekende tekst valt hierop terug (nooit een lege kaart).
+    var card;
+    function opnieuw() { var nieuw = sethKaart(); if (nieuw && card) card.replaceWith(nieuw); }
+    // een antwoord over de vorige kaartdag verandert ook de consistentieregel op de rugkaart
+    function beantwoord(waarde) { metricZet(vorige, 'seth_kaart', waarde); opnieuw(); rugVervang(); }
+    function koppel() {
+      var b;
+      if ((b = card.querySelector('.seth-ja'))) b.addEventListener('click', function () { beantwoord(1); });
+      if ((b = card.querySelector('.seth-nee'))) b.addEventListener('click', function () { beantwoord(0); });
+      if ((b = card.querySelector('.seth-wijzig'))) b.addEventListener('click', function () { beantwoord(antw === 1 ? 0 : 1); });
+      if ((b = card.querySelector('.seth-avond'))) b.addEventListener('click', function () { sethZet(gisteren, 'seth_avond', !avondGedaan); opnieuw(); });
+    }
+    // zolang de vraag openstaat, blijft de "Ik ben iemand die..."-zin weg: één ding tegelijk
+    var zin = vraagOpen ? '' : '<div class="seth-zin">' + esc(w.zin) + '</div>';
+
+    // donderdag is rust: thema en zin, geen opdracht; terugkijken op woensdag kan wel.
+    // Ontbrekende tekst valt hierop terug (nooit een lege kaart).
     if (dk === 'do' || !opdracht) {
-      card = el('<div class="card seth seth-rust">' +
-        '<div class="seth-thema">' + esc(kop) + '</div>' +
-        '<div class="seth-zin">' + esc(w.zin) + '</div>' +
-        (toonAvond ? '<div class="seth-acties">' + avondKnop + '</div>' : '') + '</div>');
-      koppelAvond();
+      card = el('<div class="card seth seth-rust"><div class="seth-thema">' + esc(kop) + '</div>' + zin + terug + '</div>');
+      koppel();
       return card;
     }
 
     var gedaan = sethGedaan(vandaag, 'seth_kaart');
 
-    // afgevinkt → ingeklapt tot één regel, zodat de training direct in beeld staat
-    if (gedaan && UI.sethOpen !== vandaag) {
+    // vandaag al afgevinkt en niets meer te beantwoorden → ingeklapt tot één regel
+    if (gedaan && UI.sethOpen !== vandaag && !vraagOpen) {
       card = el('<div class="card seth seth-dicht">' +
         '<button class="seth-dicht-main" aria-expanded="false"><span class="seth-vink">✓</span>' +
-        '<span class="seth-dicht-txt">Seth · ' + esc(w.thema) + '</span>' +
-        '<span class="tiny">' + sethTotaal() + '/' + max + '</span></button>' +
-        (toonAvond && !avondGedaan ? avondKnop : '') + '</div>');
+        '<span class="seth-dicht-txt">Seth · ' + esc(w.thema) + '</span></button>' +
+        wijzigKnop + (avondGedaan ? '' : avondKnop) + '</div>');
       card.querySelector('.seth-dicht-main').addEventListener('click', function () { UI.sethOpen = vandaag; opnieuw(); });
-      koppelAvond();
+      koppel();
       return card;
     }
 
-    var html = '<div class="card seth">' +
-      '<div class="seth-thema">' + esc(kop) + '</div>' +
-      '<div class="seth-zin">' + esc(w.zin) + '</div>';
+    var knop = '<button class="seth-mini seth-vandaag' + (gedaan ? ' on' : '') + '" aria-pressed="' + gedaan + '">' +
+      '<span class="seth-vink">✓</span>Gedaan</button>';
+    var html = '<div class="card seth"><div class="seth-thema">' + esc(kop) + '</div>' + zin + terug;
     if (zondag) {
-      html += '<div class="seth-label">Weekcheck</div>' +
+      html += '<div class="seth-kop2"><span class="seth-label">Weekcheck</span>' + knop + '</div>' +
         '<ol class="seth-vragen">' + SETH.weekcheck.vragen.map(function (q) { return '<li>' + esc(q) + '</li>'; }).join('') + '</ol>' +
         '<div class="tiny">Rollen: ' + esc(SETH.weekcheck.rollen) + '</div>' +
         '<div class="seth-opdracht">' + esc(opdracht) + '</div>' +
         '<div class="tiny">' + esc(SETH.weekcheck.lijst) + '</div>';
     } else {
-      html += '<div class="seth-label">Vandaag</div><div class="seth-opdracht">' + esc(opdracht) + '</div>';
+      html += '<div class="seth-kop2"><span class="seth-label">Vandaag</span>' + knop + '</div>' +
+        (actief.herhaling ? '<div class="tiny seth-regel">' + esc(SETH.herhaal || 'Nog één keer.') + '</div>' : '') +
+        '<div class="seth-opdracht">' + esc(opdracht) + '</div>';
     }
     if (dk === 'ma' && w.bron) {
       html += '<a class="seth-bron" href="' + esc(w.bron.url) + '" target="_blank" rel="noopener">▶ Seth: ' +
         esc(w.bron.titel) + ' · ' + esc(w.bron.tijd) + '</a>';
     }
-
-    var weekStart = datumPlus(SETH.start, wi * 7);
-    var dots = '';
-    for (var i = 0; i < 7; i++) {
-      var d = datumPlus(weekStart, i);
-      var cls = dayKeyForDate(d) === 'do' ? ' rust' : (sethGedaan(d, 'seth_kaart') ? ' on' : (d === vandaag ? ' nu' : ''));
-      dots += '<span class="seth-dot' + cls + '" title="' + esc(fmtDate(d)) + '"></span>';
-    }
-
-    html += '<div class="seth-acties">' +
-      '<button class="seth-btn' + (gedaan ? ' on' : '') + '" aria-pressed="' + gedaan + '"><span class="seth-vink">✓</span>' +
-      (zondag ? 'Weekcheck gedaan' : 'Gedaan') + '</button>' +
-      (toonAvond ? avondKnop : '') + '</div>' +
-      '<div class="seth-strook" aria-label="Seth-kaarten deze week">' + dots +
-      '<span class="tiny seth-tot">' + sethTotaal() + '/' + max + '</span></div></div>';
+    html += '</div>';
 
     card = el(html);
-    card.querySelector('.seth-btn').addEventListener('click', function () {
+    card.querySelector('.seth-vandaag').addEventListener('click', function () {
       sethZet(vandaag, 'seth_kaart', !gedaan);
       if (!gedaan) UI.sethOpen = null; // net afgevinkt → inklappen
       opnieuw();
     });
-    koppelAvond();
+    koppel();
     return card;
+  }
+
+  /* Rugkaart en consistentie (amendement A1). Eén smalle kaart bovenaan Vandaag: de rugscore
+     van vandaag (0-10, één tik, metric P.rug.key) en één regel over de laatste vier weken.
+     De score stuurt de variant van de dag (P.rug.advies) en de kiloregel in progressieAdvies.
+     Volgt de telefoondatum, net als de Seth-kaart. Geen tekstveld. */
+  var RUG = (P.rug && P.rug.key) ? P.rug : null;
+
+  function maandagVan(d) { return datumPlus(d, -((new Date(d + 'T12:00:00').getDay() + 6) % 7)); }
+  // eerste rugscore van een week: die van maandag, anders de eerste erna (nooit na 'tot')
+  function rugWeekStart(maandag, tot) {
+    for (var i = 0; i < 7; i++) {
+      var d = datumPlus(maandag, i);
+      if (d > tot) break;
+      var v = metricWaarde(d, RUG.key);
+      if (v != null) return v;
+    }
+    return null;
+  }
+  // de kilo's mogen pas omhoog als de eerste score van deze week en van vorige week laag genoeg is
+  function rugVrij(vandaag) {
+    // zonder rugregel in het programma blijft het gewicht staan: liever te voorzichtig
+    if (!RUG) return { vrij: false, nu: null, vorig: null, geenRegel: true };
+    var ma = maandagVan(vandaag);
+    var nu = rugWeekStart(ma, vandaag), vorig = rugWeekStart(datumPlus(ma, -7), vandaag);
+    return { vrij: nu != null && vorig != null && nu <= RUG.vrij && vorig <= RUG.vrij, nu: nu, vorig: vorig };
+  }
+
+  function inRust(d) {
+    return (P.rust || []).some(function (r) { return d >= r.van && d <= r.tot; });
+  }
+  /* Consistentie over de 28 dagen vóór vandaag (vandaag telt niet mee: die dag is nog bezig).
+     Geen reeks die op nul springt: gedaan van gepland. Eerst wat er gepland was (per week de
+     programmadagen en de thuis-onderdelen), dan alleen de sessies die daarbij horen: een
+     training die een dag later is gedaan telt mee, een sessie op een vervallen dag niet.
+     P.rust geldt alleen voor de training; thuis-onderdelen blijven gepland. */
+  function trainingGedaan(s, thuisDag) {
+    var opener = s.opener || {};
+    if (Object.keys(opener).some(function (b) { return Object.keys(opener[b] || {}).length > 0; })) return true;
+    // alleen een thuis-onderdeel loggen is geen training
+    return Object.keys(s.items || {}).some(function (k) { return !(k in thuisDag) && itemHasData(s.items[k]); });
+  }
+  function consistentie(vandaag) {
+    var van = datumPlus(vandaag, -28), tot = datumPlus(vandaag, -1);
+    var uit = { training: { gedaan: 0, van: 0 }, seth: { gedaan: 0, van: 0 }, thuis: { gedaan: 0, van: 0 } };
+    var cfg = (P.consistentie && P.consistentie.thuis) || null;
+    var thuisDag = {}; // key → programmadag waarop het onderdeel staat
+    if (cfg) {
+      (cfg.keys || []).forEach(function (key) {
+        Object.keys(P.days).forEach(function (pdk) {
+          (P.days[pdk].items || []).forEach(function (it) { if (it.key === key) thuisDag[key] = pdk; });
+        });
+      });
+    }
+    function weekVan(d) { var wp = isoWeekParts(d); return wp.year + '-' + wp.week; }
+    var planT = {}, planH = {}; // 'week|programmadag' en 'week|onderdeel' → 0 (gepland) of 1 (gedaan)
+    for (var i = 28; i >= 1; i--) {
+      var d = datumPlus(vandaag, -i), dk = dayKeyForDate(d);
+      if (P.days[dk] && !P.days[dk].rest && !inRust(d)) planT[weekVan(d) + '|' + dk] = 0;
+      if (SETH && SETH.weeks && sethInBlok(d) && dk !== 'do') {
+        uit.seth.van++;
+        if (metricWaarde(d, 'seth_kaart') === 1) uit.seth.gedaan++;
+      }
+      if (cfg && d >= cfg.sinds) {
+        Object.keys(thuisDag).forEach(function (key) { if (thuisDag[key] === dk) planH[weekVan(d) + '|' + key] = 0; });
+      }
+    }
+    Object.keys(S.sessions).forEach(function (k) {
+      var s = S.sessions[k];
+      if (!s || !s.date || s.date < van || s.date > tot) return;
+      var w = weekVan(s.date), tk = w + '|' + s.dayKey;
+      if (tk in planT && trainingGedaan(s, thuisDag)) planT[tk] = 1;
+      Object.keys(thuisDag).forEach(function (key) {
+        var hk = w + '|' + key, it = s.items && s.items[key];
+        if (hk in planH && it && itemHasData(it)) planH[hk] = 1;
+      });
+    });
+    function tel(plan) {
+      var ks = Object.keys(plan);
+      return { gedaan: ks.filter(function (x) { return plan[x] === 1; }).length, van: ks.length };
+    }
+    uit.training = tel(planT);
+    uit.thuis = tel(planH);
+    return uit;
+  }
+  function consistentieRegel(vandaag) {
+    var c = consistentie(vandaag), delen = [];
+    if (c.training.van) delen.push('training ' + c.training.gedaan + '/' + c.training.van);
+    if (c.seth.van) delen.push('Seth ' + c.seth.gedaan + '/' + c.seth.van);
+    if (c.thuis.van) delen.push(((P.consistentie.thuis.label) || 'thuis') + ' ' + c.thuis.gedaan + '/' + c.thuis.van);
+    return delen.length ? '4 weken: ' + delen.join(' · ') : '';
+  }
+
+  function rugKaart(dayKey) {
+    if (!RUG) return null;
+    var vandaag = sethVandaag();
+    var score = metricWaarde(vandaag, RUG.key);
+    var cons = consistentieRegel(vandaag);
+    var card;
+
+    // de vakjes staan open tot er getikt is; de consistentieregel komt erbij zodra de kaart dichtklapt
+    if (score == null || UI.rugOpen === vandaag) {
+      var vakjes = '';
+      for (var n = 0; n <= 10; n++) {
+        vakjes += '<button class="rug-vak' + (score === n ? ' on' : '') + '" data-n="' + n + '" aria-pressed="' + (score === n) + '">' + n + '</button>';
+      }
+      card = el('<div class="card rug">' +
+        '<div class="rug-kop"><span class="seth-thema">Rug nu</span><span class="tiny">0 = niets · 10 = ergst</span></div>' +
+        '<div class="rug-schaal" role="group" aria-label="Rugscore van 0 tot 10">' + vakjes + '</div></div>');
+      Array.prototype.forEach.call(card.querySelectorAll('.rug-vak'), function (b) {
+        b.addEventListener('click', function () {
+          metricZet(vandaag, RUG.key, parseInt(b.getAttribute('data-n'), 10));
+          UI.rugOpen = null;
+          // de score kan het advies bij de oefeningen veranderen (kiloregel): hele dag opnieuw tekenen
+          if (UI.view === 'vandaag') renderVandaag(); else rugVervang();
+        });
+      });
+      return card;
+    }
+
+    var reeks = metricReeks(RUG.key).filter(function (m) { return m.date <= vandaag; }).slice(-7);
+    var verloop = reeks.length > 1
+      ? 'laatste ' + reeks.length + ': ' + reeks.map(function (m) { return fmtNum(m.value); }).join(' · ') : '';
+    // op of boven de grens staat de lichte variant van de dag in beeld op de plek van het verloop;
+    // daaronder is er niets te melden: het gewone programma staat al op het scherm
+    var adv = RUG.advies && RUG.advies[dayKey];
+    var licht = (adv && adv.hoog && score >= RUG.grens) ? adv.hoog : '';
+    // ingeklapt is het geen kaart meer maar een smalle statusregel; de hele regel is de knop
+    card = el('<div class="card rug rug-dicht"><button class="rug-main" aria-label="Rugscore wijzigen">' +
+      '<span class="rug-regel"><span class="rug-getal">Rug ' + esc(fmtNum(score)) + '/10</span>' +
+      (licht ? '<span class="tiny rug-verloop hoog">' + esc(licht) + '</span>'
+        : (verloop ? '<span class="tiny rug-verloop">' + esc(verloop) + '</span>' : '')) + '</span>' +
+      (cons ? '<span class="tiny rug-cons">' + esc(cons) + '</span>' : '') + '</button></div>');
+    card.querySelector('.rug-main').addEventListener('click', function () { UI.rugOpen = vandaag; rugVervang(); });
+    return card;
+  }
+  function rugVervang() {
+    var oud = document.querySelector('#view .card.rug');
+    if (!oud) return;
+    var nieuw = rugKaart(UI.dayKey);
+    if (nieuw) oud.replaceWith(nieuw);
   }
 
   /* Vaste dingen (dag.js) — een paar kleine dagelijkse groei-acties, één tik per ding.
@@ -1281,6 +1540,9 @@
     var date = UI.date, dayKey = UI.dayKey;
     var day = P.days[dayKey];
 
+    sethGetekend = sethVandaag(); // ook zonder Seth-kaart: bij terugkomst na middernacht opnieuw tekenen
+    var rug = rugKaart(dayKey);
+    if (rug) root.appendChild(rug);
     var seth = sethKaart();
     if (seth) root.appendChild(seth);
     var dag = dagKaart();
@@ -2074,7 +2336,7 @@
     var tg = autoRow.querySelector('.toggle');
     function paintTg() { tg.classList.toggle('on', autoRestOn()); tg.setAttribute('aria-checked', autoRestOn()); }
     paintTg();
-    tg.addEventListener('click', function () { try { localStorage.setItem(LS_AUTOREST, autoRestOn() ? '0' : '1'); } catch (e) {} paintTg(); });
+    tg.addEventListener('click', function () { if (!SETH_TEST) { try { localStorage.setItem(LS_AUTOREST, autoRestOn() ? '0' : '1'); } catch (e) {} } paintTg(); });
     setCard.appendChild(autoRow);
     var restRow = el('<div class="set-row" style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px"><div><b>Standaard rusttijd</b><div class="tiny">Tussen sets</div></div><div class="rest-presets"></div></div>');
     var pr = restRow.querySelector('.rest-presets');
@@ -2083,7 +2345,7 @@
       var b = el('<button class="preset' + (restDefault === s ? ' on' : '') + '">' + lbl + '</button>');
       b.addEventListener('click', function () {
         restDefault = s;
-        try { localStorage.setItem(LS_REST, String(s)); } catch (e) {}
+        if (!SETH_TEST) { try { localStorage.setItem(LS_REST, String(s)); } catch (e) {} }
         pr.querySelectorAll('.preset').forEach(function (x) { x.classList.remove('on'); });
         b.classList.add('on');
         toast('Standaard rust: ' + lbl);
@@ -2175,6 +2437,20 @@
     if (UI.date === sethGetekend) { UI.date = nu; UI.dayKey = dayKeyForDate(nu); }
     renderVandaag();
   });
+
+  // testhaak: bestaat alleen in de testmodus (?sethdatum=) en bewaart niets
+  if (SETH_TEST) {
+    window.PA_TEST = {
+      datum: function (d) { if (d) SETH_TEST = d; return SETH_TEST; },
+      zet: metricZet, waarde: metricWaarde,
+      wis: function () { sethTest = {}; sethTestOp = {}; },
+      vorige: sethVorige, antwoord: sethAntwoord, actief: sethActief, herhaling: sethHerhaling,
+      consistentie: consistentie, rugVrij: rugVrij, advies: progressieAdvies, teken: renderVandaag,
+      // sessies alleen in het geheugen (opslaan en syncen staan uit in de testmodus)
+      sessie: function (d, dk, data) { if (data === null) delete S.sessions[sessKey(d, dk)]; else S.sessions[sessKey(d, dk)] = data; },
+      sessies: function () { return Object.keys(S.sessions); }
+    };
+  }
 
   loadLocal();
   initSupabase();

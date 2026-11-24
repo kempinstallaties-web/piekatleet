@@ -3,9 +3,14 @@
 // Deze site en repository zijn openbaar: zet hier NOOIT iets persoonlijks in (namen,
 // eigen patronen, bedrijfscijfers). Opdrachten beginnen met een werkwoord in de gebiedende
 // wijs en zijn op een gewone werkdag te doen.
-// Opslag in de app: metric 'seth_kaart' (datum van vandaag, 1/0) en 'seth_avond' (datum van gisteren).
+// Opslag in de app: metric 'seth_kaart' op de datum van de kaart (1 = gedaan, 0 = niet gedaan,
+// geen rij = geen antwoord) en 'seth_avond' (datum van gisteren).
+// 24-11-2026 (amendement A1): acht opdrachten in week 4 t/m 12 vervangen (de klap komt als
+// alles loopt, een fout twee keer is een gewoonte, donker en kou horen erbij, je eigen manier in
+// je vak, nieuwsgierig naar mensen, tradities). De bronlink per week wijst naar de video van het
+// weekthema.
 window.SETH = {
-  start: '2026-11-09', // maandag week 1 (Kaj 09-11: "mag deze week al beginnen"); het blok duurt 12 weken (84 dagen)
+  start: '2026-11-09', // maandag week 1; het blok duurt 12 weken (84 dagen)
 
   weekcheck: {
     vragen: ['Waar ging het goed?', 'Waar ging het mis?', 'Wat doe ik deze week beter?'],
@@ -14,6 +19,9 @@ window.SETH = {
   },
 
   avond: ['Waar verloor ik vandaag de controle?', 'Wat zette het in gang?', 'Wat had de man die ik wil zijn gedaan?'],
+
+  // staat boven een opdracht die je de vorige keer niet deed en nog één keer krijgt
+  herhaal: 'Nog één keer. Eén keer is oké, twee keer wordt een gewoonte.',
 
   weeks: [
     {
@@ -55,8 +63,8 @@ window.SETH = {
       bron: { titel: 'Hard Work is Contagious', tijd: '26:22', url: 'https://www.youtube.com/watch?v=G_AbihvKr-M&t=1582s' },
       ma: 'Kies bewust je toon voordat je de deur opendoet, op je werk en thuis.',
       di: 'Zeg één keer "ik mag" waar je normaal "ik moet" zou zeggen, en merk wat het doet.',
-      wo: 'Groet iedereen die je vandaag spreekt als eerste, en vraag hoe het met ze gaat.',
-      vr: 'Geef twee mensen een gemeend compliment over hun werk.',
+      wo: 'Stel de eerste die je vandaag spreekt drie vragen over hemzelf voordat je over het werk begint. Luister tot hij uitgepraat is.',
+      vr: 'Zeg tegen iemand die dicht bij je staat wat je in hem of haar waardeert. Eén zin, zonder grap erachteraan.',
       za: 'Kom thuis zonder te klagen over je week, en vertel één ding dat goed ging.',
       vraag: 'Welke energie bracht ik deze week mee, en wat deed dat met de mensen om me heen?'
     },
@@ -87,7 +95,7 @@ window.SETH = {
       zin: 'Ik ben iemand die de dag na een misser gewoon weer begint.',
       bron: { titel: 'Who Are You and What Do You Stand For?', tijd: '30:57', url: 'https://www.youtube.com/watch?v=0gdEsknFkb4&t=1857s' },
       ma: 'Denk aan een misser van vorige week. Balen mag, en vandaag doe je je vaste dingen gewoon weer.',
-      di: 'Doe iets ongemakkelijks dat niet hoeft. Het gaat om de oefening, niet om het resultaat.',
+      di: 'Zoek één fout die je deze maand twee keer maakte. Schrijf de vaste regel op die een derde keer voorkomt.',
       wo: 'Begin je werkdag met de taak die je gisteren liet liggen.',
       vr: 'Maak iets af wat je bijna had opgegeven.',
       za: 'Schrijf drie dingen op die goed gingen en één die misging. Die ene laat je daarna los.',
@@ -98,7 +106,7 @@ window.SETH = {
       zin: 'Ik ben iemand die bij tegenslag de volgende stap zoekt.',
       bron: { titel: 'Becoming the Man You Were Meant to Be', tijd: '17:45', url: 'https://www.youtube.com/watch?v=MtVfbi4bfVo&t=1065s' },
       ma: 'Schrijf het grootste probleem van deze week op, met daaronder de eerste stap die het kleiner maakt.',
-      di: 'Schrijf voor het slapen de grootste tegenvaller van vandaag op, met de volgende stap erbij.',
+      di: 'Zeg bij de eerste tegenvaller van vandaag niet "waarom ik" maar "wat nu", en zet binnen een uur de eerste stap.',
       wo: 'Los een klusje op dat al even blijft liggen, zonder uit te zoeken wie het liet liggen.',
       vr: 'Noem drie dingen waar je dankbaar voor bent, hardop of op papier.',
       za: 'Schrijf één ding op dat deze week zwaarder was dan je liet merken, en vertel het aan iemand die je vertrouwt.',
@@ -109,7 +117,7 @@ window.SETH = {
       zin: 'Ik ben iemand die zijn vaste dingen ook op een slechte dag doet.',
       bron: { titel: 'Watch This If You\'re Feeling Lazy & Weak', tijd: '2:23', url: 'https://www.youtube.com/watch?v=Ra6c6pA-RlM&t=143s' },
       ma: 'Kies twee dingen die vanaf nu elke werkdag gebeuren, ook op een slechte dag. Schrijf ze op.',
-      di: 'Doe je twee vaste dingen, hoe de dag ook loopt.',
+      di: 'Doe je twee vaste dingen juist als het donker, koud of nat is. Het weer is geen reden, het hoort erbij.',
       wo: 'Bedenk voor je twee vaste dingen een kleine versie van tien minuten, voor dagen dat het niet anders kan. Schrijf ze op.',
       vr: 'Noteer waar je nu staat met één ding dat je wilt verbeteren. Over zes weken meet je opnieuw.',
       za: 'Tel hoeveel dagen je deze week je vaste dingen deed. Schrijf het getal op, zonder oordeel.',
@@ -122,7 +130,7 @@ window.SETH = {
       ma: 'Schrijf één regel op die iedereen in je werk moet kennen, met erbij waarom hij bestaat.',
       di: 'Bedenk een taak die net boven het niveau ligt van iemand met wie je werkt, voor jullie volgende dag samen.',
       wo: 'Schrijf op hoe je reageert als iemand een fout of schade meldt: rustig blijven en eerst bedanken dat hij het zegt.',
-      vr: 'Leg de regel van maandag uit en laat iemand de taak van dinsdag doen, terwijl jij erbij bent.',
+      vr: 'Leg de regel van maandag uit en laat iemand de taak van dinsdag doen. Gaat het mis, dan herstelt hij het zelf, met jou erbij.',
       za: 'Schrijf op wat je deze week iemand hebt geleerd, en wat je de volgende keer anders uitlegt.',
       vraag: 'Wie heb ik deze week beter gemaakt, en waar was ik ongeduldig?'
     },
@@ -132,7 +140,7 @@ window.SETH = {
       bron: { titel: 'Seminar MassiveJoes 2019', tijd: '1:00:12', url: 'https://www.youtube.com/watch?v=Vl2uRIPYdNI&t=3612s' },
       ma: 'Schrijf de vijf mensen op met wie je het meest omgaat. Zet erbij: trekt hij me omhoog of omlaag?',
       di: 'Stuur een bericht aan iemand van wie je iets kunt leren en spreek deze week af.',
-      wo: 'Houd één gesprek dat je energie kost vandaag korter.',
+      wo: 'Begin een kleine traditie met iemand die belangrijk voor je is: één vast moment per week. Zet het vandaag in je agenda.',
       vr: 'Bedank iemand die je verder heeft geholpen, met een bericht of een telefoontje.',
       za: 'Vraag iemand die het al heeft meegemaakt om advies over één ding waar je mee zit.',
       vraag: 'Met wie trok ik deze week op, en word ik daar beter van?'
@@ -143,7 +151,7 @@ window.SETH = {
       bron: { titel: 'When You Feel Like You\'re Behind', tijd: '4:02', url: 'https://www.youtube.com/watch?v=KOwpUdDov24&t=242s' },
       ma: 'Leg je telefoon weg op de momenten dat je normaal gaat scrollen. Kies er twee vaste.',
       di: 'Betrap jezelf op één keer vergelijken met een ander. Zet ertegenover waar jij een jaar geleden stond.',
-      wo: 'Schrijf op waar je naast je werk iets uit haalt, en plan er deze week tijd voor.',
+      wo: 'Schrijf één ding op dat je in je vak op je eigen manier doet, anders dan het boekje, en waarom het zo beter werkt.',
       vr: 'Doe iets moeilijks dat je zelf kiest. Zeg daarna: dit deed ik, want zo iemand ben ik.',
       za: 'Schrijf de drie thema\'s op die je in dit blok het meest hebben geholpen. Neem ze mee naar de chat.',
       vraag: 'Waar vergeleek ik mezelf deze week met anderen, en wat heb ik zelf al neergezet?'
